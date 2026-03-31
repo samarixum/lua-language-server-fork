@@ -1,6 +1,10 @@
-major = 0
-minor = 0
-patch = 1
+major = 3
+minor = 17
+patch = 3
 isAlpha = false
-isBeta = false
-isNodeProject = false
+isBeta = true
+isNodeProject = true
+[[remotes]]
+name = "origin"
+isPublic = false
+group = "github"
