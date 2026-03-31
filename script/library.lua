@@ -382,7 +382,7 @@ local function loadSingle3rdConfig(libraryDir)
     return cfg
 end
 
-local innerThirdDir = ROOT / 'meta' / '3rd'
+local innerThirdDir = ROOT / 'meta' / 'submodules'
 
 local function load3rdConfigInDir(dir, configs, inner)
     if not fs.is_directory(dir) then
@@ -392,7 +392,7 @@ local function load3rdConfigInDir(dir, configs, inner)
         local suc, res = xpcall(loadSingle3rdConfig, log.error, libraryDir)
         if suc and res then
             if inner then
-                res.dirname = ('${3rd}/%s'):format(res.path)
+                res.dirname = ('${submodules}/%s'):format(res.path)
             else
                 res.dirname = ('%s/%s'):format(dir:string(), res.path)
             end

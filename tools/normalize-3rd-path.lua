@@ -1,7 +1,7 @@
 local fs  = require 'bee.filesystem'
 local fsu = require 'fs-utility'
 
-local thirdPath = fs.path 'meta/3rd'
+local thirdPath = fs.path 'meta/submodules'
 
 for dir in fs.pairs(thirdPath) do
     local libraryPath = dir / 'library'

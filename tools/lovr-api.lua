@@ -1,9 +1,9 @@
 local fs    = require 'bee.filesystem'
 local fsu   = require 'fs-utility'
 
-local api = dofile('3rd/lovr-api/api/init.lua')
+local api = dofile('submodules/lovr-api/api/init.lua')
 
-local metaPath    = fs.path 'meta/3rd/lovr'
+local metaPath    = fs.path 'meta/submodules/lovr'
 local libraryPath = metaPath / 'library'
 fs.create_directories(libraryPath)
 

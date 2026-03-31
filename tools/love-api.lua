@@ -1,11 +1,11 @@
-package.path = package.path .. ';3rd/love-api/?.lua'
+package.path = package.path .. ';submodules/love-api/?.lua'
 
 local lua51 = require 'lua51'
 local api   = lua51.require 'love_api'
 local fs    = require 'bee.filesystem'
 local fsu   = require 'fs-utility'
 
-local metaPath    = fs.path 'meta/3rd/love2d'
+local metaPath    = fs.path 'meta/submodules/love2d'
 local libraryPath = metaPath / 'library'
 fs.create_directories(libraryPath)
 

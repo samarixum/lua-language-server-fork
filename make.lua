@@ -19,12 +19,13 @@ local includeCodeFormat = true
 
 require "make.detect_platform"
 
-lm:import "3rd/bee.lua/make.lua"
+-- moved to submodules/server/submodules/luamake
+lm:import "submodules/luamake/bee.lua/make.lua"
 lm:import "make/code_format.lua"
 
 lm:source_set 'lpeglabel' {
-    rootdir = '3rd',
-    includes = "bee.lua/3rd/lua55",
+    rootdir = 'submodules',
+    includes = "luamake/bee.lua/3rd/lua55",
     sources = "lpeglabel/*.c",
     defines = {
         'MAXRECLEVEL=1000',
@@ -41,8 +42,9 @@ lm:executable "lua-language-server" {
         includeCodeFormat and "code_format" or nil,
     },
     includes = {
-        "3rd/bee.lua",
-        "3rd/bee.lua/3rd/lua55",
+        -- moved to submodules/server/submodules/luamake
+        "submodules/luamake/bee.lua",
+        "submodules/luamake/bee.lua/3rd/lua55",
     },
     sources = "make/modules.cpp",
     windows = {
@@ -112,7 +114,7 @@ lm:rule "run-unit-test" {
 lm:build "bee-test" {
     rule = "run-bee-test",
     deps = { "lua-language-server", "copy_script" },
-    inputs = "3rd/bee.lua/test/test.lua",
+    inputs = "submodules/luamake/bee.lua/test/test.lua",
 }
 
 lm:build 'unit-test' {

@@ -3,6 +3,11 @@
 /test/temp.lua
 /meta/*
 !/meta/template
-!/meta/3rd
+!/submodules/meta
 !/meta/whimsical
 /bin*
+
+.gitmodules
+**/submodules/**
+
+
