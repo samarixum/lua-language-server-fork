@@ -9,7 +9,7 @@ local setmetatable = setmetatable
 
 local math_type
 
-if _VERSION == "Lua 5.1" or _VERSION == "Lua 5.2" then
+if _VERSION == "Lua 5.1" or _VERSION == "Moonsharp 2.0.0.0" then
     local math_floor = math.floor
     function math_type(v)
         if v >= -2147483648 and v <= 2147483647 and math_floor(v) == v then

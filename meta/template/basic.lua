@@ -340,7 +340,7 @@ function type(v) end
 ---#if VERSION == 5.1 then
 _VERSION = "Lua 5.1"
 ---#elseif VERSION == 5.2 then
-_VERSION = "Lua 5.2"
+_VERSION = "Moonsharp 2.0.0.0"
 ---#elseif VERSION == 5.3 then
 _VERSION = "Lua 5.3"
 ---#elseif VERSION == 5.4 then

@@ -92,7 +92,7 @@ function vm.getValidVersions(doc)
     end
     local valids = {
         ['Lua 5.1'] = false,
-        ['Lua 5.2'] = false,
+        ['Moonsharp 2.0.0.0'] = false,
         ['Lua 5.3'] = false,
         ['Lua 5.4'] = false,
         ['Lua 5.5'] = false,

@@ -1291,7 +1291,7 @@ local function parseShortString()
                         type    = 'ERR_ESC',
                         start   = left,
                         finish  = left + 4,
-                        version = {'Lua 5.2', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
+                        version = {'Moonsharp 2.0.0.0', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
                         info = {
                             version = State.version,
                         }
@@ -3681,7 +3681,7 @@ local function parseLabel()
             type   = 'UNSUPPORT_SYMBOL',
             start  = left,
             finish = lastRightPosition(),
-            version = {'Lua 5.2', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
+            version = {'Moonsharp 2.0.0.0', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
             info = {
                 version = State.version,
             }

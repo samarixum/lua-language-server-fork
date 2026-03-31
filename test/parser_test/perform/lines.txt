@@ -20,7 +20,7 @@ local mt = getmetatable(mm.P(0))
 
 -- No more global accesses after this point
 local version = _VERSION
-if version == "Lua 5.2" then _ENV = nil end
+if version == "Moonsharp 2.0.0.0" then _ENV = nil end
 
 
 local any = m.P(1)

@@ -1062,7 +1062,7 @@ local <?t?>
 TEST 'string' [[
 local valids = {
     ['Lua 5.1'] = false,
-    ['Lua 5.2'] = false,
+    ['Moonsharp 2.0.0.0'] = false,
     ['Lua 5.3'] = false,
     ['Lua 5.4'] = false,
     ['LuaJIT']  = false,
@@ -1075,7 +1075,7 @@ end
 TEST 'boolean' [[
 local valids = {
     ['Lua 5.1'] = false,
-    ['Lua 5.2'] = false,
+    ['Moonsharp 2.0.0.0'] = false,
     ['Lua 5.3'] = false,
     ['Lua 5.4'] = false,
     ['LuaJIT']  = false,

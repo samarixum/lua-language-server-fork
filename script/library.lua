@@ -25,7 +25,7 @@ local function getDocFormater(uri)
     if client.getOption('viewDocument') then
         if version == 'Lua 5.1' then
             return 'HOVER_NATIVE_DOCUMENT_LUA51'
-        elseif version == 'Lua 5.2' then
+        elseif version == 'Moonsharp 2.0.0.0' then
             return 'HOVER_NATIVE_DOCUMENT_LUA52'
         elseif version == 'Lua 5.3' then
             return 'HOVER_NATIVE_DOCUMENT_LUA53'
@@ -39,7 +39,7 @@ local function getDocFormater(uri)
     else
         if version == 'Lua 5.1' then
             return 'HOVER_DOCUMENT_LUA51'
-        elseif version == 'Lua 5.2' then
+        elseif version == 'Moonsharp 2.0.0.0' then
             return 'HOVER_DOCUMENT_LUA52'
         elseif version == 'Lua 5.3' then
             return 'HOVER_DOCUMENT_LUA53'

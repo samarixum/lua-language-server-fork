@@ -186,7 +186,7 @@ end)
 local template = {
     ['Lua.runtime.version']                 = Type.String >> 'Lua 5.4' << {
                                                 'Lua 5.1',
-                                                'Lua 5.2',
+                                                'Moonsharp 2.0.0.0',
                                                 'Lua 5.3',
                                                 'Lua 5.4',
                                                 'Lua 5.5',

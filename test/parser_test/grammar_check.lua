@@ -1498,7 +1498,7 @@ TEST[[
 ]]
 {
     type = 'UNSUPPORT_SYMBOL',
-    version = {'Lua 5.2', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
+    version = {'Moonsharp 2.0.0.0', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
     info = {
         version = 'Lua 5.1',
     }
@@ -1525,13 +1525,13 @@ local x = '<!\xff!>'
 ]]
 {
     type = 'ERR_ESC',
-    version = {'Lua 5.2', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
+    version = {'Moonsharp 2.0.0.0', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
     info = {
         version = 'Lua 5.1',
     }
 }
 
-Version = 'Lua 5.2'
+Version = 'Moonsharp 2.0.0.0'
 TEST[[
 local x = 1 <!//!> 2
 ]]
@@ -1539,7 +1539,7 @@ local x = 1 <!//!> 2
     type = 'UNSUPPORT_SYMBOL',
     version = {'Lua 5.3', 'Lua 5.4', 'Lua 5.5'},
     info = {
-        version = 'Lua 5.2',
+        version = 'Moonsharp 2.0.0.0',
     }
 }
 
@@ -1550,7 +1550,7 @@ local x = 1 <!<<!> 2
     type = 'UNSUPPORT_SYMBOL',
     version = {'Lua 5.3', 'Lua 5.4', 'Lua 5.5'},
     info = {
-        version = 'Lua 5.2',
+        version = 'Moonsharp 2.0.0.0',
     }
 }
 
@@ -1561,7 +1561,7 @@ local x = '<!\u{1000}!>'
     type = 'ERR_ESC',
     version = {'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
     info = {
-        version = 'Lua 5.2',
+        version = 'Moonsharp 2.0.0.0',
     }
 }
 
