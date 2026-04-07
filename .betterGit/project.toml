@@ -8,3 +8,8 @@ isNodeProject = true
 name = "origin"
 isPublic = false
 group = "github"
+[[remotes]]
+name = "Fork"
+group = "Mirrors"
+provider = "github"
+isPublic = true
