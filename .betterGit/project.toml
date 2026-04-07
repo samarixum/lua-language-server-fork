@@ -13,3 +13,4 @@ name = "Fork"
 group = "Mirrors"
 provider = "github"
 isPublic = true
+branch = "master"
