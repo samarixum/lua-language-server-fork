@@ -293,8 +293,6 @@ function next(t, index) end
 -- 1b. MoonSharp Additions
 -- =============================================================================
 
-_MOONSHARP = {}
-
 --- Packs arguments into a table (alias for table.pack).
 ---@param ... any
 ---@return table<integer, any>
@@ -353,6 +351,20 @@ function dynamic.prepare(expr) end
 ---@return any result
 function dynamic.eval(expr) end
 
+--- The _MOONSHARP table exposes MoonSharp-specific runtime metadata.
+--- Hovering this global should show the MoonSharp interpreter details below.
+---@class MoonSharpRuntime
+---@field version string The version of the MoonSharp interpreter.
+---@field luacompat string The Lua compatibility level MoonSharp emulates.
+---@field platform string The platform name MoonSharp is running on.
+---@field is_aot boolean True if running on an AOT platform.
+---@field is_unity boolean True if running inside Unity.
+---@field is_mono boolean True if running on Mono.
+---@field is_clr4 boolean True if running on .NET 4.x.
+---@field is_pcl boolean True if running as a portable class library.
+---@field banner string The REPL-style MoonSharp banner.
+_MOONSHARP = {}
+
 ---@class MoonSharpJson
 ---@field parse fun(jsonString: string): any
 ---@field serialize fun(value: any): string
@@ -379,7 +391,7 @@ MoonSharp Language Differences (not type-annotatable, but important for document
 * Metalua short anonymous functions (lambda-style) are supported: |x, y| x + y is shorthand for function(x, y) return x + y end.
 * In this engine runtime, direct table iteration with `for v in table do ... end` is not guaranteed; use pairs()/ipairs() for compatibility.
 * `__iterator` probing can trigger a MoonSharp VM null-reference error path (`ExecIterPrep`) in this runtime build; treat it as unsupported.
-* Unicode escapes (\u{xxx}, up to 8 hex digits) are supported inside strings and output the specified Unicode codepoint, as in Lua 5.3.
+* Unicode escapes (\u{xxx}, up to 8 hex digits) are supported inside strings and output the specified Unicode codepoint, as in MoonSharp and Lua 5.3+.
 ]]
 
 

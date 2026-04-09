@@ -1557,13 +1557,7 @@ local x = 1 <!<<!> 2
 TEST[[
 local x = '<!\u{1000}!>'
 ]]
-{
-    type = 'ERR_ESC',
-    version = {'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
-    info = {
-        version = 'Moonsharp 2.0.0.0',
-    }
-}
+(nil)
 
 TEST[[
 while true do

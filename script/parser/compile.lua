@@ -239,6 +239,10 @@ local LocalLimit = 200
 
 local parseExp, parseAction
 
+local function isMoonsharpVersion(version)
+    return version == 'Moonsharp 2.0.0.0'
+end
+
 ---@class parser.state.err
 ---@field type string
 ---@field start? parser.position
@@ -1103,12 +1107,13 @@ local function parseStringUnicode()
     and State.version ~= 'Lua 5.4'
     and State.version ~= 'Lua 5.5'
     and State.version ~= 'LuaJIT'
+    and not isMoonsharpVersion(State.version)
     then
         pushError {
             type    = 'ERR_ESC',
             start   = leftPos - 2,
             finish  = rightPos,
-            version = {'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
+            version = {'Moonsharp 2.0.0.0', 'Lua 5.3', 'Lua 5.4', 'Lua 5.5', 'LuaJIT'},
             info = {
                 version = State.version,
             }
