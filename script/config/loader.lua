@@ -5,6 +5,7 @@ local workspace = require 'workspace'
 local scope     = require 'workspace.scope'
 local inspect   = require 'inspect'
 local jsonc     = require 'jsonc'
+local json      = require 'json'
 
 local function errorMessage(msg)
     proto.notify('window/showMessage', {
@@ -88,26 +89,27 @@ end
 ---@param uri? uri
 ---@return table?
 function m.loadClientConfig(uri)
+    local resourceScopeUri = uri or json.null
     local configs = proto.awaitRequest('workspace/configuration', {
         items = {
             {
-                scopeUri = uri,
+                scopeUri = resourceScopeUri,
                 section = 'Lua',
             },
             {
-                scopeUri = uri,
+                scopeUri = json.null,
                 section = 'files.associations',
             },
             {
-                scopeUri = uri,
+                scopeUri = resourceScopeUri,
                 section = 'files.exclude',
             },
             {
-                scopeUri = uri,
+                scopeUri = resourceScopeUri,
                 section = 'editor.semanticHighlighting.enabled',
             },
             {
-                scopeUri = uri,
+                scopeUri = resourceScopeUri,
                 section = 'editor.acceptSuggestionOnEnter',
             },
         },
