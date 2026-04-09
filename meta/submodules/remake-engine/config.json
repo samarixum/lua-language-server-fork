@@ -2,8 +2,7 @@
     "name": "remake-engine",
     "words": [
         "Game_Root",
-        "UIMode",
-        "_MOONSHARP"
+        "UIMode"
     ],
     "settings": {
         "Lua.workspace.library": [

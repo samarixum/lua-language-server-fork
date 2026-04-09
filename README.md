@@ -29,7 +29,7 @@ This server ships a built-in third-party library definition for Remake Engine at
 
 When `Lua.workspace.checkThirdParty` is enabled, the server can detect and apply the Remake Engine library automatically. You can also enable it explicitly with `Lua.workspace.userThirdParty`.
 
-Once applied, the Remake Engine API definitions are loaded through `Lua.workspace.library`, exposing MoonSharp-specific globals and engine helpers such as `Game_Root`, `UIMode`, `_MOONSHARP`, and the `sdk` module family.
+Once applied, the Remake Engine API definitions are loaded through `Lua.workspace.library`, exposing engine helpers such as `Game_Root`, `UIMode`, and the `sdk` module family. MoonSharp runtime globals now come from the core runtime templates.
 
 The Remake Engine API is intended for Moonsharp 2.0.0.0 projects.
 

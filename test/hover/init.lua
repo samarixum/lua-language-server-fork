@@ -820,6 +820,25 @@ TEST [[
 }
 ]]
 
+config.set(nil, 'Lua.runtime.version', 'Moonsharp 2.0.0.0')
+TEST [[
+<?_MOONSHARP?>
+]]
+[[
+(global) _MOONSHARP: _MOONSHARP {
+    version: string,
+    luacompat: string,
+    platform: string,
+    is_aot: boolean,
+    is_unity: boolean,
+    is_mono: boolean,
+    is_clr4: boolean,
+    is_pcl: boolean,
+    banner: string,
+}
+]]
+config.set(nil, 'Lua.runtime.version', nil)
+
 TEST [[
 local <?t?> = {
     'aaa',

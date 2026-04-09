@@ -95,6 +95,33 @@ function string.lower(s) end
 ---@nodiscard
 function string.match(s, pattern, init) end
 
+---#if VERSION == 5.2 then
+--- Returns the unicode codepoint(s) at the given position(s) in the string.
+---@param s string
+---@param i? integer
+---@param j? integer
+---@return integer|table<integer, integer>
+function string.unicode(s, i, j) end
+
+--- Returns true if str2 is contained in str1.
+---@param str1 string
+---@param str2 string
+---@return boolean
+function string.contains(str1, str2) end
+
+--- Returns true if str1 starts with str2.
+---@param str1 string
+---@param str2 string
+---@return boolean
+function string.startsWith(str1, str2) end
+
+--- Returns true if str1 ends with str2.
+---@param str1 string
+---@param str2 string
+---@return boolean
+function string.endsWith(str1, str2) end
+---#end
+
 ---@version >5.3
 ---#DES 'string.pack'
 ---@param fmt string

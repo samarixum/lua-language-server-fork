@@ -115,11 +115,15 @@ local function compileSingleMetaDoc(uri, script, metaLang, status)
     middleBuf[#middleBuf+1] = ('PUSH [===[%s]===]'):format(script:sub(last))
     local middleScript = table.concat(middleBuf, '\n')
     local version, jit
-    if config.get(uri, 'Lua.runtime.version') == 'LuaJIT' then
+    local runtimeVersion = config.get(uri, 'Lua.runtime.version')
+    if runtimeVersion == 'LuaJIT' then
         version = 5.1
         jit = true
+    elseif isMoonsharpVersion(runtimeVersion) then
+        version = 5.2
+        jit = false
     else
-        version = tonumber(config.get(uri, 'Lua.runtime.version'):sub(-3)) or 5.4
+        version = tonumber(runtimeVersion:sub(-3)) or 5.4
         jit = false
     end
 

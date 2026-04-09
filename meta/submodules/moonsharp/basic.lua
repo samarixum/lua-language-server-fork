@@ -349,6 +349,93 @@ _VERSION = "Lua 5.4"
 _VERSION = "Lua 5.5"
 ---#end
 
+---#if VERSION == 5.2 then
+---@class _MOONSHARP
+---@field version string The version of the MoonSharp interpreter.
+---@field luacompat string The Lua compatibility level MoonSharp emulates.
+---@field platform string The platform name MoonSharp is running on.
+---@field is_aot boolean True if running on an AOT platform.
+---@field is_unity boolean True if running inside Unity.
+---@field is_mono boolean True if running on Mono.
+---@field is_clr4 boolean True if running on .NET 4.x.
+---@field is_pcl boolean True if running as a portable class library.
+---@field banner string The REPL-style MoonSharp banner.
+_MOONSHARP = {}
+
+--- Packs arguments into a table (alias for table.pack).
+---@param ... any
+---@return table<integer, any>
+function pack(...) end
+
+--- Unpacks values from a table (alias for table.unpack).
+---@param t table<integer, any>
+---@return ... any
+function unpack(t) end
+
+--- Loads a chunk with the environment defaulting to the caller's environment.
+---@param ld string|function The chunk or loader function.
+---@param source? string
+---@param mode? string
+---@param env? table
+---@return function|nil chunk
+---@return string? error_message
+function loadsafe(ld, source, mode, env) end
+
+--- Loads a file with the environment defaulting to the caller's environment.
+---@param filename? string
+---@param mode? string
+---@param env? table
+---@return function|nil chunk
+---@return string? error_message
+function loadfilesafe(filename, mode, env) end
+
+---@class DynamicModule
+dynamic = {}
+
+--- Prepares an expression for dynamic evaluation.
+---@param expr string
+---@return any prepared
+function dynamic.prepare(expr) end
+
+--- Evaluates a prepared expression or string.
+---@param expr any
+---@return any result
+function dynamic.eval(expr) end
+
+---@class MoonSharpJson
+---@field parse fun(jsonString: string): any
+---@field serialize fun(value: any): string
+---@field null fun(): any
+---@field isNull nil Always nil in the current MoonSharp environment.
+json = {}
+
+--- Parses a JSON string into a Lua table.
+---@param jsonString string
+---@return any
+function json.parse(jsonString) end
+
+--- Serializes a Lua value to a JSON string.
+---@param value any
+---@return string
+function json.serialize(value) end
+
+--- Returns a special value representing JSON null.
+---@return any
+function json.null() end
+
+---@deprecated not available in this environment, use sdk.text.json.isNull instead
+json.isNull = nil
+
+--[[
+MoonSharp Language Differences (not type-annotatable, but important for documentation):
+* Multiple expressions can be used as indices, but the value to be indexed must be a userdata or a table resolving to userdata through the metatable (without using metamethods).
+* Metalua short anonymous functions (lambda-style) are supported: |x, y| x + y is shorthand for function(x, y) return x + y end.
+* In this engine runtime, direct table iteration with `for v in table do ... end` is not guaranteed; use pairs()/ipairs() for compatibility.
+* `__iterator` probing can trigger a MoonSharp VM null-reference error path (`ExecIterPrep`) in this runtime build; treat it as unsupported.
+* Unicode escapes (\u{xxx}, up to 8 hex digits) are supported inside strings and output the specified Unicode codepoint, as in MoonSharp and Lua 5.3+.
+]]
+---#end
+
 ---@version >5.4
 ---#DES 'warn'
 ---@param message string
