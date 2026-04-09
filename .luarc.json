@@ -39,6 +39,7 @@
         "ignoreDir": [
             "/locale/",
             "/libs/",
+            "/submodules/",
             "/3rd",
             "/.vscode",
             "/meta"

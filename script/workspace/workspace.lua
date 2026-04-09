@@ -19,11 +19,6 @@ local m = {}
 m.type = 'workspace'
 m.watchList = {}
 
-local function isMoonsharpVersion(version)
-    return version == 'Lua 5.2'
-        or version == 'Moonsharp 2.0.0.0'
-end
-
 --- 注册事件
 ---@param callback async fun(ev: string, uri: uri)
 function m.watch(callback)
@@ -233,12 +228,6 @@ function m.getLibraryMatchers(scp)
         path = m.getAbsolutePath(scp.uri, path)
         if path then
             librarys[files.normalize(path)] = true
-        end
-    end
-    if isMoonsharpVersion(config.get(scp.uri, 'Lua.runtime.version')) then
-        local moonsharpPath = m.getAbsolutePath(scp.uri, '${submodules}/moonsharp')
-        if moonsharpPath then
-            librarys[files.normalize(moonsharpPath)] = true
         end
     end
     local metaPaths = scp:get 'metaPaths'
