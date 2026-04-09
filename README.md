@@ -8,6 +8,31 @@ This project was implemented for standard lua but is now being slowly refactored
 
 This document provides an overview of the directory structure and key files within the project.
 
+## Workspace Libraries
+
+`Lua.workspace.library` tells the language server to index extra directories as external code libraries. This is the right place for generated code, engine SDKs, or other sources that should participate in completion, hover, diagnostics, and navigation without being treated as normal workspace files.
+
+Files under workspace libraries are read as library content. They are available to the analyzer, but refactors such as rename are not meant to rewrite them.
+
+Example:
+
+```jsonc
+"Lua.workspace.library": [
+	"${workspaceFolder}/vendor/lua",
+	"${workspaceFolder}/generated/api"
+]
+```
+
+## Remake Engine API Support
+
+This server ships a built-in third-party library definition for Remake Engine at `meta/submodules/remake-engine`.
+
+When `Lua.workspace.checkThirdParty` is enabled, the server can detect and apply the Remake Engine library automatically. You can also enable it explicitly with `Lua.workspace.userThirdParty`.
+
+Once applied, the Remake Engine API definitions are loaded through `Lua.workspace.library`, exposing MoonSharp-specific globals and engine helpers such as `Game_Root`, `UIMode`, `_MOONSHARP`, and the `sdk` module family.
+
+The Remake Engine API is intended for Moonsharp 2.0.0.0 projects.
+
 ## 📂 Project Structure
 
 ### Source & Configuration
