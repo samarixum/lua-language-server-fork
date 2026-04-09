@@ -2199,7 +2199,6 @@ Automatic detection and adaptation of third-party libraries, currently supported
 * LÖVR
 * skynet
 * Jass
-* Template
 * remake-engine
 
 ## type
