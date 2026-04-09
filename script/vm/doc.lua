@@ -92,6 +92,7 @@ function vm.getValidVersions(doc)
     end
     local valids = {
         ['Lua 5.1'] = false,
+        ['Lua 5.2'] = false,
         ['Moonsharp 2.0.0.0'] = false,
         ['Lua 5.3'] = false,
         ['Lua 5.4'] = false,
@@ -121,6 +122,10 @@ function vm.getValidVersions(doc)
     end
     if valids['Lua 5.1'] then
         valids['LuaJIT'] = true
+    end
+    if valids['Lua 5.2'] or valids['Moonsharp 2.0.0.0'] then
+        valids['Lua 5.2'] = true
+        valids['Moonsharp 2.0.0.0'] = true
     end
     doc._validVersions = valids
     return valids

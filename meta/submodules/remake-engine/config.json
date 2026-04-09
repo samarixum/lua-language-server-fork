@@ -1,0 +1,13 @@
+{
+    "name": "remake-engine",
+    "words": [
+        "Game_Root",
+        "UIMode",
+        "_MOONSHARP"
+    ],
+    "settings": {
+        "Lua.workspace.library": [
+            "${submodules}/remake-engine"
+        ]
+    }
+}

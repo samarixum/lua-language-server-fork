@@ -4,6 +4,7 @@ local diag   = require 'proto.diagnostic'
 
 ---@class config.unit
 ---@field caller function
+---@field checker function
 ---@field loader function
 ---@field _checker fun(self: config.unit, value: any): boolean
 ---@field name     string
@@ -12,6 +13,8 @@ local diag   = require 'proto.diagnostic'
 ---@operator call: config.unit
 local mt = {}
 mt.__index = mt
+
+local unitAliases = setmetatable({}, { __mode = 'k' })
 
 function mt:__call(...)
     self:caller(...)
@@ -36,6 +39,15 @@ function mt:checker(v)
             if util.equal(enum, v) then
                 ok = true
                 break
+            end
+        end
+        local aliases = unitAliases[self]
+        if not ok and aliases then
+            for _, alias in ipairs(aliases) do
+                if util.equal(alias, v) then
+                    ok = true
+                    break
+                end
             end
         end
         if not ok then
@@ -167,15 +179,16 @@ end)
 
 register('Or', nil, function (self, value)
     for _, sub in ipairs(self.subs) do
-        if sub:checker(value) then
+        if mt.checker(sub, value) then
             return true
         end
     end
     return false
 end, function (self, value)
     for _, sub in ipairs(self.subs) do
-        if sub:checker(value) then
-            return sub:loader(value)
+        if mt.checker(sub, value) then
+            local loader = rawget(sub, 'loader')
+            return loader(sub, value)
         end
     end
 end, function (self, ...)
@@ -436,5 +449,19 @@ local template = {
     ['editor.semanticHighlighting.enabled'] = Type.Or(Type.Boolean, Type.String),
     ['editor.acceptSuggestionOnEnter']      = Type.String  >> 'on',
 }
+
+do
+    local versionUnit = template['Lua.runtime.version']
+    unitAliases[versionUnit] = {
+        'Lua 5.2',
+    }
+    local defaultLoader = versionUnit.loader
+    versionUnit.loader = function (self, value)
+        if value == 'Lua 5.2' then
+            return 'Moonsharp 2.0.0.0'
+        end
+        return defaultLoader(self, value)
+    end
+end
 
 return template

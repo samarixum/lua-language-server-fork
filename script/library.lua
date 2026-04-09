@@ -20,12 +20,17 @@ local m = {}
 
 m.metaPaths = {}
 
+local function isMoonsharpVersion(version)
+    return version == 'Lua 5.2'
+        or version == 'Moonsharp 2.0.0.0'
+end
+
 local function getDocFormater(uri)
     local version = config.get(uri, 'Lua.runtime.version')
     if client.getOption('viewDocument') then
         if version == 'Lua 5.1' then
             return 'HOVER_NATIVE_DOCUMENT_LUA51'
-        elseif version == 'Moonsharp 2.0.0.0' then
+        elseif isMoonsharpVersion(version) then
             return 'HOVER_NATIVE_DOCUMENT_LUA52'
         elseif version == 'Lua 5.3' then
             return 'HOVER_NATIVE_DOCUMENT_LUA53'
@@ -39,7 +44,7 @@ local function getDocFormater(uri)
     else
         if version == 'Lua 5.1' then
             return 'HOVER_DOCUMENT_LUA51'
-        elseif version == 'Moonsharp 2.0.0.0' then
+        elseif isMoonsharpVersion(version) then
             return 'HOVER_DOCUMENT_LUA52'
         elseif version == 'Lua 5.3' then
             return 'HOVER_DOCUMENT_LUA53'

@@ -931,13 +931,16 @@ function m.updateAddonsPath(path)
     end
 end
 
----Resolve path variables/placeholders like ${3rd} and ${addons}
+---Resolve path variables/placeholders like ${3rd}, ${submodules}, and ${addons}
 ---@param path string
 ---@return string resolvedPath
 function m.resolvePathPlaceholders(path)
     path = path:gsub("%$%{(.-)%}", function(key)
-        if key == "3rd" then
-            return (ROOT / "meta" / "3rd"):string()
+        if key == "3rd"
+        or key == "submodules" then
+            return (ROOT / "meta" / "submodules"):string()
+        --[[
+        disabled addons since addon manager is removed in this version
         elseif key == "addons" then
             if addonsPath then
                 return addonsPath
@@ -964,7 +967,7 @@ function m.resolvePathPlaceholders(path)
                     addonsPath = "~/Library/Application Support/Code/" .. dataPath
                 end
             end
-            return addonsPath
+            return addonsPath--]]
         elseif key:sub(1, 4) == "env:" then
             local env = os.getenv(key:sub(5))
             return env

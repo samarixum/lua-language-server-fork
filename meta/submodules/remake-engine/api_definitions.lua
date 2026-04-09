@@ -21,6 +21,7 @@ The file is organized into sections:
 
 
 ---@meta _
+---@version 5.2
 
 -- Builtins
 
