@@ -1,0 +1,16 @@
+{
+    "Lua.runtime.builtin": {
+        "basic": "disable",
+        "io": "disable",
+        "os": "disable",
+        "builtin": "disable",
+        "debug": "disable"
+    },
+
+    "Lua.codeLens.enable": true,
+    "Lua.completion.callSnippet": "Both",
+    "Lua.doc.regengine": "lua",
+    "Lua.hint.arrayIndex": "Enable",
+    "Lua.runtime.version": "Moonsharp 2.0.0.0"
+
+}

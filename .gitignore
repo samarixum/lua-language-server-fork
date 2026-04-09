@@ -1,13 +1,16 @@
 /log
 /build
 /test/temp.lua
-/meta/*
+
+# build artifacts in meta
+/meta/563e45af
+/meta/default utf8
+/meta/Lua 5.4 zh-cn utf8
+/meta/LuaJIT zh-cn utf8
+
 !/meta/template
 !/submodules/meta
 !/meta/whimsical
 /bin*
-
-.gitmodules
-**/submodules/**
 
 

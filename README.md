@@ -2,6 +2,10 @@
 
 This repository contains a fork of the Lua Language Server.
 
+This project was implemented for standard lua but is now being slowly refactored to support moonsharp only by rewriting the 5.2 api definitions and removing any non moonsharp compatible code. The project is still in early stages and is not yet ready for production use.
+
+
+
 This document provides an overview of the directory structure and key files within the project.
 
 ## 📂 Project Structure

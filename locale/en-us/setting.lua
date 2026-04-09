@@ -143,6 +143,8 @@ Automatic detection and adaptation of third-party libraries, currently supported
 * LÖVR
 * skynet
 * Jass
+* Template
+* remake-engine
 ]]
 config.workspace.userThirdParty          =
 'Add private third-party library configuration file paths here, please refer to the built-in [configuration file path](https://github.com/LuaLS/lua-language-server/tree/master/meta/3rd)'
