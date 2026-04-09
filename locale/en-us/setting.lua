@@ -474,6 +474,8 @@ config.typeFormat.config.format_line        =
 
 command.exportDocument =
 'Lua: Export Document ...'
+command.refresh =
+'Lua: Refresh'
 command.addon_manager.open =
 'Lua: Open Addon Manager ...'
 command.reloadFFIMeta =

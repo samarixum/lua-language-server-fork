@@ -473,6 +473,8 @@ config.typeFormat.config.format_line        =
 
 command.exportDocument =
 'Lua: ドキュメントをエクスポート...'
+command.refresh =
+'Lua: 更新'
 command.addon_manager.open =
 'Lua: アドオンマネージャーを開く...'
 command.reloadFFIMeta =

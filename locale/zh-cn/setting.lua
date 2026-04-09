@@ -472,6 +472,8 @@ config.typeFormat.config.format_line        =
 
 command.exportDocument =
 'Lua: 导出文档...'
+command.refresh =
+'Lua: 刷新'
 command.addon_manager.open =
 'Lua: 打开插件管理器...'
 command.reloadFFIMeta =

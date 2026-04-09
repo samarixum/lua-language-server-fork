@@ -473,6 +473,8 @@ config.typeFormat.config.format_line        =
 
 command.exportDocument =
 'Lua: Exportar Documento ...'
+command.refresh =
+'Lua: Atualizar'
 command.addon_manager.open =
 'Lua: Abrir Gerenciador de Addon ...'
 command.reloadFFIMeta =

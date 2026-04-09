@@ -1,47 +1,84 @@
-# lua-language-server (fork)
+# lua-language-server (moonsharp)
 
-This README documents the top-level items currently in this directory.
-If a purpose is not clear from repository contents, it is listed as UNKNOWN.
+This repository contains a fork of the Lua Language Server.
 
-## Directories
+This document provides an overview of the directory structure and key files within the project.
 
-| Name | Purpose |
-| --- | --- |
-| `bin` | Built server binaries and runtime bootstrap files. |
-| `build` | Build artifacts and intermediate outputs. |
-| `doc` | User-facing documentation content. |
-| `locale` | Localization files used by the server. |
-| `log` | Runtime and test log outputs/samples. |
-| `lua` | Symbolic link to `script`; reason for link is UNKNOWN. |
-| `make` | Build helper sources and platform-specific build inputs. |
-| `meta` | API/type metadata used for completion and analysis. |
-| `script` | Core Lua language server implementation. |
-| `submodules` | External source dependencies pulled as git submodules. |
-| `test` | Test cases and fixtures. |
-| `tools` | Utility scripts for maintenance/build data generation. |
+## 📂 Project Structure
 
-## Files
+### Source & Configuration
+These directories house the core logic, documentation, and metadata required for the language server to function.
 
-| Name | Purpose |
-| --- | --- |
-| `.editorconfig` | Editor formatting and indentation rules. |
-| `.gitignore` | Git ignore rules for generated files/artifacts. |
-| `.gitmodules` | Git submodule declarations and source URLs. |
-| `.luarc.json` | Lua language server development settings for this repo. |
-| `.make.bat` | Windows helper script to initialize submodules and run `luamake`. |
-| `.pre-commit-hooks.yaml` | Pre-commit hook config to run Lua checks. |
-| `debugger.lua` | Optional debug bootstrap used in development mode. |
-| `Dockerfile` | Linux container definition for building the server toolchain. |
-| `errors.json` | UNKNOWN (stored diagnostics JSON sample/output). |
-| `LICENSE` | Project license text (MIT). |
-| `lua-language-server` | Launcher script that runs `main.lua` via `bee`. |
-| `lua-language-server-scm-1.rockspec` | LuaRocks package manifest for the server distribution. |
-| `main.lua` | Main server entrypoint and process initialization. |
-| `make.lua` | Primary `luamake` build script for native/server targets. |
-| `package.json` | Minimal package metadata (`name` and `version`). |
-| `README.md` | This documentation file. |
-| `test.lua` | Test runner entrypoint for local/server test execution. |
-| `theme-tokens.md` | Reference documentation for syntax/semantic token scopes. |
-| `zig-cc-wrapper.sh` | Wrapper script to call `zig c++` while filtering incompatible flags. |
+| Name | Description |
+| :--- | :--- |
+| `script` | **Core Logic:** Contains the primary Lua implementation of the language server. |
 
+## meta is the LuaCATS (Lua Comment and Type System)
+## These repositories contain .lua files with type annotations.
+## They don't contain the functional code of the libraries themselves
+## they provide the LLS with the Type Descriptions etc
+| `meta` | **API Metadata:** Type definitions and metadata used for autocompletion and static analysis. |
+files in meta
 
+#built in
+spell/ -- contains two text files, dictionary.txt and lua_dict.txt, which are used for spell checking and autocompletion of english words and Lua keywords, respectively.
+submodules/ -- third party dependencies via git
+template/ -- template
+
+#generated
+563e45af/ --empty
+default utf8/ -- built-in utf8 lua api definitions
+Lua 5.4 zh-cn utf8/ -- built-in Lua 5.4 api definitions
+LuaJIT zh-cn utf8/ -- built-in LuaJIT api definitions
+
+| `locale` | **Localization:** Files used by vscode client build script `build-settings.lua` to generate localized `package.nls.json` files. |
+| `doc` | **Documentation:** User-facing guides and technical documentation. |
+doc contains for each language a config.md documenting all vscode configs listed in locale/<lang>/setting.lua config. entries
+
+### Build & Dependencies
+Tools and external sources required to compile or extend the server.
+
+| Name | Description |
+| :--- | :--- |
+| `submodules` | External Git dependencies. |
+| `make` | Platform-specific build inputs and helper sources. |
+| `tools` | lua utilities and data generation scripts. |
+| `zig-cc-wrapper` | Wrapper for `zig c++` to filter incompatible build flags. |
+
+### Development & Testing
+Resources for contributors to verify code quality and debug.
+
+| Name | Description |
+| :--- | :--- |
+| `test` | Test cases, fixtures, and unit tests. |
+| `log` | Runtime logs and test output samples. |
+| `bin` | Compiled binaries and runtime bootstrap files. |
+| `build` | Intermediate build artifacts. |
+
+---
+
+## 📄 Key Files
+
+### Core Entry Points
+| File | Role |
+| :--- | :--- |
+| `main.lua` | **Entrypoint:** Primary server initialization logic. |
+| `lua-language-server` | **Launcher:** Shell script to execute `main.lua` via the `bee` runtime. |
+| `make.lua` | **Build Script:** The primary `luamake` definition for all targets. |
+| `test.lua` | **Test Runner:** Entrypoint for executing the test suite. |
+
+### Configuration & Environment
+| File | Role |
+| :--- | :--- |
+| `.luarc.json` | Project-specific Lua Language Server settings. |
+| `.editorconfig` | Enforces consistent indentation and formatting across editors. |
+| `Dockerfile` | Defines the Linux container for the build toolchain. |
+| `.pre-commit-hooks.yaml` | Configuration for automated Lua checks before committing. |
+
+### Metadata & Legal
+| File | Role |
+| :--- | :--- |
+| `package.json` | Project metadata (name, version). |
+| `LICENSE` | MIT License text. |
+| `theme-tokens.md` | Documentation for syntax and semantic token scopes. |
+| `lua-language-server-scm-1.rockspec` | LuaRocks manifest for distribution. |
