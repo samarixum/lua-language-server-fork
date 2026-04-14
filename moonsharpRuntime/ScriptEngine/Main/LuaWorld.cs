@@ -45,6 +45,11 @@ internal class LuaWorld {
     /// </summary>
     internal Table SqliteModule { get; }
 
+    /// <summary>
+    /// Gets the script argument table exposed to Lua as <c>arg</c>.
+    /// </summary>
+    internal Table ScriptArguments { get; private set; }
+
     /* :: :: Properties :: END :: */
     // //
     /* :: :: Fields :: START :: */
@@ -146,6 +151,12 @@ internal class LuaWorld {
         LuaScript = _luaScript;
         LuaScriptPath = _scriptPath;
 
+        var fullScriptPath = System.IO.Path.GetFullPath(_scriptPath);
+        var fullScriptDir = System.IO.Path.GetDirectoryName(fullScriptPath) ?? AppContext.BaseDirectory;
+
+        LuaScript.Globals["ThisScriptPath"] = DynValue.NewString(fullScriptPath);
+        LuaScript.Globals["ThisScriptDir"] = DynValue.NewString(fullScriptDir);
+
         // create sdk hierarchy
         Sdk = new SdkContainer(LuaScript);
 
@@ -161,6 +172,8 @@ internal class LuaWorld {
 
         // sqlite module tables
         SqliteModule = new Table(LuaScript);
+
+        ScriptArguments = new Table(LuaScript);
 
     }
 
@@ -179,6 +192,90 @@ internal class LuaWorld {
         lock (_openDisposablesLock) {
             _openDisposables.Add(disposable);
         }
+    }
+
+    /// <summary>
+    /// Exposes forwarded command-line arguments to Lua as the global <c>arg</c> table and the compatibility <c>argv</c>/<c>argc</c> globals.
+    /// </summary>
+    internal void SetScriptArguments(System.Collections.Generic.IEnumerable<string>? scriptArguments) {
+        ScriptArguments = new Table(LuaScript);
+
+        var forwardedArgs = new List<DynValue>();
+        var processPath = System.Environment.ProcessPath;
+
+        ScriptArguments[-1] = DynValue.NewString(string.IsNullOrWhiteSpace(processPath) ? LuaScriptPath : processPath);
+        ScriptArguments[0] = DynValue.NewString("!main.lua");
+
+        var argMetadata = new Table(LuaScript);
+        argMetadata["__pairs"] = DynValue.NewCallback((context, callbackArgs) => {
+            var orderedKeys = new List<DynValue>();
+            var orderedValues = new List<DynValue>();
+
+            for (var i = 1; i <= forwardedArgs.Count; i++) {
+                orderedKeys.Add(DynValue.NewNumber(i));
+                orderedValues.Add(ScriptArguments.Get(i));
+            }
+
+            orderedKeys.Add(DynValue.NewNumber(-1));
+            orderedValues.Add(ScriptArguments.Get(-1));
+
+            orderedKeys.Add(DynValue.NewNumber(0));
+            orderedValues.Add(ScriptArguments.Get(0));
+
+            var position = -1;
+            var iterator = DynValue.NewCallback((iteratorContext, iteratorArgs) => {
+                position++;
+                if (position >= orderedKeys.Count) {
+                    return DynValue.NewNil();
+                }
+
+                return DynValue.NewTuple(orderedKeys[position], orderedValues[position]);
+            }, "arg_pairs_iter");
+
+            return DynValue.NewTuple(iterator, DynValue.NewNil(), DynValue.NewNil());
+        }, "arg_pairs");
+
+        ScriptArguments.MetaTable = argMetadata;
+
+        var packageValue = LuaScript.Globals.Get("package");
+        if (packageValue.Type == DataType.Table) {
+            var packageTable = packageValue.Table;
+            var searchersValue = packageTable.Get("searchers");
+
+            if (searchersValue.Type == DataType.Table) {
+                packageTable["loaders"] = searchersValue.Table;
+            } else {
+                var searchersTable = new Table(LuaScript);
+                packageTable["searchers"] = searchersTable;
+                packageTable["loaders"] = searchersTable;
+            }
+
+            var syntheticCPath = System.IO.Path.Combine(System.AppContext.BaseDirectory, "?.dll");
+            var existingCPath = packageTable.Get("cpath");
+
+            if (existingCPath.Type == DataType.String && !string.IsNullOrWhiteSpace(existingCPath.String)) {
+                packageTable["cpath"] = syntheticCPath + ";" + existingCPath.String;
+            } else {
+                packageTable["cpath"] = syntheticCPath;
+            }
+        }
+
+        var argvTable = new Table(LuaScript);
+        var argc = 0;
+
+        var index = 1;
+        if (scriptArguments is not null) {
+            foreach (var scriptArgument in scriptArguments) {
+                var argumentValue = DynValue.NewString(scriptArgument);
+                forwardedArgs.Add(argumentValue);
+                ScriptArguments[index++] = argumentValue;
+                argvTable[++argc] = argumentValue;
+            }
+        }
+
+        LuaScript.Globals["arg"] = ScriptArguments;
+        LuaScript.Globals["argv"] = argvTable;
+        LuaScript.Globals["argc"] = argc;
     }
 
     /// <summary>

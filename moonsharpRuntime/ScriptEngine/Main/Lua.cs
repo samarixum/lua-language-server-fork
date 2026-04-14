@@ -65,6 +65,8 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
             object[] argsForLua = new object[this._args.Length];
             Array.Copy(this._args, argsForLua, this._args.Length);
 
+            LuaWorld.SetScriptArguments(this._args);
+
             await System.Threading.Tasks.Task.Run(() => {
                 LuaWorld.LuaScript.Call(LuaWorld.LuaScript.LoadString(code, codeFriendlyName: this._scriptPath), argsForLua);
             }, cancellationToken).ConfigureAwait(false);

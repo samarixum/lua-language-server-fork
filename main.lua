@@ -1,6 +1,49 @@
-local fs      = require 'bee.filesystem'
 local util    = require 'utility'
 local version = require 'version'
+
+local useMoonSharpPaths = _MOONSHARP == true
+local fs = nil
+if not useMoonSharpPaths then
+    fs = require 'bee.filesystem'
+end
+
+local function joinPath(left, right)
+    local separator = package.config:sub(1, 1)
+    left = tostring(left)
+    right = tostring(right)
+
+    if left:sub(-1) ~= separator then
+        left = left .. separator
+    end
+
+    if right:sub(1, 1) == separator then
+        right = right:sub(2)
+    end
+
+    return left .. right
+end
+
+local function makePath(pathText)
+    local pathValue = tostring(pathText)
+
+    if not useMoonSharpPaths then
+        return fs.path(pathValue)
+    end
+
+    return setmetatable({ value = pathValue }, {
+        __tostring = function(self)
+            return self.value
+        end,
+        __index = {
+            string = function(self)
+                return self.value
+            end,
+        },
+        __div = function(self, rhs)
+            return makePath(joinPath(self.value, rhs))
+        end,
+    })
+end
 
 require 'config.env'
 
@@ -49,9 +92,9 @@ local currentPath = debug.getinfo(1, 'S').source:sub(2)
 local rootPath    = currentPath:gsub('[/\\]*[^/\\]-$', '')
 
 rootPath = (rootPath == '' and '.' or rootPath)
-ROOT     = fs.path(util.expandPath(rootPath))
-LOGPATH  = LOGPATH  and util.expandPath(LOGPATH)  or (ROOT:string() .. '/log')
-METAPATH = METAPATH and util.expandPath(METAPATH) or (ROOT:string() .. '/meta')
+ROOT     = makePath(util.expandPath(rootPath))
+LOGPATH  = LOGPATH  and makePath(util.expandPath(LOGPATH))  or (ROOT / 'log')
+METAPATH = METAPATH and makePath(util.expandPath(METAPATH)) or (ROOT / 'meta')
 
 util.enableCloseFunction()
 util.enableFormatString()
@@ -63,7 +106,7 @@ collectgarbage('param', 'minormajor', 50)
 
 ---@diagnostic disable-next-line: lowercase-global
 log = require 'log'
-log.init(ROOT, fs.path(LOGPATH) / 'service.log')
+log.init(ROOT, useMoonSharpPaths and (LOGPATH / 'service.log') or (fs.path(LOGPATH) / 'service.log'))
 if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
 end
