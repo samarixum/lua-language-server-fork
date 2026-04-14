@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- Default TFMs for CI and most dev machines (no Apple workloads required) -->
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <OutputType>WinExe</OutputType>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        <StartupObject>Moonsharpy.Program</StartupObject>
+
+        <!-- Publish with all .net dependencies included (no .NET runtime required on target machine) -->
+        <SelfContained>true</SelfContained>
+
+        <!-- Publish as a single executable file -->
+        <PublishSingleFile>true</PublishSingleFile>
+        <!-- Include native libraries in the single file bundle -->
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <!-- Embedd PDBs in exe, these are used for debugging in published app -->
+        <DebugType>embedded</DebugType>
+
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Program.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="ScriptEngine\Moonsharpy.ScriptEngines.csproj" />
+    </ItemGroup>
+
+
+</Project>
