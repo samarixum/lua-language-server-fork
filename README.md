@@ -72,7 +72,6 @@ Tools and external sources required to compile or extend the server.
 | `submodules` | External Git dependencies. |
 | `make` | Platform-specific build inputs and helper sources. |
 | `tools` | lua utilities and data generation scripts. |
-| `zig-cc-wrapper` | Wrapper for `zig c++` to filter incompatible build flags. |
 
 ### Development & Testing
 Resources for contributors to verify code quality and debug.
@@ -111,3 +110,62 @@ Resources for contributors to verify code quality and debug.
 | `LICENSE` | MIT License text. |
 | `theme-tokens.md` | Documentation for syntax and semantic token scopes. |
 | `lua-language-server-scm-1.rockspec` | LuaRocks manifest for distribution. |
+
+
+
+
+
+
+
+
+
+
+
+---
+Dirs
+- .betterGit
+- .vscode
+
+- bin   - contains compiled binaries and runtime 'make/bootstrap.lua' named 'main.lua'.
+- build - C build artifacts, including object files and intermediate outputs.
+
+- doc    - localisation for vscode client config settings
+- locale - localisation for more things also includes the config settings
+
+- log    - logs created by lls 'script\log.lua'
+
+- make   - contains files for building the lls.exe also includes the bootstrap.lua file renamed in bin as main.lua which is the entry point for the lls.exe subsequently calling the main.lua in the root of the project
+
+- meta   - contains 4 build artifact folders for built in lua type definitions and a spell folder with two text files, dictionary.txt and lua_dict.txt, which are used for spell checking and autocompletion of english words and Lua keywords, respectively. also contains the submodules folder which contains third party type definitions such as the remake engine api definitions.
+
+- moonsharpRuntime - contains the new moonsharp lls (intended to replace the current lls.exe) written in C# using moonsharp as the runtime.
+
+- script
+- submodules
+- test
+- tools
+
+Files
+- .editorconfig
+- .gitignore
+- .gitmodules
+- .luarc.json
+- .make.bat
+- .pre-commit-hooks.yaml
+- debugger.lua
+- errors.json
+- LICENSE
+- lua-language-server
+- lua-language-server-scm-1.rockspec
+- main.lua
+- make.lua
+- package.json
+- README.md
+- test.lua
+
+---
+
+
+
+
+

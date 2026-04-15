@@ -24,7 +24,7 @@
         "unusedLocalExclude": [ "_*" ]
     },
     "runtime": {
-        "version": "Lua 5.5",
+        "version": "Lua 5.2",
         "path": [
             "script/?.lua",
             "script/?/init.lua",

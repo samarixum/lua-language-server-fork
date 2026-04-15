@@ -2,10 +2,7 @@ local util    = require 'utility'
 local version = require 'version'
 
 local useMoonSharpPaths = _MOONSHARP == true
-local fs = nil
-if not useMoonSharpPaths then
-    fs = require 'bee.filesystem'
-end
+local fs = require 'bee.filesystem'
 
 local function joinPath(left, right)
     local separator = package.config:sub(1, 1)
@@ -48,7 +45,7 @@ end
 require 'config.env'
 
 local function getValue(value)
-    if     value == 'true' or value == nil then
+    if value == 'true' or value == nil then
         value = true
     elseif value == 'false' then
         value = false
@@ -89,7 +86,10 @@ end
 loadArgs()
 
 local currentPath = debug.getinfo(1, 'S').source:sub(2)
+print('Current path:', currentPath)
 local rootPath    = currentPath:gsub('[/\\]*[^/\\]-$', '')
+print('Root path:', rootPath)
+
 
 rootPath = (rootPath == '' and '.' or rootPath)
 ROOT     = makePath(util.expandPath(rootPath))
@@ -104,11 +104,26 @@ util.enableFormatString()
 collectgarbage('param', 'minormul', 10)
 collectgarbage('param', 'minormajor', 50)
 
+LOGLEVEL = LOGLEVEL or 'debug'
+
 ---@diagnostic disable-next-line: lowercase-global
 log = require 'log'
 log.init(ROOT, useMoonSharpPaths and (LOGPATH / 'service.log') or (fs.path(LOGPATH) / 'service.log'))
 if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
+end
+
+log.info('Lua version: ', _VERSION)
+if _MOONSHARP then
+    log.info('Moonsharp version: ', _MOONSHARP)
+    log.info('Moonsharp luacompat: ', _MOONSHARP.luacompat)
+    log.info('Moonsharp platform: ', _MOONSHARP.platform)
+    log.info('Moonsharp is_aot: ', _MOONSHARP.is_aot)
+    log.info('Moonsharp is_unity: ', _MOONSHARP.is_unity)
+    log.info('Moonsharp is_mono: ', _MOONSHARP.is_mono)
+    log.info('Moonsharp is_clr4: ', _MOONSHARP.is_clr4)
+    log.info('Moonsharp is_pcl: ', _MOONSHARP.is_pcl)
+    log.info('Moonsharp banner: ', _MOONSHARP.banner)
 end
 
 log.info('Lua Lsp startup, root: ', ROOT)
@@ -117,12 +132,17 @@ log.info('LOGPATH:', LOGPATH)
 log.info('METAPATH:', METAPATH)
 log.info('VERSION:', version.getVersion())
 
+print('including script/tracy.lua')
 require 'tracy'
 
+print('xpcall dofile debugger.lua')
 xpcall(dofile, log.debug, (ROOT / 'debugger.lua'):string())
 
+print('including script/cli.lua')
 require 'cli'
 
+print('setup service')
 local _, service = xpcall(require, log.error, 'service')
 
+print('start service')
 service.start()

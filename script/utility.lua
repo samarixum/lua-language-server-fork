@@ -1,3 +1,5 @@
+
+
 local tableSort    = table.sort
 local stringRep    = string.rep
 local stringByte   = string.byte
@@ -11,21 +13,22 @@ local next         = next
 local rawset       = rawset
 local move         = table.move
 local tableRemove  = table.remove
-local setmetatable = debug.setmetatable
+local setmetatable = debug and debug.setmetatable or setmetatable
 local mathType     = math.type
 local mathCeil     = math.ceil
 local getmetatable = getmetatable
 local mathAbs      = math.abs
 local mathRandom   = math.random
 local ioOpen       = io.open
-local utf8Len      = utf8.len
+local utf8Len      = utf8 and utf8.len or nil
 local getenv       = os.getenv
-local getupvalue   = debug.getupvalue
+local getupvalue   = debug and debug.getupvalue or nil
 local mathHuge     = math.huge
 local inf          = 1 / 0
 local nan          = 0 / 0
 local error        = error
 local assert       = assert
+
 
 _ENV = nil
 
@@ -546,13 +549,15 @@ end
 ---@return any[]
 function m.revertArray(arr)
     local len = #arr
-    if len <= 1 then
-        return arr
-    end
-    for x = 1, len // 2 do
+    if len <= 1 then return arr end
+
+    -- This works in MoonSharp AND standard Lua 5.3+
+    -- math.floor is the safest cross-version way to get an integer index
+    for x = 1, math.floor(len / 2) do
         local y = len - x + 1
         arr[x], arr[y] = arr[y], arr[x]
     end
+
     return arr
 end
 
@@ -1133,35 +1138,43 @@ end
 ---@param sorter? fun(a: T, b: T): boolean
 ---@return T[]
 function m.sortK(arr, k, sorter)
-    if not sorter then
-        sorter = function (a, b)
-            return a < b
-        end
-    end
+    -- Default sorter
+    sorter = sorter or function(a, b) return a < b end
+
+    local len = #arr
     if k <= 0 then
         return arr
     end
-    if k >= (#arr // 2) then
-        tableSort(arr, sorter)
+
+    -- Fix //: Use math.floor for MoonSharp compatibility
+    if k >= math.floor(len / 2) then
+        table.sort(arr, sorter)
         return arr
     end
 
     local offset = 1
 
     local function sort(left, right)
-        if left >= right then
+        if left >= right or left > k then
             return
         end
-        if left > k then
-            return
-        end
-        -- 对这部分进行快排
-        local index = left + offset % (right - left)
+
+        -- Quickselect / Partial Sort Logic
+        local index = left + (offset % (right - left + 1))
+        -- Ensure index stays within bounds if offset is large
+        if index > right then index = left end
+
         local pivot = arr[index]
-        offset = offset << 1
-        if offset == 0 then
+
+        -- Fix <<: offset << 1 is the same as offset * 2
+        -- This is safe for MoonSharp and standard Lua
+        offset = offset * 2
+
+        -- Prevent integer overflow if this runs in a environment with 32-bit ints
+        if offset <= 0 then
             offset = 1
         end
+
         arr[index], arr[right] = arr[right], arr[index]
         local i = left
         for j = left, right - 1 do
@@ -1171,11 +1184,13 @@ function m.sortK(arr, k, sorter)
             end
         end
         arr[i], arr[right] = arr[right], arr[i]
+
+        -- Recursive calls
         sort(i + 1, right)
         sort(left, i - 1)
     end
 
-    sort(1, #arr)
+    sort(1, len)
     return arr
 end
 

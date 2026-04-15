@@ -21,34 +21,14 @@ internal class LuaWorld {
     internal string LuaScriptPath { get; }
 
     /// <summary>
-    /// Gets the SDK hierarchy (sdk, sdk.IO, sdk.Hash, sdk.text.*).
-    /// </summary>
-    internal SdkContainer Sdk { get; }
-
-    /// <summary>
-    /// Gets the global progress table (not under sdk).
-    /// </summary>
-    internal Table Progress { get; }
-
-    /// <summary>
-    /// Gets the global os table (not under sdk).
-    /// </summary>
-    internal Table Os { get; }
-
-    /// <summary>
-    /// Gets the diagnostics methods table exposed to Lua.
-    /// </summary>
-    internal Table DiagnosticsMethods { get; }
-
-    /// <summary>
-    /// Gets the SQLite module table exposed to Lua.
-    /// </summary>
-    internal Table SqliteModule { get; }
-
-    /// <summary>
     /// Gets the script argument table exposed to Lua as <c>arg</c>.
     /// </summary>
     internal Table ScriptArguments { get; private set; }
+
+    /// <summary>
+    /// Resolves builtin modules such as bee.filesystem, bee.sys, and bee.lua before package.path lookup.
+    /// </summary>
+    internal BuiltinModuleResolver? BuiltinModuleResolver { get; set; }
 
     /* :: :: Properties :: END :: */
     // //
@@ -59,85 +39,129 @@ internal class LuaWorld {
 
     /* :: :: Fields :: END :: */
     // //
+    /* :: :: Helpers :: START :: */
+
+    private static string? ResolveModulePath(string moduleName, string packagePath) {
+        var modulePath = moduleName.Replace('.', System.IO.Path.DirectorySeparatorChar).Replace('/', System.IO.Path.DirectorySeparatorChar);
+
+        foreach (var template in packagePath.Split(';')) {
+            if (string.IsNullOrWhiteSpace(template)) {
+                continue;
+            }
+
+            var candidatePath = template.Replace("?", modulePath);
+            if (System.IO.File.Exists(candidatePath)) {
+                return candidatePath;
+            }
+        }
+
+        return null;
+    }
+
+    private void InstallRequireShim() {
+        LuaScript.Globals["require"] = DynValue.NewCallback((context, callbackArguments) => {
+            if (callbackArguments.Count < 1) {
+                throw new System.ArgumentException("require expects a module name", nameof(callbackArguments));
+            }
+
+            var moduleNameValue = callbackArguments[0];
+            if (moduleNameValue.Type != DataType.String) {
+                throw new System.ArgumentException("require expects a string module name", nameof(callbackArguments));
+            }
+
+            var moduleName = moduleNameValue.String;
+            var packageValue = LuaScript.Globals.Get("package");
+            if (packageValue.Type != DataType.Table) {
+                throw new System.InvalidOperationException("Lua package table is not available");
+            }
+
+            var packageTable = packageValue.Table;
+            var loadedValue = packageTable.Get("loaded");
+            if (loadedValue.Type != DataType.Table) {
+                loadedValue = DynValue.NewTable(LuaScript);
+                packageTable["loaded"] = loadedValue;
+            }
+
+            var loadedTable = loadedValue.Table;
+            var cachedValue = loadedTable.Get(moduleName);
+            if (cachedValue.Type != DataType.Nil && cachedValue.Type != DataType.Void && cachedValue.Type != DataType.Boolean || cachedValue.Boolean) {
+                return cachedValue;
+            }
+
+            if (BuiltinModuleResolver != null && BuiltinModuleResolver(this, moduleName, out var builtinModule)) {
+                loadedTable[moduleName] = builtinModule;
+                return builtinModule;
+            }
+
+            var packagePathValue = packageTable.Get("path");
+            var packagePath = packagePathValue.Type == DataType.String ? packagePathValue.String : string.Empty;
+            var modulePath = ResolveModulePath(moduleName, packagePath);
+
+            if (modulePath == null) {
+                throw new System.IO.FileNotFoundException($"module '{moduleName}' not found");
+            }
+
+            loadedTable[moduleName] = DynValue.NewBoolean(true);
+
+            try {
+                var source = System.IO.File.ReadAllText(modulePath);
+                var chunk = LuaScript.LoadString(source, codeFriendlyName: modulePath);
+                var result = LuaScript.Call(chunk);
+
+                if (result.Type == DataType.Nil || result.Type == DataType.Void) {
+                    result = DynValue.NewBoolean(true);
+                }
+
+                loadedTable[moduleName] = result;
+                return result;
+            } catch {
+                loadedTable[moduleName] = DynValue.NewNil();
+                throw;
+            }
+        }, "require");
+
+        LuaScript.Globals["loadfile"] = DynValue.NewCallback((context, callbackArguments) => {
+            if (callbackArguments.Count < 1 || callbackArguments[0].Type != DataType.String) {
+                return DynValue.NewTuple(DynValue.NewNil(), DynValue.NewString("loadfile expects a filename"));
+            }
+
+            var fileName = callbackArguments[0].String;
+            if (string.IsNullOrWhiteSpace(fileName)) {
+                return DynValue.NewTuple(DynValue.NewNil(), DynValue.NewString("loadfile expects a filename"));
+            }
+
+            try {
+                var fullPath = System.IO.Path.GetFullPath(fileName);
+                var source = System.IO.File.ReadAllText(fullPath);
+                var chunk = LuaScript.LoadString(source, codeFriendlyName: fullPath);
+                return chunk;
+            } catch (Exception ex) {
+                return DynValue.NewTuple(DynValue.NewNil(), DynValue.NewString(ex.Message));
+            }
+        }, "loadfile");
+
+        LuaScript.Globals["dofile"] = DynValue.NewCallback((context, callbackArguments) => {
+            if (callbackArguments.Count < 1 || callbackArguments[0].Type != DataType.String) {
+                throw new System.ArgumentException("dofile expects a filename", nameof(callbackArguments));
+            }
+
+            var fileName = callbackArguments[0].String;
+            if (string.IsNullOrWhiteSpace(fileName)) {
+                throw new System.ArgumentException("dofile expects a filename", nameof(callbackArguments));
+            }
+
+            var fullPath = System.IO.Path.GetFullPath(fileName);
+            var source = System.IO.File.ReadAllText(fullPath);
+            var chunk = LuaScript.LoadString(source, codeFriendlyName: fullPath);
+            return LuaScript.Call(chunk);
+        }, "dofile");
+    }
+
+    /* :: :: Helpers :: END :: */
+    // //
     /* :: :: Nested Types :: START :: */
 
-    /// <summary>
-    /// Container for sdk tables to mirror Lua usage (sdk, sdk.IO, sdk.Hash, sdk.text.*).
-    /// </summary>
-    internal class SdkContainer {
-        /// <summary>
-        /// Gets the root sdk table.
-        /// </summary>
-        internal Table Table { get; }
 
-        /// <summary>
-        /// Gets the sdk.IO table.
-        /// </summary>
-        internal Table IO { get; }
-
-        /// <summary>
-        /// Gets the sdk.Hash table.
-        /// </summary>
-        internal Table Hash { get; }
-
-        /// <summary>
-        /// Gets the sdk.text container.
-        /// </summary>
-        internal TextContainer Text { get; }
-
-        /// <summary>
-        /// Creates a new SDK container and links tables in MoonSharp.
-        /// </summary>
-        internal SdkContainer(Script script) {
-            Table = new Table(script);
-            IO = new Table(script);
-            Hash = new Table(script);
-            Text = new TextContainer(script);
-
-            Table["IO"] = IO;
-            Table["Hash"] = Hash;
-            Table["text"] = Text.Table;
-        }
-    }
-
-    /// <summary>
-    /// Container for sdk.text tables (sdk.text.json, sdk.text.toml, sdk.text.yaml).
-    /// </summary>
-    internal class TextContainer {
-        /// <summary>
-        /// Gets the sdk.text table.
-        /// </summary>
-        internal Table Table { get; }
-
-        /// <summary>
-        /// Gets the sdk.text.json table.
-        /// </summary>
-        internal Table Json { get; }
-
-        /// <summary>
-        /// Gets the sdk.text.toml table.
-        /// </summary>
-        internal Table Toml { get; }
-
-        /// <summary>
-        /// Gets the sdk.text.yaml table.
-        /// </summary>
-        internal Table Yaml { get; }
-
-        /// <summary>
-        /// Creates a new text container and links tables in MoonSharp.
-        /// </summary>
-        internal TextContainer(Script script) {
-            Table = new Table(script);
-            Json = new Table(script);
-            Toml = new Table(script);
-            Yaml = new Table(script);
-
-            Table["json"] = Json;
-            Table["toml"] = Toml;
-            Table["yaml"] = Yaml;
-        }
-    }
 
     /* :: :: Nested Types :: END :: */
     // //
@@ -156,22 +180,11 @@ internal class LuaWorld {
 
         LuaScript.Globals["ThisScriptPath"] = DynValue.NewString(fullScriptPath);
         LuaScript.Globals["ThisScriptDir"] = DynValue.NewString(fullScriptDir);
-
-        // create sdk hierarchy
-        Sdk = new SdkContainer(LuaScript);
+        InstallRequireShim();
 
         // global tables, alongside sdk table, to be set as Script.Globals[""] in LuaScriptAction.private.cs::SetupCoreFunctions()
         // here only for centralized management of all tables
 
-        Progress = new Table(LuaScript);
-
-        Os = new Table(LuaScript);
-
-        // debug tables
-        DiagnosticsMethods = new Table(LuaScript);
-
-        // sqlite module tables
-        SqliteModule = new Table(LuaScript);
 
         ScriptArguments = new Table(LuaScript);
 

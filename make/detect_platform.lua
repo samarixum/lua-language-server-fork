@@ -2,15 +2,16 @@ local lm = require 'luamake'
 
 local platform = require 'bee.platform'
 
-if     platform.os == 'macos' then
-    if     lm.platform == nil then
+if platform.os == 'macos' then
+    --[[if lm.platform == nil then
     elseif lm.platform == "darwin-arm64" then
         lm.target = "arm64-apple-macos11"
     elseif lm.platform == "darwin-x64" then
         lm.target = "x86_64-apple-macos10.12"
     else
         error "unknown platform"
-    end
+    end--]]
+    print("macOS builds are not supported yet")
 elseif platform.os == 'windows' then
     if     lm.platform == nil then
     elseif lm.platform == "win32-ia32" then
@@ -21,15 +22,17 @@ elseif platform.os == 'windows' then
         error "unknown platform"
     end
 elseif platform.os == 'linux' then
-    -- Use Zig for Linux builds to ensure glibc 2.17 compatibility
+    print("Linux builds are not supported yet")
+    --[[
+    --Use Zig for Linux builds to ensure glibc 2.17 compatibility
     local use_zig = os.getenv("USE_ZIG")
     if use_zig and use_zig ~= "0" and use_zig ~= "false" then
         -- Set compiler to zig wrapper script that filters out -lstdc++fs
         -- The wrapper is needed because bee.lua requires stdc++fs but Zig's libc++ already includes it
-        local wrapper = lm.workdir .. '/zig-cc-wrapper.sh'
+        local wrapper = lm.workdir .. '/zig-cc-wrapper.sh' -- deleted this file, linux is nolonger supported for build machines
         lm.cc = wrapper
         lm.ar = 'zig ar'
-        
+
         if     lm.platform == nil then
             -- Auto-detect and set target
         elseif lm.platform == "linux-x64" then
@@ -52,7 +55,7 @@ elseif platform.os == 'linux' then
         else
             error "unknown platform"
         end
-    end
+    end--]]
 end
 
 local function detectWindowsArch()

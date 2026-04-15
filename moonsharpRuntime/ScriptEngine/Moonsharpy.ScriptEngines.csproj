@@ -5,14 +5,11 @@
         <OutputType>Library</OutputType>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
-        <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
         <!-- Script runtimes -->
         <PackageReference Include="MoonSharp" Version="2.0.0" />
-        <PackageReference Include="IronPython" Version="3.4.2" />
-        <PackageReference Include="Jint" Version="4.8.0" />
     </ItemGroup>
 
     <PropertyGroup>

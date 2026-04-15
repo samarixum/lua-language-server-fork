@@ -65,6 +65,8 @@ local function pushLog(level, ...)
     local info = debugGetInfo(3, 'Sl')
     local text = m.raw(0, level, str, info.source, info.currentline, monotonic())
 
+    print(text)
+
     return text
 end
 

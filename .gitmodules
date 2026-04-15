@@ -4,11 +4,6 @@
     path = submodules/luamake
     url = https://github.com/actboy168/luamake
 
-## use the bee.lua from luamake instead of cloning it again, since it's already a dependency of luamake
-#[submodule "submodules/bee.lua"]
-#    path = submodules/bee.lua
-#    url = https://github.com/actboy168/bee.lua
-
 # used in Docs and Make.lua
 [submodule "submodules/EmmyLuaCodeStyle"]
     path = submodules/EmmyLuaCodeStyle
@@ -19,14 +14,6 @@
     path = submodules/lpeglabel
     url = https://github.com/sqmedeiros/lpeglabel
 
-
-
-##
-## building the lua-language-server without the following throws no errors,
-## clearly they are extensions of the tool not actually part of the lls tooling
-## providing data not function, very useful for adding moonsharp specific support
-##
-
 ## pure-Lua JSON library used to encode and decode JSON data without needing external C dependencies
 # only hardcoded reference appears in submodules\server\.github\workflows\build.yml
 [submodule "submodules/json.lua"]
@@ -34,63 +21,3 @@
     url = https://github.com/actboy168/json.lua
 
 
-
-# machine-readable summary of the LÖVE (Love2D) game engine API. tells LLS know which functions and objects exist in LÖVE.
-[submodule "submodules/love-api"]
-    path = submodules/love-api
-    url = https://github.com/love2d-community/love-api
-
-# documentation and API metadata for LÖVR
-[submodule "submodules/lovr-api"]
-    path = submodules/lovr-api
-    url = https://github.com/bjornbytes/lovr-docs
-
-
-## LuaCATS (Lua Comment and Type System)
-
-## These repositories contain .lua files with type annotations.
-## They don't contain the functional code of the libraries themselves
-## they provide the LLS with the Type Descriptions etc
-
-[submodule "meta/submodules/OpenResty"]
-    path = meta/submodules/OpenResty
-    url = https://github.com/LuaCATS/openresty.git
-[submodule "meta/submodules/bee"]
-    path = meta/submodules/bee
-    url = https://github.com/LuaCATS/bee.git
-[submodule "meta/submodules/busted"]
-    path = meta/submodules/busted
-    url = https://github.com/LuaCATS/busted.git
-[submodule "meta/submodules/Cocos4.0"]
-    path = meta/submodules/Cocos4.0
-    url = https://github.com/LuaCATS/cocos4.0.git
-[submodule "meta/submodules/Defold"]
-    path = meta/submodules/Defold
-    url = https://github.com/LuaCATS/defold.git
-[submodule "meta/submodules/Jass"]
-    path = meta/submodules/Jass
-    url = https://github.com/LuaCATS/jass.git
-[submodule "meta/submodules/lfs"]
-    path = meta/submodules/lfs
-    url = https://github.com/LuaCATS/luafilesystem.git
-[submodule "meta/submodules/love2d"]
-    path = meta/submodules/love2d
-    url = https://github.com/LuaCATS/love2d.git
-[submodule "meta/submodules/lovr"]
-    path = meta/submodules/lovr
-    url = https://github.com/LuaCATS/lovr.git
-[submodule "meta/submodules/luaecs"]
-    path = meta/submodules/luaecs
-    url = https://github.com/LuaCATS/luaecs.git
-[submodule "meta/submodules/luassert"]
-    path = meta/submodules/luassert
-    url = https://github.com/LuaCATS/luassert.git
-[submodule "meta/submodules/skynet"]
-    path = meta/submodules/skynet
-    url = https://github.com/LuaCATS/skynet.git
-[submodule "meta/submodules/ffi-reflect"]
-    path = meta/submodules/ffi-reflect
-    url = https://github.com/LuaCATS/ffi-reflect.git
-[submodule "meta/submodules/luv"]
-    path = meta/submodules/luv
-    url = https://github.com/LuaCATS/luv.git

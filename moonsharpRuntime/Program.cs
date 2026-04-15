@@ -43,7 +43,7 @@ public static class Program {
 
     private static bool TryParseLaunchArguments(string[] args, out string scriptPath, out CoreModules preset, out string[] scriptArgs, out string errorMessage) {
         scriptPath = ResolveDefaultScriptPath();
-        preset = CoreModules.Preset_Default;
+        preset = CoreModules.Preset_Complete;
         scriptArgs = Array.Empty<string>();
         errorMessage = string.Empty;
 

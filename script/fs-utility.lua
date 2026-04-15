@@ -1,4 +1,5 @@
-local fs           = require 'bee.filesystem'
+
+local fs = require 'bee.filesystem'
 
 local type         = type
 local ioOpen       = io.open
@@ -24,7 +25,7 @@ function m.loadFile(path, keepBom)
     if not f then
         return nil, e
     end
-    local text = f:read 'a'
+    local text = f:read '*a'
     f:close()
     if not keepBom then
         if text:sub(1, 3) == '\xEF\xBB\xBF' then

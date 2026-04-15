@@ -1,18 +1,35 @@
----@diagnostic disable: deprecated
+
+print('1')
+
 local pub    = require 'pub'
+print('1')
 local await  = require 'await'
+
+
 local timer  = require 'timer'
 local proto  = require 'proto'
 local vm     = require 'vm'
+
+print('2')
+
 local util   = require 'utility'
 local files  = require 'files'
 local lang   = require 'language'
 local ws     = require 'workspace'
+
+print('3')
+
 local time   = require 'bee.time'
 local fw     = require 'filewatch'
 local furi   = require 'file-uri'
+
+print('4')
+
 local net    = require 'service.net'
 local client = require 'client'
+
+
+print('5')
 
 require 'jsonc'
 require 'json-beautify'

@@ -67,20 +67,12 @@ end
 local root
 do
     if main then
-        if _MOONSHARP then
-            dprint("Determining root via ThisScriptDir...")
-            local sep = package.config:sub(1, 1)
-            local scriptDir = ThisScriptDir or arg[0]:match("^(.*)" .. sep .. "[^" .. sep .. "]+$")
-            root = scriptDir and scriptDir:match("^(.*)" .. sep .. "[^" .. sep .. "]+$") or '.'
-            if root == '' then root = '.' end
-        else
-            dprint("Determining root via bee.filesystem...")
+        dprint("Determining root via bee.filesystem...")
 
-            local fs = require 'bee.filesystem'
-            local mainPath = fs.path(arg[0])
-            root = mainPath:parent_path():string()
-            if root == '' then root = '.' end
-        end
+        local fs = require 'bee.filesystem'
+        local mainPath = fs.path(arg[0])
+        root = mainPath:parent_path():string()
+        if root == '' then root = '.' end
 
     elseif package.cpath then
         dprint("Determining root via package.cpath...")
@@ -145,8 +137,12 @@ if (arg[0]) then
     dprint("Executing entry point: " .. tostring(arg[0]))
     dprint("------------------------------------------")
 
-    dprint("Installing loader into package.searchers[2]")
-    package.searchers[2] = custom_loader
+    if not _MOONSHARP then
+        dprint("Installing loader into package.searchers[2]")
+        package.searchers[2] = custom_loader
+    else
+        dprint("Using host-provided require shim")
+    end
 
     local status, result = pcall(function()
         return assert(loadfile(arg[0]))(table.unpack(arg))
