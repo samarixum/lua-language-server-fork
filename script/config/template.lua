@@ -1,6 +1,12 @@
+print('including script/config/template.lua')
+
+print('1')
 local util   = require 'utility'
+print('2')
 local define = require 'proto.define'
+print('3')
 local diag   = require 'proto.diagnostic'
+print('4')
 
 ---@class config.unit
 ---@field caller function
@@ -8,29 +14,39 @@ local diag   = require 'proto.diagnostic'
 ---@field loader function
 ---@field _checker fun(self: config.unit, value: any): boolean
 ---@field name     string
----@operator shl:  config.unit
----@operator shr:  config.unit
+---@field setDefault fun(self: config.unit, default: any): config.unit
+---@field setEnums fun(self: config.unit, enums: table): config.unit
 ---@operator call: config.unit
 local mt = {}
 mt.__index = mt
 
 local unitAliases = setmetatable({}, { __mode = 'k' })
 
+print('5')
+
 function mt:__call(...)
     self:caller(...)
     return self
 end
 
-function mt:__shr(default)
+print('6')
+
+-- Replaced __shr (>>) with a method for MoonSharp compatibility
+function mt:setDefault(default)
     self.default = default
     self.hasDefault = true
     return self
 end
 
-function mt:__shl(enums)
+print('7')
+
+-- Replaced __shl (<<) with a method for MoonSharp compatibility
+function mt:setEnums(enums)
     self.enums = enums
     return self
 end
+
+print('8')
 
 function mt:checker(v)
     if self.enums then
@@ -57,6 +73,8 @@ function mt:checker(v)
     return self:_checker(v)
 end
 
+print('9')
+
 local units = {}
 
 local function register(name, default, checker, loader, caller)
@@ -69,6 +87,8 @@ local function register(name, default, checker, loader, caller)
     }
 end
 
+print('10')
+
 ---@class config.master
 ---@field [string] config.unit
 local Type = setmetatable({}, { __index = function (_, name)
@@ -78,6 +98,8 @@ local Type = setmetatable({}, { __index = function (_, name)
     end
     return setmetatable(unit, mt)
 end })
+
+print('11')
 
 register('Boolean', false, function (self, v)
     return type(v) == 'boolean'
@@ -195,24 +217,22 @@ end, function (self, ...)
     self.subs = { ... }
 end)
 
+print('template.lua 12')
+
 ---@format disable-next
 local template = {
-    ['Lua.runtime.version']                 = Type.String >> 'Lua 5.4' << {
-                                                'Lua 5.1',
+    ['Lua.runtime.version']                 = Type.String:setDefault('Moonsharp 2.0.0.0'):setEnums({
                                                 'Moonsharp 2.0.0.0',
-                                                'Lua 5.3',
-                                                'Lua 5.4',
-                                                'Lua 5.5',
-                                                'LuaJIT',
-                                            },
-    ['Lua.runtime.path']                    = Type.Array(Type.String) >> {
+                                                'Lua 5.5'
+                                            }),
+    ['Lua.runtime.path']                    = Type.Array(Type.String):setDefault({
                                                 "?.lua",
                                                 "?/init.lua",
-                                            },
-    ['Lua.runtime.pathStrict']              = Type.Boolean >> false,
+                                            }),
+    ['Lua.runtime.pathStrict']              = Type.Boolean:setDefault(false),
     ['Lua.runtime.special']                 = Type.Hash(
                                                 Type.String,
-                                                Type.String >> 'require' << {
+                                                Type.String:setDefault('require'):setEnums({
                                                     '_G',
                                                     'rawset',
                                                     'rawget',
@@ -226,11 +246,11 @@ local template = {
                                                     'error',
                                                     'type',
                                                     'os.exit',
-                                                }
+                                                })
                                             ),
-    ['Lua.runtime.meta']                    = Type.String >> '${version} ${language} ${encoding}',
+    ['Lua.runtime.meta']                    = Type.String:setDefault('${version} ${language} ${encoding}'),
     ['Lua.runtime.unicodeName']             = Type.Boolean,
-    ['Lua.runtime.nonstandardSymbol']       = Type.Array(Type.String << {
+    ['Lua.runtime.nonstandardSymbol']       = Type.Array(Type.String:setEnums({
                                                 '//', '/**/',
                                                 '`',
                                                 '+=', '-=', '*=', '/=', '%=', '^=', '//=',
@@ -238,31 +258,34 @@ local template = {
                                                 '||', '&&', '!', '!=',
                                                 'continue',
                                                 '|lambda|',
-                                            }),
+                                            })),
     ['Lua.runtime.plugin']                  = Type.Or(Type.String, Type.Array(Type.String)) ,
     ['Lua.runtime.pluginArgs']              = Type.Or(Type.Array(Type.String), Type.Hash(Type.String, Type.String)),
-    ['Lua.runtime.fileEncoding']            = Type.String >> 'utf8' << {
+    ['Lua.runtime.fileEncoding']            = Type.String:setDefault('utf8'):setEnums({
                                                 'utf8',
                                                 'ansi',
                                                 'utf16le',
                                                 'utf16be',
-                                            },
+                                            }),
     ['Lua.runtime.builtin']                 = Type.Hash(
-                                                Type.String << util.getTableKeys(define.BuiltIn, true),
-                                                Type.String >> 'default' << {
+                                                Type.String:setEnums(util.getTableKeys(define.BuiltIn, true)),
+                                                Type.String:setDefault('default'):setEnums({
                                                     'default',
                                                     'enable',
                                                     'disable',
-                                                }
+                                                })
                                             )
-                                            >> util.deepCopy(define.BuiltIn),
-    ['Lua.diagnostics.enable']              = Type.Boolean >> true,
+                                            :setDefault(util.deepCopy(define.BuiltIn)),
+    ['Lua.diagnostics.enable']              = Type.Boolean:setDefault(true),
     ['Lua.diagnostics.globals']             = Type.Array(Type.String),
     ['Lua.diagnostics.globalsRegex']        = Type.Array(Type.String),
-    ['Lua.diagnostics.disable']             = Type.Array(Type.String << util.getTableKeys(diag.getDiagAndErrNameMap(), true)),
+
+    -- this line breaks moonsharp on Nil value
+    --    ['Lua.diagnostics.disable']             = Type.Array(Type.String:setEnums(util.getTableKeys(diag.getDiagAndErrNameMap(), true))),
+
     ['Lua.diagnostics.severity']            = Type.Hash(
-                                                Type.String << util.getTableKeys(define.DiagnosticDefaultNeededFileStatus, true),
-                                                Type.String << {
+                                                Type.String:setEnums(util.getTableKeys(define.DiagnosticDefaultNeededFileStatus, true)),
+                                                Type.String:setEnums({
                                                     'Error',
                                                     'Warning',
                                                     'Information',
@@ -271,184 +294,186 @@ local template = {
                                                     'Warning!',
                                                     'Information!',
                                                     'Hint!',
-                                                }
+                                                })
                                             )
-                                            >> util.deepCopy(define.DiagnosticDefaultSeverity),
+                                            :setDefault(util.deepCopy(define.DiagnosticDefaultSeverity)),
     ['Lua.diagnostics.neededFileStatus']    = Type.Hash(
-                                                Type.String << util.getTableKeys(define.DiagnosticDefaultNeededFileStatus, true),
-                                                Type.String << {
+                                                Type.String:setEnums(util.getTableKeys(define.DiagnosticDefaultNeededFileStatus, true)),
+                                                Type.String:setEnums({
                                                     'Any',
                                                     'Opened',
                                                     'None',
                                                     'Any!',
                                                     'Opened!',
                                                     'None!',
-                                                }
+                                                })
                                             )
-                                            >> util.deepCopy(define.DiagnosticDefaultNeededFileStatus),
+                                            :setDefault(util.deepCopy(define.DiagnosticDefaultNeededFileStatus)),
     ['Lua.diagnostics.groupSeverity']       = Type.Hash(
-                                                Type.String << util.getTableKeys(define.DiagnosticDefaultGroupSeverity, true),
-                                                Type.String << {
+                                                Type.String:setEnums(util.getTableKeys(define.DiagnosticDefaultGroupSeverity, true)),
+                                                Type.String:setEnums({
                                                     'Error',
                                                     'Warning',
                                                     'Information',
                                                     'Hint',
                                                     'Fallback',
-                                                }
+                                                })
                                             )
-                                            >> util.deepCopy(define.DiagnosticDefaultGroupSeverity),
+                                            :setDefault(util.deepCopy(define.DiagnosticDefaultGroupSeverity)),
     ['Lua.diagnostics.groupFileStatus']     = Type.Hash(
-                                                Type.String << util.getTableKeys(define.DiagnosticDefaultGroupFileStatus, true),
-                                                Type.String << {
+                                                Type.String:setEnums(util.getTableKeys(define.DiagnosticDefaultGroupFileStatus, true)),
+                                                Type.String:setEnums({
                                                     'Any',
                                                     'Opened',
                                                     'None',
                                                     'Fallback',
-                                                }
+                                                })
                                             )
-                                            >> util.deepCopy(define.DiagnosticDefaultGroupFileStatus),
-    ['Lua.diagnostics.enableScheme']        = Type.Array(Type.String) >> { 'file' },
-    ['Lua.diagnostics.workspaceEvent']      = Type.String >> 'OnSave' << {
+                                            :setDefault(util.deepCopy(define.DiagnosticDefaultGroupFileStatus)),
+    ['Lua.diagnostics.enableScheme']        = Type.Array(Type.String):setDefault({ 'file' }),
+    ['Lua.diagnostics.workspaceEvent']      = Type.String:setDefault('OnSave'):setEnums({
                                                 'OnChange',
                                                 'OnSave',
                                                 'None',
-                                            },
-    ['Lua.diagnostics.workspaceDelay']      = Type.Integer >> 3000,
-    ['Lua.diagnostics.workspaceRate']       = Type.Integer >> 100,
-    ['Lua.diagnostics.libraryFiles']        = Type.String  >> 'Opened' << {
+                                            }),
+    ['Lua.diagnostics.workspaceDelay']      = Type.Integer:setDefault(3000),
+    ['Lua.diagnostics.workspaceRate']       = Type.Integer:setDefault(100),
+    ['Lua.diagnostics.libraryFiles']        = Type.String:setDefault('Opened'):setEnums({
                                                 'Enable',
                                                 'Opened',
                                                 'Disable',
-                                            },
-    ['Lua.diagnostics.ignoredFiles']        = Type.String  >> 'Opened' << {
+                                            }),
+    ['Lua.diagnostics.ignoredFiles']        = Type.String:setDefault('Opened'):setEnums({
                                                 'Enable',
                                                 'Opened',
                                                 'Disable',
-                                            },
+                                            }),
     ['Lua.diagnostics.unusedLocalExclude']  = Type.Array(Type.String),
-    ['Lua.workspace.ignoreDir']             = Type.Array(Type.String) >> {
+    ['Lua.workspace.ignoreDir']             = Type.Array(Type.String):setDefault({
                                                 '.vscode',
-                                            },
-    ['Lua.workspace.ignoreSubmodules']      = Type.Boolean >> true,
-    ['Lua.workspace.useGitIgnore']          = Type.Boolean >> true,
-    ['Lua.workspace.maxPreload']            = Type.Integer >> 5000,
-    ['Lua.workspace.preloadFileSize']       = Type.Integer >> 500,
+                                            }),
+    ['Lua.workspace.ignoreSubmodules']      = Type.Boolean:setDefault(true),
+    ['Lua.workspace.useGitIgnore']          = Type.Boolean:setDefault(true),
+    ['Lua.workspace.maxPreload']            = Type.Integer:setDefault(5000),
+    ['Lua.workspace.preloadFileSize']       = Type.Integer:setDefault(500),
     ['Lua.workspace.library']               = Type.Array(Type.String),
-    ['Lua.workspace.checkThirdParty']       = Type.Or(Type.String >> 'Ask' << {
+    ['Lua.workspace.checkThirdParty']       = Type.Or(Type.String:setDefault('Ask'):setEnums({
                                                 'Ask',
                                                 'Apply',
                                                 'ApplyInMemory',
                                                 'Disable',
-                                            }, Type.Boolean),
+                                            }), Type.Boolean),
     ['Lua.workspace.userThirdParty']        = Type.Array(Type.String),
-    ['Lua.completion.enable']               = Type.Boolean >> true,
-    ['Lua.completion.callSnippet']          = Type.String  >> 'Disable' << {
+    ['Lua.completion.enable']               = Type.Boolean:setDefault(true),
+    ['Lua.completion.callSnippet']          = Type.String:setDefault('Disable'):setEnums({
                                                 'Disable',
                                                 'Both',
                                                 'Replace',
-                                            },
-    ['Lua.completion.keywordSnippet']       = Type.String  >> 'Replace' << {
+                                            }),
+    ['Lua.completion.keywordSnippet']       = Type.String:setDefault('Replace'):setEnums({
                                                 'Disable',
                                                 'Both',
                                                 'Replace',
-                                            },
-    ['Lua.completion.displayContext']       = Type.Integer >> 0,
-    ['Lua.completion.workspaceWord']        = Type.Boolean >> true,
-    ['Lua.completion.showWord']             = Type.String  >> 'Fallback' << {
+                                            }),
+    ['Lua.completion.displayContext']       = Type.Integer:setDefault(0),
+    ['Lua.completion.workspaceWord']        = Type.Boolean:setDefault(true),
+    ['Lua.completion.showWord']             = Type.String:setDefault('Fallback'):setEnums({
                                                 'Enable',
                                                 'Fallback',
                                                 'Disable',
-                                            },
-    ['Lua.completion.autoRequire']          = Type.Boolean >> true,
-    ['Lua.completion.maxSuggestCount']      = Type.Integer >> 100,
-    ['Lua.completion.showParams']           = Type.Boolean >> true,
-    ['Lua.completion.requireSeparator']     = Type.String  >> '.',
-    ['Lua.completion.postfix']              = Type.String  >> '@',
-    ['Lua.signatureHelp.enable']            = Type.Boolean >> true,
-    ['Lua.hover.enable']                    = Type.Boolean >> true,
-    ['Lua.hover.viewString']                = Type.Boolean >> true,
-    ['Lua.hover.viewStringMax']             = Type.Integer >> 1000,
-    ['Lua.hover.viewNumber']                = Type.Boolean >> true,
-    ['Lua.hover.previewFields']             = Type.Integer >> 10,
-    ['Lua.hover.enumsLimit']                = Type.Integer >> 5,
-    ['Lua.hover.expandAlias']               = Type.Boolean >> true,
-    ['Lua.semantic.enable']                 = Type.Boolean >> true,
-    ['Lua.semantic.variable']               = Type.Boolean >> true,
-    ['Lua.semantic.annotation']             = Type.Boolean >> true,
-    ['Lua.semantic.keyword']                = Type.Boolean >> false,
-    ['Lua.hint.enable']                     = Type.Boolean >> false,
-    ['Lua.hint.paramType']                  = Type.Boolean >> true,
-    ['Lua.hint.setType']                    = Type.Boolean >> false,
-    ['Lua.hint.paramName']                  = Type.String  >> 'All' << {
+                                            }),
+    ['Lua.completion.autoRequire']          = Type.Boolean:setDefault(true),
+    ['Lua.completion.maxSuggestCount']      = Type.Integer:setDefault(100),
+    ['Lua.completion.showParams']           = Type.Boolean:setDefault(true),
+    ['Lua.completion.requireSeparator']     = Type.String:setDefault('.'),
+    ['Lua.completion.postfix']              = Type.String:setDefault('@'),
+    ['Lua.signatureHelp.enable']            = Type.Boolean:setDefault(true),
+    ['Lua.hover.enable']                    = Type.Boolean:setDefault(true),
+    ['Lua.hover.viewString']                = Type.Boolean:setDefault(true),
+    ['Lua.hover.viewStringMax']             = Type.Integer:setDefault(1000),
+    ['Lua.hover.viewNumber']                = Type.Boolean:setDefault(true),
+    ['Lua.hover.previewFields']             = Type.Integer:setDefault(10),
+    ['Lua.hover.enumsLimit']                = Type.Integer:setDefault(5),
+    ['Lua.hover.expandAlias']               = Type.Boolean:setDefault(true),
+    ['Lua.semantic.enable']                 = Type.Boolean:setDefault(true),
+    ['Lua.semantic.variable']               = Type.Boolean:setDefault(true),
+    ['Lua.semantic.annotation']             = Type.Boolean:setDefault(true),
+    ['Lua.semantic.keyword']                = Type.Boolean:setDefault(false),
+    ['Lua.hint.enable']                     = Type.Boolean:setDefault(false),
+    ['Lua.hint.paramType']                  = Type.Boolean:setDefault(true),
+    ['Lua.hint.setType']                    = Type.Boolean:setDefault(false),
+    ['Lua.hint.paramName']                  = Type.String:setDefault('All'):setEnums({
                                                 'All',
                                                 'Literal',
                                                 'Disable',
-                                            },
-    ['Lua.hint.await']                      = Type.Boolean >> true,
-    ['Lua.hint.awaitPropagate']             = Type.Boolean >> false,
-    ['Lua.hint.arrayIndex']                 = Type.String >> 'Auto' << {
+                                            }),
+    ['Lua.hint.await']                      = Type.Boolean:setDefault(true),
+    ['Lua.hint.awaitPropagate']             = Type.Boolean:setDefault(false),
+    ['Lua.hint.arrayIndex']                 = Type.String:setDefault('Auto'):setEnums({
                                                 'Enable',
                                                 'Auto',
                                                 'Disable',
-                                            },
-    ['Lua.hint.semicolon']                  = Type.String >> 'SameLine' << {
+                                            }),
+    ['Lua.hint.semicolon']                  = Type.String:setDefault('SameLine'):setEnums({
                                                 'All',
                                                 'SameLine',
                                                 'Disable',
-                                            },
-    ['Lua.window.statusBar']                = Type.Boolean >> true,
-    ['Lua.window.progressBar']              = Type.Boolean >> true,
-    ['Lua.codeLens.enable']                 = Type.Boolean >> false,
-    ['Lua.format.enable']                   = Type.Boolean >> true,
+                                            }),
+    ['Lua.window.statusBar']                = Type.Boolean:setDefault(true),
+    ['Lua.window.progressBar']              = Type.Boolean:setDefault(true),
+    ['Lua.codeLens.enable']                 = Type.Boolean:setDefault(false),
+    ['Lua.format.enable']                   = Type.Boolean:setDefault(true),
     ['Lua.format.defaultConfig']            = Type.Hash(Type.String, Type.String)
-                                            >> {},
+                                            :setDefault({}),
     ['Lua.typeFormat.config']               = Type.Hash(Type.String, Type.String)
-                                            >> {
+                                            :setDefault({
                                                 format_line = "true",
                                                 auto_complete_end = "true",
                                                 auto_complete_table_sep = "true"
-                                            },
+                                            }),
     ['Lua.spell.dict']                      = Type.Array(Type.String),
     ['Lua.nameStyle.config']                = Type.Hash(Type.String, Type.Or(Type.String, Type.Array(Type.Hash(Type.String, Type.String))))
-                                            >> {},
+                                            :setDefault({}),
     ['Lua.misc.parameters']                 = Type.Array(Type.String),
     ['Lua.misc.executablePath']             = Type.String,
-    ['Lua.language.fixIndent']              = Type.Boolean >> true,
-    ['Lua.language.completeAnnotation']     = Type.Boolean >> true,
-    ['Lua.type.castNumberToInteger']        = Type.Boolean >> true,
-    ['Lua.type.weakUnionCheck']             = Type.Boolean >> false,
-    ['Lua.type.maxUnionVariants']           = Type.Integer >> 0,
-    ['Lua.type.weakNilCheck']               = Type.Boolean >> false,
-    ['Lua.type.inferParamType']             = Type.Boolean >> false,
-    ['Lua.type.checkTableShape']            = Type.Boolean >> false,
-    ['Lua.type.inferTableSize']             = Type.Integer >> 10,
+    ['Lua.language.fixIndent']              = Type.Boolean:setDefault(true),
+    ['Lua.language.completeAnnotation']     = Type.Boolean:setDefault(true),
+    ['Lua.type.castNumberToInteger']        = Type.Boolean:setDefault(true),
+    ['Lua.type.weakUnionCheck']             = Type.Boolean:setDefault(false),
+    ['Lua.type.maxUnionVariants']           = Type.Integer:setDefault(0),
+    ['Lua.type.weakNilCheck']               = Type.Boolean:setDefault(false),
+    ['Lua.type.inferParamType']             = Type.Boolean:setDefault(false),
+    ['Lua.type.checkTableShape']            = Type.Boolean:setDefault(false),
+    ['Lua.type.inferTableSize']             = Type.Integer:setDefault(10),
     ['Lua.doc.privateName']                 = Type.Array(Type.String),
     ['Lua.doc.protectedName']               = Type.Array(Type.String),
     ['Lua.doc.packageName']                 = Type.Array(Type.String),
-    ['Lua.doc.regengine']                   = Type.String >> 'glob' << {
+    ['Lua.doc.regengine']                   = Type.String:setDefault('glob'):setEnums({
                                                 'glob',
                                                 'lua',
-                                            },
+                                            }),
     --testma
     ["Lua.docScriptPath"]                   = Type.String,
     ["Lua.addonRepositoryPath"]             = Type.String,
     -- VSCode
-    ["Lua.addonManager.enable"]             = Type.Boolean >> true,
+    ["Lua.addonManager.enable"]             = Type.Boolean:setDefault(true),
     ["Lua.addonManager.repositoryPath"]     = Type.String,
     ["Lua.addonManager.repositoryBranch"]   = Type.String,
     ['files.associations']                  = Type.Hash(Type.String, Type.String),
                                             -- copy from VSCode default
-    ['files.exclude']                       = Type.Hash(Type.String, Type.Boolean) >> {
+    ['files.exclude']                       = Type.Hash(Type.String, Type.Boolean):setDefault({
                                                 ["**/.DS_Store"] = true,
                                                 ["**/.git"]      = true,
                                                 ["**/.hg"]       = true,
                                                 ["**/.svn"]      = true,
                                                 ["**/CVS"]       = true,
                                                 ["**/Thumbs.db"] = true,
-                                            },
+                                            }),
     ['editor.semanticHighlighting.enabled'] = Type.Or(Type.Boolean, Type.String),
-    ['editor.acceptSuggestionOnEnter']      = Type.String  >> 'on',
+    ['editor.acceptSuggestionOnEnter']      = Type.String:setDefault('on'),
 }
+
+print('13')
 
 do
     local versionUnit = template['Lua.runtime.version']
@@ -463,5 +488,17 @@ do
         return defaultLoader(self, value)
     end
 end
+
+local function tabletostring(t)
+    local result = '{'
+    for k, v in pairs(t) do
+        local key = type(k) == 'string' and ('%q'):format(k) or tostring(k)
+        local value = type(v) == 'table' and tabletostring(v) or (type(v) == 'string' and ('%q'):format(v) or tostring(v))
+        result = result .. key .. '=' .. value .. ','
+    end
+    return result .. '}'
+end
+
+print('template.lua EOF')
 
 return template

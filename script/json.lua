@@ -1,3 +1,5 @@
+print('json.lua')
+
 local type = type
 local next = next
 local error = error
@@ -20,7 +22,7 @@ local tiny = -huge
 local utf8_char
 local math_type
 
-if _VERSION == "Lua 5.1" or _VERSION == "Moonsharp 2.0.0.0" then
+if _VERSION == "Moonsharp 2.0.0.0" then
     local math_floor = math.floor
     function utf8_char(c)
         if c <= 0x7f then

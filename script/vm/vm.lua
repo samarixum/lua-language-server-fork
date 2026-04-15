@@ -1,7 +1,12 @@
-local guide     = require 'parser.guide'
-local files     = require 'files'
-local timer     = require 'timer'
 
+print('including script/vm.lua')
+print('1')
+local guide     = require 'parser.guide'
+print('2')
+local files     = require 'files'
+print('3')
+local timer     = require 'timer'
+print('4')
 local setmetatable   = setmetatable
 local log            = log
 local xpcall         = xpcall

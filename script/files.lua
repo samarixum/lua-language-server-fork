@@ -1,21 +1,42 @@
+print('including script/files.lua')
+
+print('1')
 local platform = require 'bee.platform'
+print('2')
 local fs       = require 'bee.filesystem'
+print('3')
 local sys      = require 'bee.sys'
+print('4')
 local config   = require 'config'
+print('5')
 local glob     = require 'glob'
+print('6')
 local furi     = require 'file-uri'
+print('7')
 local parser   = require 'parser'
+print('8')
 local lang     = require 'language'
+print('9')
 local await    = require 'await'
+print('10')
 local util     = require 'utility'
+print('11')
 local smerger  = require 'string-merger'
+print('12')
 local progress = require "progress"
+print('13')
 local encoder  = require 'encoder'
+print('14')
 local scope    = require 'workspace.scope'
+print('15')
 local lazy     = require 'lazytable'
+print('16')
 local cacher   = require 'lazy-cacher'
+print('17')
 local sp       = require 'bee.subprocess'
+print('18')
 local pub      = require 'pub'
+print('19')
 
 ---@class file
 ---@field uri           uri
@@ -694,8 +715,24 @@ function m.compileState(uri)
     if not client.isReady() then
         log.error('Client not ready!', uri)
     end
-    local prog <close> = progress.create(uri, lang.script.WINDOW_COMPILING, 0.5)
+    
+    -- Removed <close> attribute for MoonSharp compatibility
+    local prog = progress.create(uri, lang.script.WINDOW_COMPILING, 0.5)
     prog:setMessage(ws.getRelativePath(uri))
+    
+    -- Helper to emulate the Lua 5.4 <close> behavior
+    local function close_prog()
+        if not prog then return end
+        local mt = getmetatable(prog)
+        if mt and type(mt.__close) == 'function' then
+            mt.__close(prog)
+        elseif type(prog) == 'table' and type(prog.close) == 'function' then
+            prog:close()
+        elseif type(prog) == 'table' and type(prog.remove) == 'function' then
+            prog:remove()
+        end
+    end
+
     log.trace('Compile State:', uri)
     local clock = os.clock()
     local state, err = parser.compile(file.text
@@ -710,17 +747,20 @@ function m.compileState(uri)
 
     if not state then
         log.error('Compile failed:', uri, err)
+        close_prog()
         return nil
     end
 
     state = pluginOnTransformAst(uri, state)
     if not state then
         log.error('pluginOnTransformAst failed! discard the file state')
+        close_prog()
         return nil
     end
 
     m.compileStateThen(state, file)
 
+    close_prog()
     return state
 end
 

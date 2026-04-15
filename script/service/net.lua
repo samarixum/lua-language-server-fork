@@ -2,39 +2,55 @@ local socket = require "bee.socket"
 local select = require "bee.select"
 local fs = require "bee.filesystem"
 
+-- Dynamically resolve bitwise operations to avoid MoonSharp syntax errors
+local b_and, b_or, b_not
+if _G._MOONSHARP or _VERSION == "MoonSharp 2.0.0.0" or _VERSION == "Lua 5.2" then
+    local bit32 = require("bit32")
+    b_and = bit32.band
+    b_or  = bit32.bor
+    b_not = bit32.bnot
+else
+    -- Lua 5.3+ (including 5.5). We use load() to hide the syntax from MoonSharp's parser
+    b_and = load("return function(a, b) return a & b end")()
+    b_or  = load("return function(a, b) return a | b end")()
+    b_not = load("return function(a) return ~a end")()
+end
+
 local selector = select.create()
-local SELECT_READ <const> = select.SELECT_READ
-local SELECT_WRITE <const> = select.SELECT_WRITE
+
+-- Removed <const> attribute for MoonSharp compatibility
+local SELECT_READ = select.SELECT_READ
+local SELECT_WRITE = select.SELECT_WRITE
 
 local function fd_set_read(s)
-    if s._flags & SELECT_READ ~= 0 then
+    if b_and(s._flags, SELECT_READ) ~= 0 then
         return
     end
-    s._flags = s._flags | SELECT_READ
+    s._flags = b_or(s._flags, SELECT_READ)
     selector:event_mod(s._fd, s._flags)
 end
 
 local function fd_clr_read(s)
-    if s._flags & SELECT_READ == 0 then
+    if b_and(s._flags, SELECT_READ) == 0 then
         return
     end
-    s._flags = s._flags & (~SELECT_READ)
+    s._flags = b_and(s._flags, b_not(SELECT_READ))
     selector:event_mod(s._fd, s._flags)
 end
 
 local function fd_set_write(s)
-    if s._flags & SELECT_WRITE ~= 0 then
+    if b_and(s._flags, SELECT_WRITE) ~= 0 then
         return
     end
-    s._flags = s._flags | SELECT_WRITE
+    s._flags = b_or(s._flags, SELECT_WRITE)
     selector:event_mod(s._fd, s._flags)
 end
 
 local function fd_clr_write(s)
-    if s._flags & SELECT_WRITE == 0 then
+    if b_and(s._flags, SELECT_WRITE) == 0 then
         return
     end
-    s._flags = s._flags & (~SELECT_WRITE)
+    s._flags = b_and(s._flags, b_not(SELECT_WRITE))
     selector:event_mod(s._fd, s._flags)
 end
 
@@ -93,7 +109,7 @@ local function close_write(self)
     end
 end
 local function update_stream(s, event)
-    if event & SELECT_READ ~= 0 then
+    if b_and(event, SELECT_READ) ~= 0 then
         local data = s._fd:recv()
         if data == nil then
             s:close()
@@ -102,7 +118,7 @@ local function update_stream(s, event)
             on_event(s, "data", data)
         end
     end
-    if event & SELECT_WRITE ~= 0 then
+    if b_and(event, SELECT_WRITE) ~= 0 then
         local n = s._fd:send(s._writebuf)
         if n == nil then
             s.shutdown_w = true
@@ -248,7 +264,7 @@ function m.connect(protocol, address, port)
             if s._writebuf ~= "" then
                 update_stream(s, SELECT_WRITE)
                 if s._writebuf ~= "" then
-                    s._flags = SELECT_READ | SELECT_WRITE
+                    s._flags = b_or(SELECT_READ, SELECT_WRITE)
                 else
                     s._flags = SELECT_READ
                 end

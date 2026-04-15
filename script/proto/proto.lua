@@ -175,32 +175,45 @@ function m.applyMethod(proto)
         return
     end
     await.call(function () ---@async
-        --log.debug('Start method:', method)
-        if proto.id then
-            await.setID('proto:' .. proto.id)
-        end
         local clock = os.clock()
         local ok = false
         local res
-        -- 任务可能在执行过程中被中断，通过close来捕获
-        local response <close> = function ()
+        local is_done = false
+
+        -- The task might be interrupted during execution.
+        -- Replaced <close> with a callback function for Lua 5.2/MoonSharp compatibility.
+        local function response()
+            if is_done then return end
+            is_done = true
+
             local passed = os.clock() - clock
             if passed > 0.5 then
                 log.warn(('Method [%s] takes [%.3f]sec. %s'):format(method, passed, inspect(proto, secretOption)))
             end
-            --log.debug('Finish method:', method)
+
             if not proto.id then
                 return
             end
+
             await.close('proto:' .. proto.id)
+
             if ok then
                 m.response(proto.id, res)
             else
                 m.responseErr(proto.id, proto._closeReason or define.ErrorCodes.InternalError, proto._closeMessage or res)
             end
         end
+
+        if proto.id then
+            -- Pass the response function as a callback so await.close can execute it if interrupted
+            await.setID('proto:' .. proto.id, response)
+        end
+
         ok, res = xpcall(abil, log.error, proto.params, proto.id)
         await.delay()
+
+        -- Execute manually for successful/normal completion
+        response()
     end)
 end
 

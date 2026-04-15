@@ -1,21 +1,8 @@
-local _tl_compat; if (tonumber((_VERSION or ''):match('[%d.]*$')) or 0) < 5.3 then local p, m = pcall(require, 'compat53.module'); if p then _tl_compat = m end end; local math = _tl_compat and _tl_compat.math or math; local string = _tl_compat and _tl_compat.string or string; local table = _tl_compat and _tl_compat.table or table
+-- this line is used to backport 5.3 features to 5.1 and 5.2, but we are only targeting moonsharp/5.2 so theres nothing to backport from, as instead we are rewriting the lua code to be 5.2 instead
+--local _tl_compat; if (tonumber((_VERSION or ''):match('[%d.]*$')) or 0) < 5.3 then local p, m = pcall(require, 'compat53.module'); if p then _tl_compat = m end end; local math = _tl_compat and _tl_compat.math or math; local string = _tl_compat and _tl_compat.string or string; local table = _tl_compat and _tl_compat.table or table
+
+
 local inspect = {Options = {}, }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 inspect._VERSION = 'inspect.lua 3.1.0'
 inspect._URL = 'http://github.com/kikito/inspect.lua'
@@ -58,15 +45,12 @@ local function rawpairs(t)
    return next, t, nil
 end
 
-
-
 local function smartQuote(str)
    if match(str, '"') and not match(str, "'") then
       return "'" .. str .. "'"
    end
    return '"' .. gsub(str, '"', '\\"') .. '"'
 end
-
 
 local shortControlCharEscapes = {
    ["\a"] = "\\a", ["\b"] = "\\b", ["\f"] = "\\f", ["\n"] = "\\n",
@@ -164,7 +148,6 @@ local function makePath(path, a, b)
    return newPath
 end
 
-
 local function processRecursive(process,
    item,
    path,
@@ -198,17 +181,7 @@ local function puts(buf, str)
    buf[buf.n] = str
 end
 
-
-
 local Inspector = {}
-
-
-
-
-
-
-
-
 
 
 local Inspector_mt = { __index = Inspector }

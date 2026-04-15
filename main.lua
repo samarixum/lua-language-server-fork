@@ -113,17 +113,17 @@ if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
 end
 
-log.info('Lua version: ', _VERSION)
+print('Lua _VERSION: ', _VERSION)
 if _MOONSHARP then
-    log.info('Moonsharp version: ', _MOONSHARP)
-    log.info('Moonsharp luacompat: ', _MOONSHARP.luacompat)
-    log.info('Moonsharp platform: ', _MOONSHARP.platform)
-    log.info('Moonsharp is_aot: ', _MOONSHARP.is_aot)
-    log.info('Moonsharp is_unity: ', _MOONSHARP.is_unity)
-    log.info('Moonsharp is_mono: ', _MOONSHARP.is_mono)
-    log.info('Moonsharp is_clr4: ', _MOONSHARP.is_clr4)
-    log.info('Moonsharp is_pcl: ', _MOONSHARP.is_pcl)
-    log.info('Moonsharp banner: ', _MOONSHARP.banner)
+    print('_MOONSHARP.version: ', _MOONSHARP.version)
+    print('_MOONSHARP.luacompat: ', _MOONSHARP.luacompat)
+    print('_MOONSHARP.platform: ', _MOONSHARP.platform)
+    print('_MOONSHARP.is_aot: ', _MOONSHARP.is_aot)
+    print('_MOONSHARP.is_unity: ', _MOONSHARP.is_unity)
+    print('_MOONSHARP.is_mono: ', _MOONSHARP.is_mono)
+    print('_MOONSHARP.is_clr4: ', _MOONSHARP.is_clr4)
+    print('_MOONSHARP.is_pcl: ', _MOONSHARP.is_pcl)
+    print('_MOONSHARP.banner: ', _MOONSHARP.banner)
 end
 
 log.info('Lua Lsp startup, root: ', ROOT)

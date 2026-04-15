@@ -1,38 +1,38 @@
 
 print('1')
-
 local pub    = require 'pub'
 print('1')
 local await  = require 'await'
-
-
-local timer  = require 'timer'
-local proto  = require 'proto'
-local vm     = require 'vm'
-
 print('2')
-
-local util   = require 'utility'
-local files  = require 'files'
-local lang   = require 'language'
-local ws     = require 'workspace'
-
+local timer  = require 'timer'
 print('3')
-
-local time   = require 'bee.time'
-local fw     = require 'filewatch'
-local furi   = require 'file-uri'
-
+local proto  = require 'proto'
 print('4')
-
-local net    = require 'service.net'
-local client = require 'client'
-
-
+local vm     = require 'vm'
 print('5')
-
+local util   = require 'utility'
+print('6')
+local files  = require 'files'
+print('7')
+local lang   = require 'language'
+print('8')
+local ws     = require 'workspace'
+print('9')
+local time   = require 'bee.time'
+print('10')
+local fw     = require 'filewatch'
+print('11')
+local furi   = require 'file-uri'
+print('12')
+local net    = require 'service.net'
+print('13')
+local client = require 'client'
+print('14')
 require 'jsonc'
+print('15')
 require 'json-beautify'
+print('16')
+
 
 ---@class service
 local m = {}

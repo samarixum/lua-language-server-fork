@@ -13,8 +13,20 @@ m.delayQueueIndex = 1
 m.needClose = {}
 m._enable = true
 
+-- Lua 5.2 compatibility for checking if a coroutine can yield
+local function is_yieldable(co)
+    if coroutine.isyieldable then
+        if co then return coroutine.isyieldable(co) else return coroutine.isyieldable() end
+    end
+    local current_co, is_main = coroutine.running()
+    if co and co ~= current_co then
+        return coroutine.status(co) == 'suspended' or coroutine.status(co) == 'running'
+    end
+    return not is_main
+end
+
 local function setID(id, co, callback)
-    if not coroutine.isyieldable(co) then
+    if not is_yieldable(co) then
         return
     end
     if not m.idMap[id] then
@@ -23,8 +35,8 @@ local function setID(id, co, callback)
     m.idMap[id][co] = callback or true
 end
 
---- 设置错误处理器
----@param errHandle function # 当有错误发生时，会以错误堆栈为参数调用该函数
+--- Set error handler
+---@param errHandle function # Function called with the error stack trace as an argument when an error occurs
 function m.setErrorHandle(errHandle)
     m.errorHandle = errHandle
 end
@@ -37,7 +49,7 @@ function m.checkResult(co, ...)
     return ...
 end
 
---- 创建一个任务
+--- Create a task
 ---@param callback async fun()
 function m.call(callback, ...)
     local co = coroutine.create(callback)
@@ -65,27 +77,33 @@ function m.call(callback, ...)
     return m.checkResult(co, coroutine.resume(co))
 end
 
---- 创建一个任务，并挂起当前线程，当任务完成后再延续当前线程/若任务被关闭，则返回nil
+--- Create a task, suspend the current thread, and resume it once the task is completed / return nil if the task is closed
 ---@async
 function m.await(callback, ...)
-    if not coroutine.isyieldable() then
+    if not is_yieldable() then
         return callback(...)
     end
     return m.wait(function (resume, ...)
         m.call(function ()
-            local returnNil <close> = resume
-            resume(callback())
+            -- pcall is used for Lua 5.2 compatibility to replace 5.4's <close> feature
+            local ok, result = pcall(callback)
+            if ok then
+                resume(result)
+            else
+                resume()
+                error(result)
+            end
         end, ...)
     end, ...)
 end
 
---- 设置一个id，用于批量关闭任务
+--- Set an id for batch closing tasks
 function m.setID(id, callback)
     local co = coroutine.running()
     setID(id, co, callback)
 end
 
---- 根据id批量关闭任务
+--- Batch close tasks by id
 function m.close(id)
     local map = m.idMap[id]
     if not map then
@@ -98,7 +116,8 @@ function m.close(id)
             if type(callback) == 'function' then
                 xpcall(callback, log.error)
             end
-            coroutine.close(co)
+            -- Note: coroutine.close(co) is omitted here as it is Lua 5.4 specific.
+            -- In Lua 5.2, unreferenced coroutines are automatically garbage collected.
         end
     end
 end
@@ -113,11 +132,11 @@ function m.unique(id, callback)
     m.setID(id, callback)
 end
 
---- 休眠一段时间
+--- Sleep for a period of time
 ---@param time number
 ---@async
 function m.sleep(time)
-    if not coroutine.isyieldable() then
+    if not is_yieldable() then
         if m.errorHandle then
             m.errorHandle(debug.traceback('Cannot yield'))
         end
@@ -133,7 +152,7 @@ function m.sleep(time)
     return coroutine.yield()
 end
 
---- 等待直到唤醒
+--- Wait until awakened
 ---@param callback function
 ---@async
 function m.wait(callback, ...)
@@ -152,13 +171,13 @@ function m.wait(callback, ...)
     return coroutine.yield()
 end
 
---- 延迟
+--- Delay
 ---@async
 function m.delay()
     if not m._enable then
         return
     end
-    if not coroutine.isyieldable() then
+    if not is_yieldable() then
         return
     end
     local co = coroutine.running()
@@ -198,10 +217,10 @@ function m.newThrottledDelayer(factor)
     }, throttledDelayer)
 end
 
---- stop then close
+--- Stop then close
 ---@async
 function m.stop()
-    if not coroutine.isyieldable() then
+    if not is_yieldable() then
         return
     end
     m.needClose[#m.needClose+1] = coroutine.running()
@@ -225,10 +244,10 @@ local function warnStepTime(passed, waker)
     end
 end
 
---- 步进
+--- Step
 function m.step()
     for i = #m.needClose, 1, -1 do
-        coroutine.close(m.needClose[i])
+        -- Note: coroutine.close(m.needClose[i]) is omitted for 5.2 compatibility
         m.needClose[i] = nil
     end
 

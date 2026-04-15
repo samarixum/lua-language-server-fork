@@ -2,7 +2,7 @@ local diag = require 'proto.diagnostic'
 
 local m = {}
 
---- 诊断等级
+--- Diagnostic severity levels
 m.DiagnosticSeverity = {
     Error       = 1,
     Warning     = 2,
@@ -16,17 +16,17 @@ m.DiagnosticFileStatus = {
     None       = 3,
 }
 
---- 诊断类型与默认等级
+--- Diagnostic type and default severity
 m.DiagnosticDefaultSeverity = diag.getDefaultSeverity()
 
---- 诊断类型与需要的文件状态(可以控制只分析打开的文件、还是所有文件)
+--- Diagnostic type and required file status (controls whether to analyze only opened files or all files)
 m.DiagnosticDefaultNeededFileStatus = diag.getDefaultStatus()
 
 m.DiagnosticDefaultGroupSeverity = diag.getGroupSeverity()
 
 m.DiagnosticDefaultGroupFileStatus = diag.getGroupStatus()
 
---- 诊断报告标签
+--- Diagnostic report tags
 m.DiagnosticTag = {
     Unnecessary = 1,
     Deprecated  = 2,
@@ -126,17 +126,18 @@ m.SymbolKind = {
 }
 
 m.TokenModifiers = {
-    ["declaration"]    = 1 << 0,
-    ["definition"]     = 1 << 1,
-    ["readonly"]       = 1 << 2,
-    ["static"]         = 1 << 3,
-    ["deprecated"]     = 1 << 4,
-    ["abstract"]       = 1 << 5,
-    ["async"]          = 1 << 6,
-    ["modification"]   = 1 << 7,
-    ["documentation"]  = 1 << 8,
-    ["defaultLibrary"] = 1 << 9,
-    ["global"]         = 1 << 10,
+    -- Replaced Lua 5.3 bitwise operators (<<) with their integer values for Lua 5.2 compatibility
+    ["declaration"]    = 1,    -- 1 << 0
+    ["definition"]     = 2,    -- 1 << 1
+    ["readonly"]       = 4,    -- 1 << 2
+    ["static"]         = 8,    -- 1 << 3
+    ["deprecated"]     = 16,   -- 1 << 4
+    ["abstract"]       = 32,   -- 1 << 5
+    ["async"]          = 64,   -- 1 << 6
+    ["modification"]   = 128,  -- 1 << 7
+    ["documentation"]  = 256,  -- 1 << 8
+    ["defaultLibrary"] = 512,  -- 1 << 9
+    ["global"]         = 1024, -- 1 << 10
 }
 
 m.TokenTypes = {

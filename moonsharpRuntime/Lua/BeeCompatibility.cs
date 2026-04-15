@@ -9,7 +9,7 @@ namespace Moonsharpy.ScriptEngines.Lua;
 
 internal delegate bool BuiltinModuleResolver(LuaWorld world, string moduleName, out DynValue moduleValue);
 
-internal static class BeeCompatibility {
+internal static partial class BeeCompatibility {
     private const int CopyOptionNone = 0;
     private const int CopyOptionSkipExisting = 1;
     private const int CopyOptionOverwriteExisting = 2;
@@ -25,6 +25,7 @@ internal static class BeeCompatibility {
 
     static BeeCompatibility() {
         UserData.RegisterType<FileLockHandle>();
+        RegisterCompatibilityUserData();
     }
 
     internal static bool TryLoadModule(LuaWorld world, string moduleName, out DynValue moduleValue) {
@@ -38,12 +39,39 @@ internal static class BeeCompatibility {
         case "bee.time":
             moduleValue = DynValue.NewTable(CreateTimeModule(world));
             return true;
+        case "bee.platform":
+            moduleValue = DynValue.NewTable(CreatePlatformModule(world));
+            return true;
+        case "bee.thread":
+            moduleValue = DynValue.NewTable(CreateThreadModule(world));
+            return true;
+        case "bee.channel":
+            moduleValue = DynValue.NewTable(CreateChannelModule(world));
+            return true;
+        case "bee.select":
+            moduleValue = DynValue.NewTable(CreateSelectModule(world));
+            return true;
+        case "bee.epoll":
+            moduleValue = DynValue.NewTable(CreateEpollModule(world));
+            return true;
+        case "bee.subprocess":
+            moduleValue = DynValue.NewTable(CreateSubprocessModule(world));
+            return true;
+        case "bee.socket":
+            moduleValue = DynValue.NewTable(CreateSocketModule(world));
+            return true;
+        case "bee.filewatch":
+            moduleValue = DynValue.NewTable(CreateFilewatchModule(world));
+            return true;
+        case "bee.windows":
+            moduleValue = DynValue.NewTable(CreateWindowsModule(world));
+            return true;
+        case "bee.serialization":
+            moduleValue = DynValue.NewTable(CreateSerializationModule(world));
+            return true;
         case "bee.lua":
         case "bee": {
-            var root = CreateFilesystemModule(world);
-            root["filesystem"] = root;
-            root["sys"] = CreateSysModule(world);
-            root["time"] = CreateTimeModule(world);
+            var root = CreateBeeRootModule(world);
             moduleValue = DynValue.NewTable(root);
             return true;
         }

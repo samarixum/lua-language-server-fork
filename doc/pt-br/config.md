@@ -1965,17 +1965,13 @@ string
 ```
 
 ## enum
-
-* ``"Lua 5.1"``
-* ``""``
-* ``"Lua 5.3"``
-* ``"Lua 5.4"``
-* ``"LuaJIT"``
+* ``"Lua 5.5"``
+* ``"Moonsharp 2.0.0.0"``
 
 ## default
 
 ```jsonc
-"Lua 5.4"
+"Moonsharp 2.0.0.0"
 ```
 
 # semantic.annotation

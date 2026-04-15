@@ -845,14 +845,15 @@ function m.eachSpecialOf(ast, name, callback)
     end
 end
 
---- 将 position 拆分成行号与列号
+--- Split position into row number and column number
 ---
---- 第一行是0
+--- The first row is 0
 ---@param position integer
 ---@return integer row
 ---@return integer col
 function m.rowColOf(position)
-    return position // 10000, position % 10000
+    -- Replaced Lua 5.3 integer division (//) with math.floor for MoonSharp/Lua 5.2 compatibility
+    return math.floor(position / 10000), position % 10000
 end
 
 --- 将行列合并为 position
@@ -896,7 +897,8 @@ function m.offsetToPositionByLines(lines, offset)
     local right = #lines
     local row   = 0
     while true do
-        row = (left + right) // 2
+        -- Replaced Lua 5.3 integer division (//) with math.floor
+        row = math.floor((left + right) / 2)
         if row == left then
             if right ~= left then
                 if lines[right] - 1 <= offset then

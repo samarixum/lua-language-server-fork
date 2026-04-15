@@ -1,20 +1,35 @@
-local tokens     = require 'parser.tokens'
-local guide      = require 'parser.guide'
+print('compile')
 
+print('1')
+local tokens     = require 'parser.tokens'
+print('2')
+local guide      = require 'parser.guide'
+print('3')
 local sbyte      = string.byte
+print('4')
 local sfind      = string.find
+print('5')
 local smatch     = string.match
+print('6')
 local sgsub      = string.gsub
+print('7')
 local ssub       = string.sub
+print('8')
 local schar      = string.char
+print('9')
 local supper     = string.upper
+print('10')
 local uchar      = utf8.char
+print('11')
 local tconcat    = table.concat
+print('12')
 local tinsert    = table.insert
+print('13')
 local tointeger  = math.tointeger
 local tonumber   = tonumber
 local maxinteger = math.maxinteger
 local assert     = assert
+
 
 _ENV = nil
 
@@ -979,39 +994,36 @@ local function resolveLable(label, obj)
     for i = 1, #locals do
         local loc = locals[i]
         -- 检查局部变量声明位置为 goto 与 label 之间
-        if loc.start < obj.start or loc.finish > label.finish then
-            goto CONTINUE
-        end
-        -- 检查局部变量的使用位置在 label 之后
-        local refs = loc.ref
-        if not refs then
-            goto CONTINUE
-        end
-        for j = 1, #refs do
-            local ref = refs[j]
-            if ref.finish > label.finish then
-                pushError {
-                    type   = 'JUMP_LOCAL_SCOPE',
-                    start  = obj.start,
-                    finish = obj.finish,
-                    info   = {
-                        loc = loc[1],
-                    },
-                    relative = {
-                        {
-                            start  = label.start,
-                            finish = label.finish,
-                        },
-                        {
-                            start  = loc.start,
-                            finish = loc.finish,
+        if loc.start >= obj.start and loc.finish <= label.finish then
+            -- 检查局部变量的使用位置在 label 之后
+            local refs = loc.ref
+            if refs then
+                for j = 1, #refs do
+                    local ref = refs[j]
+                    if ref.finish > label.finish then
+                        pushError {
+                            type   = 'JUMP_LOCAL_SCOPE',
+                            start  = obj.start,
+                            finish = obj.finish,
+                            info   = {
+                                loc = loc[1],
+                            },
+                            relative = {
+                                {
+                                    start  = label.start,
+                                    finish = label.finish,
+                                },
+                                {
+                                    start  = loc.start,
+                                    finish = loc.finish,
+                                }
+                            },
                         }
-                    },
-                }
-                return
+                        return
+                    end
+                end
             end
         end
-        ::CONTINUE::
     end
 end
 
@@ -1176,6 +1188,7 @@ local function parseShortString()
     local currentOffset = startOffset + 1
     local escs        = {}
     while true do
+        ::CONTINUE::
         local token = Tokens[Index + 1]
         if token == mark then
             stringIndex = stringIndex + 1
@@ -1340,7 +1353,6 @@ local function parseShortString()
             escs[#escs+1] = 'err'
         end
         Index = Index + 2
-        ::CONTINUE::
     end
     local stringResult = tconcat(stringPool, '', 1, stringIndex)
     local str = {
@@ -1692,6 +1704,7 @@ local function parseExpList(mini)
     local list
     local wantSep = false
     while true do
+        ::CONTINUE::
         skipSpace()
         local token = Tokens[Index + 1]
         if not token then
@@ -1748,7 +1761,6 @@ local function parseExpList(mini)
             list.finish   = exp.finish
             exp.parent    = list
         end
-        ::CONTINUE::
     end
     if not list then
         return nil
@@ -1797,6 +1809,7 @@ local function parseTable()
     local tindex = 0
     local wantSep = false
     while true do
+        ::CONTINUE::
         skipSpace(true)
         local token = Tokens[Index + 1]
         if token == '}' then
@@ -1923,7 +1936,6 @@ local function parseTable()
         skipSpace()
         tbl.bfinish = getPosition(Tokens[Index], 'left')
         break
-        ::CONTINUE::
     end
     tbl.finish = lastRightPosition()
     return tbl
@@ -2336,6 +2348,7 @@ end
 local function parseActions()
     local rtn, last
     while true do
+        ::CONTINUE::
         skipSpace(true)
         local token = Tokens[Index + 1]
         if token == ';' then
@@ -2358,7 +2371,6 @@ local function parseActions()
             end
             last = action
         end
-        ::CONTINUE::
     end
     if rtn and rtn ~= last then
         pushError {
@@ -2374,6 +2386,7 @@ local function parseParams(params, isLambda)
     local hasDots
     local endToken = isLambda and '|' or ')'
     while true do
+        ::CONTINUE::
         skipSpace()
         local token = Tokens[Index + 1]
         if not token or token == endToken then
@@ -2478,7 +2491,6 @@ local function parseParams(params, isLambda)
             goto CONTINUE
         end
         skipUnknownSymbol()
-        ::CONTINUE::
     end
     return params
 end
@@ -4565,6 +4577,7 @@ local function initState(lua, version, options)
     end
 end
 
+
 return function (lua, mode, version, options)
     Mode = mode
     initState(lua, version, options)
@@ -4602,3 +4615,4 @@ return function (lua, mode, version, options)
 
     return State
 end
+

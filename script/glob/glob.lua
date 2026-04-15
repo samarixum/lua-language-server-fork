@@ -1,3 +1,5 @@
+print('glob')
+
 local m = require 'lpeglabel'
 local matcher = require 'glob.matcher'
 
@@ -99,6 +101,10 @@ function mt:__call(path)
     return false
 end
 
+
+print('glob end')
+
+
 return function (pattern, options)
     local self = setmetatable({
         pattern = {},
@@ -123,3 +129,5 @@ return function (pattern, options)
     end
     return self
 end
+
+

@@ -21,26 +21,28 @@ local function readProtoHead(reader)
     while true do
         local char = reader(1)
         if char == nil then
-            -- 说明管道已经关闭了
+            -- The pipe has been closed
             return nil, 'Disconnected!'
         end
         line = line .. char
+        
+        -- End of headers
         if line == '\r\n' then
             break
         end
-        if line:sub(-2) ~= '\r\n' then
-            goto continue
+        
+        -- If we have reached the end of a header line, process it
+        if line:sub(-2) == '\r\n' then
+            local k, v = line:match '^([^:]+)%s*%:%s*(.+)\r\n$'
+            if not k then
+                return nil, 'Proto header error: ' .. line
+            end
+            if k == 'Content-Length' then
+                v = tonumber(v)
+            end
+            head[k] = v
+            line = ''
         end
-        local k, v = line:match '^([^:]+)%s*%:%s*(.+)\r\n$'
-        if not k then
-            return nil, 'Proto header error: ' .. line
-        end
-        if k == 'Content-Length' then
-            v = tonumber(v)
-        end
-        head[k] = v
-        line = ''
-        ::continue::
     end
     return head
 end
