@@ -30,6 +30,10 @@ internal static partial class BeeCompatibility {
 
     internal static bool TryLoadModule(LuaWorld world, string moduleName, out DynValue moduleValue) {
         switch (moduleName) {
+        case "bit32":
+        case "script.bit32":
+            moduleValue = DynValue.NewTable(CreateBit32Module(world));
+            return true;
         case "bee.filesystem":
             moduleValue = DynValue.NewTable(CreateFilesystemModule(world));
             return true;
@@ -79,6 +83,207 @@ internal static partial class BeeCompatibility {
             moduleValue = DynValue.NewNil();
             return false;
         }
+    }
+
+    private static uint ToBit32Value(DynValue value) {
+        if (value.Type != DataType.Number || double.IsNaN(value.Number) || double.IsInfinity(value.Number)) {
+            return 0u;
+        }
+
+        return unchecked((uint)(long)System.Math.Truncate(value.Number));
+    }
+
+    private static int ToBit32Shift(DynValue value) {
+        if (value.Type != DataType.Number || double.IsNaN(value.Number) || double.IsInfinity(value.Number)) {
+            return 0;
+        }
+
+        return (int)System.Math.Truncate(value.Number);
+    }
+
+    private static DynValue CreateBit32Result(uint value) {
+        return DynValue.NewNumber(value);
+    }
+
+    private static uint RotateLeft32(uint value, int shift) {
+        shift &= 31;
+        if (shift == 0) {
+            return value;
+        }
+
+        return (value << shift) | (value >> (32 - shift));
+    }
+
+    private static uint RotateRight32(uint value, int shift) {
+        shift &= 31;
+        if (shift == 0) {
+            return value;
+        }
+
+        return (value >> shift) | (value << (32 - shift));
+    }
+
+    private static Table CreateBit32Module(LuaWorld world) {
+        Script script = world.LuaScript;
+        Table module = new Table(script);
+
+        module["arshift"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            var value = unchecked((int)ToBit32Value(args[0]));
+            var shift = ToBit32Shift(args[1]);
+            if (shift >= 32) {
+                return DynValue.NewNumber(value < 0 ? -1 : 0);
+            }
+
+            if (shift <= -32) {
+                return DynValue.NewNumber(0);
+            }
+
+            if (shift < 0) {
+                return DynValue.NewNumber(unchecked((uint)value) << -shift);
+            }
+
+            return DynValue.NewNumber(value >> shift);
+        }, "bit32.arshift");
+
+        module["band"] = DynValue.NewCallback((_, args) => {
+            var result = args.Count == 0 ? uint.MaxValue : ToBit32Value(args[0]);
+            for (var i = 1; i < args.Count; i++) {
+                result &= ToBit32Value(args[i]);
+            }
+
+            return CreateBit32Result(result);
+        }, "bit32.band");
+
+        module["bnot"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 1) {
+                return DynValue.NewNil();
+            }
+
+            return CreateBit32Result(~ToBit32Value(args[0]));
+        }, "bit32.bnot");
+
+        module["bor"] = DynValue.NewCallback((_, args) => {
+            var result = args.Count == 0 ? 0u : ToBit32Value(args[0]);
+            for (var i = 1; i < args.Count; i++) {
+                result |= ToBit32Value(args[i]);
+            }
+
+            return CreateBit32Result(result);
+        }, "bit32.bor");
+
+        module["btest"] = DynValue.NewCallback((_, args) => {
+            if (args.Count == 0) {
+                return DynValue.NewBoolean(false);
+            }
+
+            var result = ToBit32Value(args[0]);
+            for (var i = 1; i < args.Count; i++) {
+                result &= ToBit32Value(args[i]);
+            }
+
+            return DynValue.NewBoolean(result != 0);
+        }, "bit32.btest");
+
+        module["bxor"] = DynValue.NewCallback((_, args) => {
+            var result = args.Count == 0 ? 0u : ToBit32Value(args[0]);
+            for (var i = 1; i < args.Count; i++) {
+                result ^= ToBit32Value(args[i]);
+            }
+
+            return CreateBit32Result(result);
+        }, "bit32.bxor");
+
+        module["extract"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            var value = ToBit32Value(args[0]);
+            var field = ToBit32Shift(args[1]);
+            var width = args.Count > 2 ? ToBit32Shift(args[2]) : 1;
+            if (field < 0 || field > 31 || width < 1 || width > 32 - field) {
+                return DynValue.NewNil();
+            }
+
+            uint mask = width == 32 ? uint.MaxValue : ((1u << width) - 1u) << field;
+            return CreateBit32Result((value & mask) >> field);
+        }, "bit32.extract");
+
+        module["replace"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 3) {
+                return DynValue.NewNil();
+            }
+
+            var value = ToBit32Value(args[0]);
+            var replacement = ToBit32Value(args[1]);
+            var field = ToBit32Shift(args[2]);
+            var width = args.Count > 3 ? ToBit32Shift(args[3]) : 1;
+            if (field < 0 || field > 31 || width < 1 || width > 32 - field) {
+                return DynValue.NewNil();
+            }
+
+            uint mask = width == 32 ? uint.MaxValue : ((1u << width) - 1u) << field;
+            value = (value & ~mask) | ((replacement << field) & mask);
+            return CreateBit32Result(value);
+        }, "bit32.replace");
+
+        module["lrotate"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            return CreateBit32Result(RotateLeft32(ToBit32Value(args[0]), ToBit32Shift(args[1])));
+        }, "bit32.lrotate");
+
+        module["lshift"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            var value = ToBit32Value(args[0]);
+            var shift = ToBit32Shift(args[1]);
+            if (shift >= 32) {
+                return CreateBit32Result(0);
+            }
+
+            if (shift < 0) {
+                return CreateBit32Result(value >> -shift);
+            }
+
+            return CreateBit32Result(value << shift);
+        }, "bit32.lshift");
+
+        module["rrotate"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            return CreateBit32Result(RotateRight32(ToBit32Value(args[0]), ToBit32Shift(args[1])));
+        }, "bit32.rrotate");
+
+        module["rshift"] = DynValue.NewCallback((_, args) => {
+            if (args.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            var value = ToBit32Value(args[0]);
+            var shift = ToBit32Shift(args[1]);
+            if (shift >= 32) {
+                return CreateBit32Result(0);
+            }
+
+            if (shift < 0) {
+                return CreateBit32Result(value << -shift);
+            }
+
+            return CreateBit32Result(value >> shift);
+        }, "bit32.rshift");
+
+        return module;
     }
 
     private static Table CreateFilesystemModule(LuaWorld world) {

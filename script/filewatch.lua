@@ -4,9 +4,10 @@ local sys   = require("bee.sys")
 local plat  = require("bee.platform")
 local await = require("script.await")
 local files = require("script.files")
+local bit32  = require("script.bit32")
 
-local MODIFY = 1 << 0
-local RENAME = 1 << 1
+local MODIFY = bit32.lshift(1, 0)
+local RENAME = bit32.lshift(1, 1)
 
 local function isExists(filename)
     local path = fs.path(filename)
@@ -101,9 +102,9 @@ function m.update()
                 collect = {}
             end
             if ev == 'modify' then
-                collect[path] = (collect[path] or 0) | MODIFY
+                collect[path] = bit32.bor(collect[path] or 0, MODIFY)
             elseif ev == 'rename' then
-                collect[path] = (collect[path] or 0) | RENAME
+                collect[path] = bit32.bor(collect[path] or 0, RENAME)
             end
         end
     end
@@ -113,13 +114,13 @@ function m.update()
     end
 
     for path, flag in pairs(collect) do
-        if flag & RENAME ~= 0 then
+        if bit32.band(flag, RENAME) ~= 0 then
             if isExists(path) then
                 m._callEvent('create', path)
             else
                 m._callEvent('delete', path)
             end
-        elseif flag & MODIFY ~= 0 then
+        elseif bit32.band(flag, MODIFY) ~= 0 then
             m._callEvent('change', path)
         end
     end
