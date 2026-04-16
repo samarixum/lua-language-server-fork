@@ -257,7 +257,7 @@ internal class LuaWorld {
         ScriptArguments[0] = mainScriptValue;
 
         var argMetadata = new Table(LuaScript);
-        argMetadata["__index"] = DynValue.NewCallback((context, callbackArgs) => {
+        argMetadata["__index"] = DynValue.NewCallback((_, callbackArgs) => {
             if (callbackArgs.Count < 2) {
                 return DynValue.NewNil();
             }
@@ -283,7 +283,7 @@ internal class LuaWorld {
             return DynValue.NewNil();
         }, "arg_index");
 
-        argMetadata["__pairs"] = DynValue.NewCallback((context, callbackArgs) => {
+        argMetadata["__pairs"] = DynValue.NewCallback((_, _) => {
             var orderedKeys = new List<DynValue>();
             var orderedValues = new List<DynValue>();
 
@@ -299,7 +299,7 @@ internal class LuaWorld {
             orderedValues.Add(mainScriptValue);
 
             var position = -1;
-            var iterator = DynValue.NewCallback((iteratorContext, iteratorArgs) => {
+            var iterator = DynValue.NewCallback((_, _) => {
                 position++;
                 if (position >= orderedKeys.Count) {
                     return DynValue.NewNil();

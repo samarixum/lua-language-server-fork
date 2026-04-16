@@ -90,17 +90,17 @@ if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
 end
 
-print('Lua _VERSION: ', _VERSION)
+print('Lua _VERSION: ', _VERSION)                         -- 'MoonSharp 2.0.0.0' or 'Lua 5.5'
 if _MOONSHARP then
-    print('_MOONSHARP.version: ', _MOONSHARP.version)
-    print('_MOONSHARP.luacompat: ', _MOONSHARP.luacompat)
-    print('_MOONSHARP.platform: ', _MOONSHARP.platform)
-    print('_MOONSHARP.is_aot: ', _MOONSHARP.is_aot)
-    print('_MOONSHARP.is_unity: ', _MOONSHARP.is_unity)
-    print('_MOONSHARP.is_mono: ', _MOONSHARP.is_mono)
-    print('_MOONSHARP.is_clr4: ', _MOONSHARP.is_clr4)
-    print('_MOONSHARP.is_pcl: ', _MOONSHARP.is_pcl)
-    print('_MOONSHARP.banner: ', _MOONSHARP.banner)
+    print('_MOONSHARP.version: ', _MOONSHARP.version)     -- '2.0.0.0'
+    print('_MOONSHARP.luacompat: ', _MOONSHARP.luacompat) -- 'Lua 5.2'
+    print('_MOONSHARP.platform: ', _MOONSHARP.platform)   -- 'core.dotnet.clr4.netcore'
+    print('_MOONSHARP.is_aot: ', _MOONSHARP.is_aot)       -- false
+    print('_MOONSHARP.is_unity: ', _MOONSHARP.is_unity)   -- false
+    print('_MOONSHARP.is_mono: ', _MOONSHARP.is_mono)     -- false
+    print('_MOONSHARP.is_clr4: ', _MOONSHARP.is_clr4)     -- true
+    print('_MOONSHARP.is_pcl: ', _MOONSHARP.is_pcl)       -- false
+    print('_MOONSHARP.banner: ', _MOONSHARP.banner)       -- """Copyright (C) 2014-2016 Marco Mastropaolo \nhttp://www.moonsharp.org"""
 end
 
 log.info('Lua Lsp startup, root: ', ROOT)
