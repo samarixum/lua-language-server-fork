@@ -39,3 +39,8 @@ ThisScriptDir = ""
 --path to the currently executing script
 ---@type string
 ThisScriptPath = ""
+
+
+-- added in this env
+math.tointeger = function ()
+end

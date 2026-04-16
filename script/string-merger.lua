@@ -18,7 +18,7 @@ local function getNearDiff(diffs, offset, key)
     local min = 1
     local max = #diffs
     while max > min do
-        local middle = min + (max - min) // 2
+        local middle = min + math.floor((max - min) / 2)
         local diff  = diffs[middle]
         local ndiff = diffs[middle + 1]
         if diff[key] > offset then

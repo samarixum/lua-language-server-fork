@@ -101,15 +101,15 @@ dprint("Final package.path: " .. package.path)
 
 -- Custom Loader Logic
 local function custom_loader(name)
-    dprint("Require call: searching for '" .. name .. "'")
+    --dprint("Require call: searching for '" .. name .. "'")
     local filename, err = package.searchpath(name, package.path)
 
     if not filename then
-        dprint("  - Not found in package.path: " .. tostring(err))
+        --dprint("  - Not found in package.path: " .. tostring(err))
         return err
     end
 
-    dprint("  - Found file: " .. filename)
+    --dprint("  - Found file: " .. filename)
     local f = io.open(filename, "r")
     if not f then return 'cannot open file:' .. filename end
 
@@ -121,10 +121,10 @@ local function custom_loader(name)
         relative = filename:sub(#root + 2)
     end
 
-    dprint("  - Loading chunk: @" .. relative)
+    --dprint("  - Loading chunk: @" .. relative)
     local init, loadErr = load(buf, '@' .. relative)
     if not init then
-        dprint("  - COMPILATION ERROR: " .. tostring(loadErr))
+        --dprint("  - COMPILATION ERROR: " .. tostring(loadErr))
         return loadErr
     end
 

@@ -1,16 +1,14 @@
 
 print('including script/vm.lua')
-print('1')
 local guide     = require 'parser.guide'
-print('2')
 local files     = require 'files'
-print('3')
 local timer     = require 'timer'
-print('4')
 local setmetatable   = setmetatable
 local log            = log
 local xpcall         = xpcall
 local mathHuge       = math.huge
+
+print('vm-1')
 
 local weakMT = { __mode = 'kv' }
 
@@ -25,6 +23,8 @@ function m.getSpecial(source)
     end
     return source.special
 end
+
+print('vm-2')
 
 ---@param source parser.object
 ---@return string?
@@ -42,6 +42,9 @@ function m.getKeyName(source)
     return guide.getKeyName(source)
 end
 
+print('vm-3')
+
+
 function m.getKeyType(source)
     if not source then
         return nil
@@ -56,6 +59,8 @@ function m.getKeyType(source)
     return guide.getKeyType(source)
 end
 
+print('vm-4')
+
 ---@param source parser.object
 ---@return parser.object?
 function m.getObjectValue(source)
@@ -67,6 +72,8 @@ function m.getObjectValue(source)
     end
     return nil
 end
+
+print('vm-5')
 
 ---@param source parser.object
 ---@return parser.object?
@@ -84,6 +91,8 @@ end
 
 m.cacheTracker = setmetatable({}, weakMT)
 
+print('vm-6')
+
 function m.flushCache()
     if m.cache then
         m.cache.dead = true
@@ -95,6 +104,8 @@ function m.flushCache()
     m.cacheTracker[m.cache] = true
 end
 
+print('vm-7')
+
 function m.getCache(name, weak)
     if m.cacheVersion ~= files.globalVersion then
         m.flushCache()
@@ -105,6 +116,8 @@ function m.getCache(name, weak)
     end
     return m.cache[name]
 end
+
+print('vm-8')
 
 local function init()
     m.flushCache()
@@ -119,6 +132,10 @@ local function init()
     --end)
 end
 
+print('vm-9')
+
 xpcall(init, log.error)
+
+print('vm.lua loaded')
 
 return m

@@ -1,3 +1,5 @@
+print('including parser/luadoc.lua')
+
 local m          = require 'lpeglabel'
 local re         = require 'parser.relabel'
 local guide      = require 'parser.guide'
@@ -12,7 +14,10 @@ local Offset
 local pushWarning, NextComment, Lines
 local parseType, parseTypeUnit
 ---@type any
-local Parser = re.compile([[
+local Parser
+do
+    local ok, compiled = pcall(function ()
+        return re.compile([[
 Main                <-  (Token / Sp)*
 Sp                  <-  %s+
 X16                 <-  [a-fA-F0-9]
@@ -93,7 +98,31 @@ Symbol              <-  ({} {
             return ''
         end
         if v >= 0 and v <= 0x10FFFF then
-            return utf8.char(v)
+            if utf8 and utf8.char then
+                return utf8.char(v)
+            end
+            if v <= 0x7F then
+                return string.char(v)
+            end
+            if v <= 0x7FF then
+                return string.char(
+                    math.floor(v / 0x40) + 0xC0,
+                    (v % 0x40) + 0x80
+                )
+            end
+            if v <= 0xFFFF then
+                return string.char(
+                    math.floor(v / 0x1000) + 0xE0,
+                    math.floor(v / 0x40) % 0x40 + 0x80,
+                    (v % 0x40) + 0x80
+                )
+            end
+            return string.char(
+                math.floor(v / 0x40000) + 0xF0,
+                math.floor(v / 0x1000) % 0x40 + 0x80,
+                math.floor(v / 0x40) % 0x40 + 0x80,
+                (v % 0x40) + 0x80
+            )
         end
         return ''
     end,
@@ -136,7 +165,18 @@ Symbol              <-  ({} {
         TokenFinishs[Ci]  = finish - 1
         TokenContents[Ci] = content
     end,
-})
+        })
+    end)
+    if ok then
+        Parser = compiled
+    else
+        Parser = {
+            match = function ()
+                return nil
+            end,
+        }
+    end
+end
 
 ---@alias parser.visibleType 'public' | 'protected' | 'private' | 'package'
 
@@ -271,16 +311,17 @@ local function parseDocAttr(parent)
 
     while true do
         if checkToken('symbol', ',', 1) then
+            -- Consume the comma and move to the next iteration
             nextToken()
-            goto continue
+        else
+            -- If it's not a comma, parse the name
+            local name = parseName('doc.attr.name', attrs)
+            if not name then
+                break
+            end
+            attrs.names[#attrs.names+1] = name
+            attrs.finish = name.finish
         end
-        local name = parseName('doc.attr.name', attrs)
-        if not name then
-            break
-        end
-        attrs.names[#attrs.names+1] = name
-        attrs.finish = name.finish
-        ::continue::
     end
 
     nextSymbolOrError(')')
@@ -2046,7 +2087,7 @@ local function bindDocsBetween(sources, binded, start, finish)
     local left  = 1
     local right = max
     for _ = 1, 1000 do
-        index = left + (right - left) // 2
+        index = left + (right - left) / 2
         if index <= left then
             index = left
             break

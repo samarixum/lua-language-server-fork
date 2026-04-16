@@ -1,42 +1,22 @@
 print('including script/files.lua')
-
-print('1')
 local platform = require 'bee.platform'
-print('2')
 local fs       = require 'bee.filesystem'
-print('3')
 local sys      = require 'bee.sys'
-print('4')
 local config   = require 'config'
-print('5')
 local glob     = require 'glob'
-print('6')
 local furi     = require 'file-uri'
-print('7')
 local parser   = require 'parser'
-print('8')
 local lang     = require 'language'
-print('9')
 local await    = require 'await'
-print('10')
 local util     = require 'utility'
-print('11')
 local smerger  = require 'string-merger'
-print('12')
 local progress = require "progress"
-print('13')
 local encoder  = require 'encoder'
-print('14')
 local scope    = require 'workspace.scope'
-print('15')
 local lazy     = require 'lazytable'
-print('16')
 local cacher   = require 'lazy-cacher'
-print('17')
 local sp       = require 'bee.subprocess'
-print('18')
 local pub      = require 'pub'
-print('19')
 
 ---@class file
 ---@field uri           uri
@@ -1068,5 +1048,7 @@ function m.onWatch(ev, uri)
         end)
     end
 end
+
+print('files.lua loaded')
 
 return m

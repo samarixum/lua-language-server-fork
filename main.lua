@@ -1,46 +1,8 @@
 local util    = require 'utility'
 local version = require 'version'
 
-local useMoonSharpPaths = _MOONSHARP == true
+--local useMoonSharpPaths = _MOONSHARP == true
 local fs = require 'bee.filesystem'
-
-local function joinPath(left, right)
-    local separator = package.config:sub(1, 1)
-    left = tostring(left)
-    right = tostring(right)
-
-    if left:sub(-1) ~= separator then
-        left = left .. separator
-    end
-
-    if right:sub(1, 1) == separator then
-        right = right:sub(2)
-    end
-
-    return left .. right
-end
-
-local function makePath(pathText)
-    local pathValue = tostring(pathText)
-
-    if not useMoonSharpPaths then
-        return fs.path(pathValue)
-    end
-
-    return setmetatable({ value = pathValue }, {
-        __tostring = function(self)
-            return self.value
-        end,
-        __index = {
-            string = function(self)
-                return self.value
-            end,
-        },
-        __div = function(self, rhs)
-            return makePath(joinPath(self.value, rhs))
-        end,
-    })
-end
 
 require 'config.env'
 
@@ -92,9 +54,24 @@ print('Root path:', rootPath)
 
 
 rootPath = (rootPath == '' and '.' or rootPath)
-ROOT     = makePath(util.expandPath(rootPath))
-LOGPATH  = LOGPATH  and makePath(util.expandPath(LOGPATH))  or (ROOT / 'log')
-METAPATH = METAPATH and makePath(util.expandPath(METAPATH)) or (ROOT / 'meta')
+print('Expanded root path:', (rootPath))
+ROOT     = fs.path(((util.expandPath(rootPath))))
+print('ROOT path:', ROOT)
+
+local function resolvePath(pathValue, fallback)
+    if type(pathValue) == 'string' then
+        return fs.path(((util.expandPath(pathValue)) or fallback))
+    end
+    if pathValue then
+        return fs.path(pathValue)
+    end
+    return fs.path(fallback)
+end
+
+LOGPATH  = resolvePath(LOGPATH, ROOT / 'log')
+print('LOGPATH:', LOGPATH)
+METAPATH = resolvePath(METAPATH, ROOT / 'meta')
+print('METAPATH:', METAPATH)
 
 util.enableCloseFunction()
 util.enableFormatString()
@@ -108,7 +85,7 @@ LOGLEVEL = LOGLEVEL or 'debug'
 
 ---@diagnostic disable-next-line: lowercase-global
 log = require 'log'
-log.init(ROOT, useMoonSharpPaths and (LOGPATH / 'service.log') or (fs.path(LOGPATH) / 'service.log'))
+log.init(ROOT, LOGPATH / 'service.log')
 if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
 end
@@ -142,7 +119,10 @@ print('including script/cli.lua')
 require 'cli'
 
 print('setup service')
-local _, service = xpcall(require, log.error, 'service')
+local ok, service = xpcall(require, log.error, 'service.service')
+if not ok then
+    error(service)
+end
 
 print('start service')
 service.start()

@@ -1,12 +1,8 @@
 print('including script/config/template.lua')
 
-print('1')
 local util   = require 'utility'
-print('2')
 local define = require 'proto.define'
-print('3')
 local diag   = require 'proto.diagnostic'
-print('4')
 
 ---@class config.unit
 ---@field caller function
@@ -22,14 +18,10 @@ mt.__index = mt
 
 local unitAliases = setmetatable({}, { __mode = 'k' })
 
-print('5')
-
 function mt:__call(...)
     self:caller(...)
     return self
 end
-
-print('6')
 
 -- Replaced __shr (>>) with a method for MoonSharp compatibility
 function mt:setDefault(default)
@@ -38,15 +30,11 @@ function mt:setDefault(default)
     return self
 end
 
-print('7')
-
 -- Replaced __shl (<<) with a method for MoonSharp compatibility
 function mt:setEnums(enums)
     self.enums = enums
     return self
 end
-
-print('8')
 
 function mt:checker(v)
     if self.enums then
@@ -73,8 +61,6 @@ function mt:checker(v)
     return self:_checker(v)
 end
 
-print('9')
-
 local units = {}
 
 local function register(name, default, checker, loader, caller)
@@ -87,7 +73,6 @@ local function register(name, default, checker, loader, caller)
     }
 end
 
-print('10')
 
 ---@class config.master
 ---@field [string] config.unit
@@ -98,8 +83,6 @@ local Type = setmetatable({}, { __index = function (_, name)
     end
     return setmetatable(unit, mt)
 end })
-
-print('11')
 
 register('Boolean', false, function (self, v)
     return type(v) == 'boolean'
@@ -216,8 +199,6 @@ end, function (self, value)
 end, function (self, ...)
     self.subs = { ... }
 end)
-
-print('template.lua 12')
 
 ---@format disable-next
 local template = {
@@ -473,8 +454,6 @@ local template = {
     ['editor.acceptSuggestionOnEnter']      = Type.String:setDefault('on'),
 }
 
-print('13')
-
 do
     local versionUnit = template['Lua.runtime.version']
     unitAliases[versionUnit] = {
@@ -487,16 +466,6 @@ do
         end
         return defaultLoader(self, value)
     end
-end
-
-local function tabletostring(t)
-    local result = '{'
-    for k, v in pairs(t) do
-        local key = type(k) == 'string' and ('%q'):format(k) or tostring(k)
-        local value = type(v) == 'table' and tabletostring(v) or (type(v) == 'string' and ('%q'):format(v) or tostring(v))
-        result = result .. key .. '=' .. value .. ','
-    end
-    return result .. '}'
 end
 
 print('template.lua EOF')

@@ -62,7 +62,7 @@ function mt:writterAndReader(fileID)
     local function resize(file)
         local codes = {}
         for id, data in pairs(map) do
-            local offset = data // 1000000
+            local offset = math.floor(data / 1000000)
             local len    = data %  1000000
             local suc, err = file:seek('set', offset)
             if not suc then
@@ -143,7 +143,7 @@ function mt:writterAndReader(fileID)
             self.errorHandler(err)
             return nil
         end
-        local offset = map[id] // 1000000
+        local offset = math.floor(map[id] / 1000000)
         local len    = map[id] %  1000000
         local suc, err = file:seek('set', offset)
         if not suc then

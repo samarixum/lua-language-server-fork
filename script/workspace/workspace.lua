@@ -287,7 +287,7 @@ end
 function m.awaitLoadFile(uri)
     m.awaitReady(uri)
     local scp = scope.getScope(uri)
-    local ld <close> = loading.create(scp)
+    local ld = loading.create(scp)
     local native = m.getNativeMatcher(scp)
     log.info('Scan files at:', uri)
     ---@async
@@ -326,7 +326,7 @@ function m.awaitPreload(scp)
         return
     end
 
-    local ld <close> = loading.create(scp)
+    local ld = loading.create(scp)
     scp:set('loading', ld)
 
     log.info('Preload start:', scp:getName())

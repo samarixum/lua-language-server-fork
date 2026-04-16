@@ -1,37 +1,59 @@
-print('compile')
+print('loading parser/compile.lua...')
 
-print('1')
 local tokens     = require 'parser.tokens'
-print('2')
 local guide      = require 'parser.guide'
-print('3')
 local sbyte      = string.byte
-print('4')
 local sfind      = string.find
-print('5')
 local smatch     = string.match
-print('6')
 local sgsub      = string.gsub
-print('7')
 local ssub       = string.sub
-print('8')
 local schar      = string.char
-print('9')
 local supper     = string.upper
-print('10')
-local uchar      = utf8.char
-print('11')
+local function uchar(code)
+    if utf8 and utf8.char then
+        return utf8.char(code)
+    end
+
+    if type(code) ~= 'number' or code < 0 or code > 0x10FFFF then
+        error('invalid UTF-8 codepoint', 2)
+    end
+
+    if code <= 0x7F then
+        return schar(code)
+    end
+
+    if code <= 0x7FF then
+        return schar(
+            math.floor(code / 0x40) + 0xC0,
+            (code % 0x40) + 0x80
+        )
+    end
+
+    if code <= 0xFFFF then
+        return schar(
+            math.floor(code / 0x1000) + 0xE0,
+            math.floor(code / 0x40) % 0x40 + 0x80,
+            (code % 0x40) + 0x80
+        )
+    end
+
+    return schar(
+        math.floor(code / 0x40000) + 0xF0,
+        math.floor(code / 0x1000) % 0x40 + 0x80,
+        math.floor(code / 0x40) % 0x40 + 0x80,
+        (code % 0x40) + 0x80
+    )
+end
 local tconcat    = table.concat
-print('12')
 local tinsert    = table.insert
-print('13')
 local tointeger  = math.tointeger
 local tonumber   = tonumber
 local maxinteger = math.maxinteger
 local assert     = assert
 
 
-_ENV = nil
+--_ENV = nil
+
 
 ---@alias parser.position integer
 
@@ -58,6 +80,7 @@ local function stringToCharMap(str)
     return map
 end
 
+
 local CharMapNumber  = stringToCharMap '0-9'
 local CharMapN16     = stringToCharMap 'xX'
 local CharMapN2      = stringToCharMap 'bB'
@@ -70,7 +93,11 @@ local CharMapSimple  = stringToCharMap '.:([\'"{'
 local CharMapStrSH   = stringToCharMap '\'"`'
 local CharMapStrLH   = stringToCharMap '['
 local CharMapTSep    = stringToCharMap ',;'
-local CharMapWord    = stringToCharMap '_a-zA-Z\x80-\xff'
+local CharMapWord = stringToCharMap '_a-zA-Z'
+for b = 128, 255 do
+    CharMapWord[schar(b)] = true
+end
+
 
 local EscMap = {
     ['a']  = '\a',
@@ -117,6 +144,7 @@ local KeyWord = {
     ['until']    = true,
     ['while']    = true,
 }
+
 
 local Specials = {
     ['_G']           = true,
@@ -253,6 +281,7 @@ local State, Lua, Line, LineOffset, Chunk, Tokens, Index, LastTokenFinish, Mode,
 local LocalLimit = 200
 
 local parseExp, parseAction
+
 
 local function isMoonsharpVersion(version)
     return version == 'Moonsharp 2.0.0.0'
@@ -4577,6 +4606,8 @@ local function initState(lua, version, options)
     end
 end
 
+
+print('loaded parser/compile.lua')
 
 return function (lua, mode, version, options)
     Mode = mode

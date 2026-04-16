@@ -1,15 +1,9 @@
 print('including script/config.lua')
 
-
-print('1')
 local util     = require 'utility'
-print('2')
 local timer    = require 'timer'
-print('3')
 local scope    = require 'workspace.scope'
-print('4')
 local template = require 'config.template'
-print('5')
 
 ---@alias config.source '"client"'|'"path"'|'"local"'
 

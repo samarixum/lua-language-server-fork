@@ -1,3 +1,5 @@
+print('including parser/init.lua')
+
 local api = {
     compile    = require 'parser.compile',
     lines      = require 'parser.lines',

@@ -175,7 +175,7 @@ function m.watchFiles(path)
             watchers = {
                 {
                     globPattern = path .. '/**',
-                    kind = 1 | 2 | 4,
+                    kind = 1 + 2 + 4,
                 },
             },
         },

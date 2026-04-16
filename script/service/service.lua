@@ -1,37 +1,39 @@
+print('#############################loading service/service.lua')
 
-print('1')
+
+print('service-1')
 local pub    = require 'pub'
-print('1')
+print('service-1')
 local await  = require 'await'
-print('2')
+print('service-2')
 local timer  = require 'timer'
-print('3')
+print('service-3')
 local proto  = require 'proto'
-print('4')
+print('service-4')
 local vm     = require 'vm'
-print('5')
+print('service-5')
 local util   = require 'utility'
-print('6')
+print('service-6')
 local files  = require 'files'
-print('7')
+print('service-7')
 local lang   = require 'language'
-print('8')
+print('service-8')
 local ws     = require 'workspace'
-print('9')
+print('service-9')
 local time   = require 'bee.time'
-print('10')
+print('service-10')
 local fw     = require 'filewatch'
-print('11')
+print('service-11')
 local furi   = require 'file-uri'
-print('12')
+print('service-12')
 local net    = require 'service.net'
-print('13')
+print('service-13')
 local client = require 'client'
-print('14')
+print('service-14')
 require 'jsonc'
-print('15')
+print('service-15')
 require 'json-beautify'
-print('16')
+print('service-16')
 
 
 ---@class service

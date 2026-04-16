@@ -1,3 +1,5 @@
+print('loading lpeglabel.lua...')
+
 local m = {}
 
 local pattern_mt = {}
@@ -11,6 +13,14 @@ local function copy_values(values)
     local out = {}
     for index = 1, #values do
         out[index] = values[index]
+    end
+    return out
+end
+
+local function copy_map(values)
+    local out = {}
+    for key, value in pairs(values or {}) do
+        out[key] = value
     end
     return out
 end
@@ -133,28 +143,62 @@ local function match_node(node, subject, position, context)
     end
 
     if kind == 'sequence' then
+        local savedNamedCaptures = context.named_captures
+        local workingNamedCaptures = copy_map(savedNamedCaptures)
+        local workingContext = {
+            args = context.args,
+            grammar = context.grammar,
+            named_captures = workingNamedCaptures,
+        }
+
         local currentPosition = position
         local captures = {}
         for index = 1, #node.parts do
-            local nextPosition, nextCaptures, nextError = match_node(node.parts[index], subject, currentPosition, context)
+            local nextPosition, nextCaptures, nextError = match_node(node.parts[index], subject, currentPosition, workingContext)
             if not nextPosition then
                 return nil, nil, nextError
             end
             currentPosition = nextPosition
             append_values(captures, nextCaptures)
         end
+
+        context.named_captures = workingNamedCaptures
         return currentPosition, captures
     end
 
     if kind == 'choice' then
-        local nextPosition, nextCaptures = match_node(node.left, subject, position, context)
+        local leftContext = {
+            args = context.args,
+            grammar = context.grammar,
+            named_captures = copy_map(context.named_captures),
+        }
+        local nextPosition, nextCaptures = match_node(node.left, subject, position, leftContext)
         if nextPosition then
+            context.named_captures = leftContext.named_captures
             return nextPosition, nextCaptures
         end
-        return match_node(node.right, subject, position, context)
+
+        local rightContext = {
+            args = context.args,
+            grammar = context.grammar,
+            named_captures = copy_map(context.named_captures),
+        }
+        local rightPosition, rightCaptures, rightError = match_node(node.right, subject, position, rightContext)
+        if rightPosition then
+            context.named_captures = rightContext.named_captures
+            return rightPosition, rightCaptures
+        end
+        return nil, nil, rightError
     end
 
     if kind == 'repeat' then
+        local workingNamedCaptures = copy_map(context.named_captures)
+        local workingContext = {
+            args = context.args,
+            grammar = context.grammar,
+            named_captures = workingNamedCaptures,
+        }
+
         local captures = {}
         local currentPosition = position
         local count = 0
@@ -164,7 +208,7 @@ local function match_node(node, subject, position, context)
                 break
             end
 
-            local nextPosition, nextCaptures = match_node(node.child, subject, currentPosition, context)
+            local nextPosition, nextCaptures = match_node(node.child, subject, currentPosition, workingContext)
             if not nextPosition then
                 break
             end
@@ -181,6 +225,7 @@ local function match_node(node, subject, position, context)
             return nil, nil, node.label
         end
 
+        context.named_captures = workingNamedCaptures
         return currentPosition, captures
     end
 
@@ -236,18 +281,33 @@ local function match_node(node, subject, position, context)
         return position, { position }
     end
 
+    if kind == 'capture_backref' then
+        local value = context.named_captures and context.named_captures[node.name]
+        if value == nil then
+            return nil, nil, node.label or ('undefined capture: ' .. tostring(node.name))
+        end
+        if type(value) == 'table' then
+            return position, copy_values(value)
+        end
+        return position, { value }
+    end
+
     if kind == 'capture_group' then
         local nextPosition, nextCaptures, nextError = match_node(node.child, subject, position, context)
         if not nextPosition then
             return nil, nil, nextError
         end
-        return nextPosition, {
-            {
-                _lpeg_group = true,
-                name = node.name,
-                values = nextCaptures,
-            }
-        }
+        if node.name then
+            if not context.named_captures then
+                context.named_captures = {}
+            end
+            if #nextCaptures == 1 then
+                context.named_captures[node.name] = nextCaptures[1]
+            else
+                context.named_captures[node.name] = copy_values(nextCaptures)
+            end
+        end
+        return nextPosition, nextCaptures
     end
 
     if kind == 'capture_table' then
@@ -343,6 +403,7 @@ local function match_node(node, subject, position, context)
         local childContext = {
             args = context.args,
             grammar = node,
+            named_captures = copy_map(context.named_captures),
         }
         local startRule = node.rules[node.start]
         if not startRule then
@@ -433,6 +494,7 @@ function pattern_mt:match(subject, init, ...)
     local context = {
         args = { ... },
         grammar = self.kind == 'grammar' and self or nil,
+        named_captures = {},
     }
 
     local nextPosition, captures, err = match_node(self, subject, startPosition, context)
@@ -552,6 +614,10 @@ function m.Cg(child, name)
     return new_pattern('capture_group', { child = normalize(child), name = name })
 end
 
+function m.Cb(name)
+    return new_pattern('capture_backref', { name = name })
+end
+
 function m.Cc(...)
     return new_pattern('capture_constant', { values = { ... } })
 end
@@ -580,6 +646,13 @@ function m.T(label)
     return new_pattern('fail', { label = label })
 end
 
+function m.type(value)
+    if is_pattern(value) then
+        return 'pattern'
+    end
+    return type(value)
+end
+
 function m.locale(predef)
     local function make_chars(first, last)
         local chars = {}
@@ -604,5 +677,7 @@ end
 function m.match(pattern, subject, init, ...)
     return normalize(pattern):match(subject, init, ...)
 end
+
+print('lpeglabel.lua loaded')
 
 return m

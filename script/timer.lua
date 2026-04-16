@@ -1,20 +1,12 @@
 print('including script/timer.lua')
 
-print('1')
 local time         = require 'bee.time'
-print('2')
 local setmetatable = setmetatable
-print('3')
 local mathMax      = math.max
-print('4')
 local mathFloor    = math.floor
-print('5')
 local monotonic    = time.monotonic
-print('6')
 local xpcall       = xpcall
-print('7')
 local logError     = log.error
-print('8')
 
 _ENV = nil
 
@@ -250,5 +242,6 @@ end
 function m.timeJump(delta)
     fwFrame = fwFrame + mathFloor(delta * 1000.0)
 end
+
 
 return m

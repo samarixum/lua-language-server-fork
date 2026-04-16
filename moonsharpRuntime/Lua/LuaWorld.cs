@@ -58,6 +58,37 @@ internal class LuaWorld {
         return null;
     }
 
+    private void InstallMathCompatibility() {
+        var mathValue = LuaScript.Globals.Get("math");
+        Table mathTable;
+        if (mathValue.Type == DataType.Table) {
+            mathTable = mathValue.Table;
+        } else {
+            mathTable = new Table(LuaScript);
+            LuaScript.Globals["math"] = mathTable;
+        }
+
+        mathTable["tointeger"] = DynValue.NewCallback((context, callbackArguments) => {
+            if (callbackArguments.Count < 1 || callbackArguments[0].Type != DataType.Number) {
+                return DynValue.NewNil();
+            }
+
+            double value = callbackArguments[0].Number;
+            if (double.IsNaN(value) || double.IsInfinity(value)) {
+                return DynValue.NewNil();
+            }
+
+            double integerValue = System.Math.Truncate(value);
+            if (integerValue != value) {
+                return DynValue.NewNil();
+            }
+
+            return DynValue.NewNumber(integerValue);
+        }, "math.tointeger");
+
+        mathTable["maxinteger"] = DynValue.NewNumber(9007199254740991d);
+    }
+
     private void InstallRequireShim() {
         LuaScript.Globals["require"] = DynValue.NewCallback((context, callbackArguments) => {
             if (callbackArguments.Count < 1) {
@@ -181,6 +212,7 @@ internal class LuaWorld {
         LuaScript.Globals["ThisScriptPath"] = DynValue.NewString(fullScriptPath);
         LuaScript.Globals["ThisScriptDir"] = DynValue.NewString(fullScriptDir);
         InstallRequireShim();
+        InstallMathCompatibility();
 
         // global tables, alongside sdk table, to be set as Script.Globals[""] in LuaScriptAction.private.cs::SetupCoreFunctions()
         // here only for centralized management of all tables

@@ -1,3 +1,5 @@
+print('including parser/guide.lua')
+
 local error        = error
 local type         = type
 

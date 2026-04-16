@@ -360,29 +360,24 @@ local searchFieldSwitch = util.switch()
                         return
                     end
                     for _, def in ipairs(vm.getDefs(doc)) do
-                        if def.type ~= 'doc.enum' then
-                            goto CONTINUE
-                        end
-                        local tbl = def.bindSource
-                        if not tbl then
-                            return
-                        end
-                        for _, field in ipairs(tbl) do
-                            if field.type == 'tablefield'
-                            or field.type == 'tableindex' then
-                                if not field.value then
-                                    goto CONTINUE
+                        if def.type == 'doc.enum' then
+                            local tbl = def.bindSource
+                            if not tbl then
+                                return
+                            end
+                            for _, field in ipairs(tbl) do
+                                if (field.type == 'tablefield'
+                                or field.type == 'tableindex')
+                                and field.value then
+                                    local fieldKey = guide.getKeyName(field)
+                                    if key == vm.ANY
+                                    or key == vm.ANYDOC
+                                    or key == fieldKey then
+                                        pushResult(field)
+                                    end
                                 end
-                                local fieldKey = guide.getKeyName(field)
-                                if key == vm.ANY
-                                or key == vm.ANYDOC
-                                or key == fieldKey then
-                                    pushResult(field)
-                                end
-                                ::CONTINUE::
                             end
                         end
-                        ::CONTINUE::
                     end
                 end
             end
@@ -412,46 +407,10 @@ local searchFieldSwitch = util.switch()
             end
         end
     end)
-    : case 'doc.type.table'
-    : call(function (_suri, source, key, pushResult)
-        if type(key) == 'string' and key:find(vm.ID_SPLITE) then
-            return
-        end
-        for _, field in ipairs(source.fields) do
-            local fieldKey = field.name
-            if fieldKey.type == 'doc.type' then
-                local fieldNode = vm.compileNode(fieldKey)
-                for fn in fieldNode:eachObject() do
-                    if fn.type == 'global' and fn.cate == 'type' then
-                        if key == vm.ANY
-                        or key == vm.ANYDOC
-                        or fn.name == 'any'
-                        or (fn.name == 'boolean' and type(key) == 'boolean')
-                        or (fn.name == 'number'  and type(key) == 'number')
-                        or (fn.name == 'integer' and math.tointeger(key))
-                        or (fn.name == 'string'  and type(key) == 'string') then
-                            pushResult(field, true)
-                        end
-                    elseif fn.type == 'doc.type.string'
-                    or     fn.type == 'doc.type.integer'
-                    or     fn.type == 'doc.type.boolean' then
-                        if key == vm.ANY
-                        or key == vm.ANYDOC
-                        or fn[1] == key then
-                            pushResult(field, true)
-                        end
-                    end
-                end
-            end
-            if fieldKey.type == 'doc.field.name' then
-                if key == vm.ANY or key == vm.ANYDOC or fieldKey[1] == key then
-                    pushResult(field, true)
-                end
-            end
-        end
-    end)
     : case 'doc.type.sign'
-    : call(function (suri, source, key, pushResult)
+    : call(function (source)
+        local uri = guide.getUri(source)
+        vm.setNode(source, source)
         if not source.node[1] then
             return
         end
@@ -459,16 +418,12 @@ local searchFieldSwitch = util.switch()
         if not globalVar then
             return
         end
-        vm.getClassFields(suri, globalVar, key, function (field, isMark)
-            if source.signs then
-                local newField = resolveGenericField(suri, globalVar, field, source.signs)
-                if newField then
-                    pushResult(newField, isMark)
-                    return
-                end
+        for _, set in ipairs(globalVar:getSets(uri)) do
+            if set.type == 'doc.class' and set.extends then
+                local resolved = vm.getGeneric(set.extends):resolve(uri, source.signs)
+                vm.setNode(source, resolved)
             end
-            pushResult(field, isMark)
-        end)
+        end
     end)
     : case 'global'
     : call(function (suri, node, key, pushResult)
@@ -532,21 +487,16 @@ function vm.getClassFields(suri, object, key, pushResult)
                     local fieldKey = guide.getKeyName(field)
                     if fieldKey then
                         -- ---@field x boolean -> class.x
-                        if key == vm.ANY
+                        if (key == vm.ANY
                         or key == vm.ANYDOC
-                        or fieldKey == key then
-                            if not searchedFields[fieldKey] then
-                                pushResult(field, true)
-                                hasFounded[fieldKey] = true
-                            end
+                        or fieldKey == key)
+                        and not searchedFields[fieldKey] then
+                            pushResult(field, true)
+                            hasFounded[fieldKey] = true
                         end
-                        goto CONTINUE
-                    end
-                    if key == vm.ANY or key == vm.ANYDOC then
+                    elseif key == vm.ANY or key == vm.ANYDOC then
                         pushResult(field, true)
-                        goto CONTINUE
                     end
-                    ::CONTINUE::
                 end
             end
         end
@@ -628,46 +578,43 @@ function vm.getClassFields(suri, object, key, pushResult)
                 if set.type == 'doc.class' then
                     for _, field in ipairs(set.fields) do
                         local fieldKey = guide.getKeyName(field)
-                        if fieldKey then
-                            -- already processed above
-                            goto CONTINUE
-                        end
-                        local keyType = type(key)
-                        if keyType == 'table' then
-                            -- ---@field [integer] boolean -> class[integer]
-                            local fieldNode = vm.compileNode(field.field)
-                            if vm.isSubType(suri, key.name, fieldNode) then
-                                local nkey = '|' .. key.name
-                                if not searchedFields[nkey] then
-                                    pushResult(field, true)
-                                    hasFounded[nkey] = true
-                                end
-                            end
-                        else
-                            local keyObject
-                            if keyType == 'number' then
-                                if math.tointeger(key) then
-                                    keyObject = { type = 'integer', [1] = key }
-                                else
-                                    keyObject = { type = 'number', [1] = key }
-                                end
-                            elseif keyType == 'boolean'
-                            or     keyType == 'string' then
-                                keyObject = { type = keyType, [1] = key }
-                            end
-                            if keyObject and field.field.type ~= 'doc.field.name' then
-                                -- ---@field [integer] boolean -> class[1]
+                        if not fieldKey then
+                            local keyType = type(key)
+                            if keyType == 'table' then
+                                -- ---@field [integer] boolean -> class[integer]
                                 local fieldNode = vm.compileNode(field.field)
-                                if vm.isSubType(suri, keyObject, fieldNode) then
-                                    local nkey = '|' .. keyType
+                                if vm.isSubType(suri, key.name, fieldNode) then
+                                    local nkey = '|' .. key.name
                                     if not searchedFields[nkey] then
                                         pushResult(field, true)
                                         hasFounded[nkey] = true
                                     end
                                 end
+                            else
+                                local keyObject
+                                if keyType == 'number' then
+                                    if math.tointeger(key) then
+                                        keyObject = { type = 'integer', [1] = key }
+                                    else
+                                        keyObject = { type = 'number', [1] = key }
+                                    end
+                                elseif keyType == 'boolean'
+                                or     keyType == 'string' then
+                                    keyObject = { type = keyType, [1] = key }
+                                end
+                                if keyObject and field.field.type ~= 'doc.field.name' then
+                                    -- ---@field [integer] boolean -> class[1]
+                                    local fieldNode = vm.compileNode(field.field)
+                                    if vm.isSubType(suri, keyObject, fieldNode) then
+                                        local nkey = '|' .. keyType
+                                        if not searchedFields[nkey] then
+                                            pushResult(field, true)
+                                            hasFounded[nkey] = true
+                                        end
+                                    end
+                                end
                             end
                         end
-                        ::CONTINUE::
                     end
                 end
             end
@@ -889,7 +836,7 @@ function vm.bindAs(source)
             index = left
             break
         end
-        index = left + (right - left) // 2
+        index = left + math.floor((right - left) / 2)
         local doc = ases[index]
         if doc.touch < source.finish then
             left = index + 1
@@ -1375,19 +1322,16 @@ local function compileFunctionParam(func, source)
         local refs = func.parent.ref
         local found
         for _, ref in ipairs(refs) do
-            if ref.parent.type ~= 'call' then
-                goto continue
+            if ref.parent.type == 'call' then
+                local caller = ref.parent
+                if caller.args then
+                    local callerArg = caller.args[aindex]
+                    if callerArg then
+                        vm.setNode(source, vm.compileNode(callerArg))
+                        found = true
+                    end
+                end
             end
-            local caller = ref.parent
-            if not caller.args then
-                goto continue
-            end
-            local callerArg = caller.args[aindex]
-            if callerArg then
-                vm.setNode(source, vm.compileNode(callerArg))
-                found = true
-            end
-            ::continue::
         end
         if found then
             return true
@@ -1401,77 +1345,36 @@ local function compileFunctionParam(func, source)
             register(callback)
         ]]
         for _, ref in ipairs(refs) do
-            if ref.parent.type ~= 'callargs' then
-                goto continue
-            end
-            -- the parent function is a variable used as callback param, find the callback arg index first
-            local call = ref.parent.parent
-            local cbIndex
-            for i, arg in ipairs(call.args) do
-                if arg == ref then
-                    cbIndex = i
-                    break
-                end
-            end
-            ---@cast cbIndex integer
-
-            -- simulate a completion at `cbIndex` to infer this callback function type
-            ---@diagnostic disable-next-line: missing-fields
-            local node = vm.compileCallArg({ type = 'dummyarg', uri = guide.getUri(call) }, call, cbIndex)
-            if not node then
-                goto continue
-            end
-            for n in node:eachObject() do
-                -- check if the inferred function has arg at `aindex`
-                if n.type == 'doc.type.function' and n.args and n.args[aindex] then
-                    -- use type info on this `aindex` arg
-                    local argNode = vm.compileNode(n.args[aindex])
-                    for an in argNode:eachObject() do
-                        if an.type ~= 'doc.generic.name' then
-                            vm.setNode(source, an)
-                            found = true
-                        end
+            if ref.parent.type == 'callargs' then
+                -- the parent function is a variable used as callback param, find the callback arg index first
+                local call = ref.parent.parent
+                local cbIndex
+                for i, arg in ipairs(call.args) do
+                    if arg == ref then
+                        cbIndex = i
+                        break
                     end
                 end
-            end
-            ::continue::
-        end
-        if found then
-            return true
-        end
-    end
+                ---@cast cbIndex integer
 
-    do
-        local parent = func.parent
-        local key = vm.getKeyName(parent)
-        local classDef = vm.getParentClass(parent)
-        local suri = guide.getUri(func)
-        if classDef and key then
-            local found
-            for _, set in ipairs(classDef:getSets(suri)) do
-                if set.type == 'doc.class' and set.extends then
-                    for _, ext in ipairs(set.extends) do
-                        if not ext[1] then
-                            goto continue
-                        end
-                        local extClass = vm.getGlobal('type', ext[1])
-                        if not extClass then
-                            goto continue
-                        end
-                        vm.getClassFields(suri, extClass, key, function (field, _isMark)
-                            for n in vm.compileNode(field):eachObject() do
-                                if n.type == 'function' and n.args[aindex] then
-                                    local argNode = vm.compileNode(n.args[aindex])
-                                    for an in argNode:eachObject() do
-                                        if an.type ~= 'doc.generic.name' then
-                                            vm.setNode(source, an)
-                                            found = true
-                                        end
+                -- simulate a completion at `cbIndex` to infer this callback function type
+                ---@diagnostic disable-next-line: missing-fields
+                local node = vm.compileCallArg({ type = 'dummyarg', uri = guide.getUri(call) }, call, cbIndex)
+                if node then
+                    for n in node:eachObject() do
+                        -- check if the inferred function has arg at `aindex`
+                        if n.type == 'doc.type.function' and n.args and n.args[aindex] then
+                            -- use type info on this `aindex` arg
+                            local argNode = vm.compileNode(n.args[aindex])
+                            if argNode then
+                                for an in argNode:eachObject() do
+                                    if an.type ~= 'doc.generic.name' then
+                                        vm.setNode(source, an)
+                                        found = true
                                     end
                                 end
                             end
-                        end)
-                        ::continue::
+                        end
                     end
                 end
             end
@@ -2350,26 +2253,9 @@ local compilerSwitch = util.switch()
             return
         end
         for _, set in ipairs(globalVar:getSets(uri)) do
-            if set.type == 'doc.class' then
-                if set.extends then
-                    for _, ext in ipairs(set.extends) do
-                        if ext.type == 'doc.type.table' then
-                            if vm.getGeneric(ext) then
-                                local resolved = vm.getGeneric(ext):resolve(uri, source.signs)
-                                for obj in resolved:eachObject() do
-                                    obj.hideView = true
-                                end
-                                vm.setNode(source, resolved)
-                            end
-                        end
-                    end
-                end
-            end
-            if set.type == 'doc.alias' then
-                if vm.getGeneric(set.extends) then
-                    local resolved = vm.getGeneric(set.extends):resolve(uri, source.signs)
-                    vm.setNode(source, resolved)
-                end
+            if set.type == 'doc.class' and set.extends then
+                local resolved = vm.getGeneric(set.extends):resolve(uri, source.signs)
+                vm.setNode(source, resolved)
             end
         end
     end)
@@ -2480,21 +2366,19 @@ local compilerSwitch = util.switch()
         vm.setNode(source, globalNode)
         if globalNode.cate == 'variable' then
             for luri, link in pairs(globalNode.links) do
-                if not scp:isVisible(luri) then
-                    goto continue
-                end
-                local firstSet = link.sets[1]
-                if firstSet then
-                    local setNode = vm.compileNode(firstSet)
-                    vm.setNode(source, setNode)
-                    if vm.isMetaFile(luri) then
-                        for i = 2, #link.sets do
-                            setNode = vm.compileNode(link.sets[i])
-                            vm.setNode(source, setNode)
+                if scp:isVisible(luri) then
+                    local firstSet = link.sets[1]
+                    if firstSet then
+                        local setNode = vm.compileNode(firstSet)
+                        vm.setNode(source, setNode)
+                        if vm.isMetaFile(luri) then
+                            for i = 2, #link.sets do
+                                setNode = vm.compileNode(link.sets[i])
+                                vm.setNode(source, setNode)
+                            end
                         end
                     end
                 end
-                ::continue::
             end
         end
         if globalNode.cate == 'type' then

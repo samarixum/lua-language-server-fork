@@ -1,3 +1,5 @@
+print('including parser/relabel.lua')
+
 -- $Id: re.lua,v 1.44 2013/03/26 20:11:40 roberto Exp $
 
 -- imported functions and modules
@@ -6,7 +8,7 @@ local pcall = pcall
 local setmetatable = setmetatable
 local tinsert, concat = table.insert, table.concat
 local rep = string.rep
-local m = require"lpeglabel"
+local m = require("lpeglabel")
 
 -- 'm' will be used to parse expressions, and 'mm' will be used to
 -- create expressions; that is, 're' runs on 'm', creating patterns
@@ -15,8 +17,6 @@ local mm = m
 
 -- pattern's metatable
 local mt = getmetatable(mm.P(0))
-
-
 
 -- No more global accesses after this point
 _ENV = nil
@@ -116,10 +116,7 @@ local function updatelocale ()
   setmetatable(gmem, mt)
 end
 
-
 updatelocale()
-
-
 
 local I = m.P(function (s,i) print(i, s:sub(1, i-1)); return i end)
 
@@ -131,7 +128,6 @@ local function getdef (id, defs)
   end
   return c
 end
-
 
 local function mult (p, n)
   local np = mm.P(true)
@@ -259,6 +255,7 @@ local exp = m.P{ "Exp",
                 adddef) / mm.P;
 }
 
+
 local pattern = S * m.Cg(m.Cc(false), "G") * expect(exp, "NoPatt") / mm.P
                 * S * expect(-any, "ExtraChars")
 
@@ -282,7 +279,6 @@ local function calcline (s, i)
   return 1 + line, col ~= 0 and col or 1
 end
 
-
 local function splitlines(str)
   local t = {}
   local function helper(line) tinsert(t, line) return "" end
@@ -290,7 +286,7 @@ local function splitlines(str)
   return t
 end
 
-local function compile (p, defs)
+local function compile(p, defs)
   if mm.type(p) == "pattern" then return p end   -- already compiled
   p = p .. " " -- for better reporting of column numbers in errors when at EOF
   local ok, cp, label, poserr = pcall(function() return pattern:match(p, 1, defs) end)
@@ -312,7 +308,8 @@ local function compile (p, defs)
   return cp
 end
 
-local function match (s, p, i)
+
+local function match(s, p, i)
   local cp = mem[p]
   if not cp then
     cp = compile(p)
@@ -321,7 +318,7 @@ local function match (s, p, i)
   return cp:match(s, i or 1)
 end
 
-local function find (s, p, i)
+local function find(s, p, i)
   local cp = fmem[p]
   if not cp then
     cp = compile(p) / 0
@@ -334,7 +331,7 @@ local function find (s, p, i)
   end
 end
 
-local function gsub (s, p, rep)
+local function gsub(s, p, rep)
   local g = gmem[p] or {}   -- ensure gmem[p] is not collected while here
   gmem[p] = g
   local cp = g[rep]
@@ -356,5 +353,7 @@ local re = {
   updatelocale = updatelocale,
 	calcline = calcline
 }
+
+print('parser/relabel.lua loaded')
 
 return re

@@ -2,25 +2,30 @@ local error = error
 local strchar = string.char
 local strbyte = string.byte
 local strmatch = string.match
-local utf8char = utf8.char
 local tconcat = table.concat
 
 local function be_tochar(code)
-    return strchar((code >> 8) & 0xFF, code & 0xFF)
+    return strchar(math.floor(code / 0x100), code % 0x100)
 end
 
 local function be_tobyte(s, i)
     local h, l = strbyte(s, i, i+1)
-    return (h << 8) | l
+    if not h or not l then
+        return nil
+    end
+    return h * 0x100 + l
 end
 
 local function le_tochar(code)
-    return strchar(code & 0xFF, (code >> 8) & 0xFF)
+    return strchar(code % 0x100, math.floor(code / 0x100))
 end
 
 local function le_tobyte(s, i)
     local l, h = strbyte(s, i, i+1)
-    return (h << 8) | l
+    if not h or not l then
+        return nil
+    end
+    return h * 0x100 + l
 end
 
 local function utf16char(tochar, code)
@@ -28,7 +33,7 @@ local function utf16char(tochar, code)
         return tochar(code)
     else
         code = code - 0x10000
-        return tochar(0xD800 + (code >> 10))..tochar(0xDC00 + (code & 0x3FF))
+        return tochar(0xD800 + math.floor(code / 0x400))..tochar(0xDC00 + (code % 0x400))
     end
 end
 
@@ -37,6 +42,9 @@ local function utf16next(s, n, tobyte)
         return
     end
     local code1 = tobyte(s, n)
+    if not code1 then
+        return
+    end
     if code1 < 0xD800 or code1 >= 0xE000 then
         return n+2, code1
     elseif code1 >= 0xD800 and code1 < 0xDC00 then
@@ -45,10 +53,13 @@ local function utf16next(s, n, tobyte)
             return n --invaild
         end
         local code2 = tobyte(s, n)
+        if not code2 then
+            return n --invaild
+        end
         if code2 < 0xDC00 or code2 >= 0xE000 then
             return n --invaild
         end
-        local code = 0x10000 + ((code1 - 0xD800) << 10) + ((code2 - 0xDC00) & 0x3FF)
+        local code = 0x10000 + (code1 - 0xD800) * 0x400 + (code2 - 0xDC00)
         return n+2, code
     else
         return n+2 --invaild
@@ -61,48 +72,66 @@ local function utf16codes(s, tobyte)
     end, s, 1
 end
 
-local _utf8byte = utf8.codes ""
-local function utf8byte(s, n)
-    local _, code = _utf8byte(s, n-1)
-    return code
+local function utf8char(code)
+    if code < 0x80 then
+        return strchar(code)
+    elseif code < 0x800 then
+        return strchar(
+            math.floor(code / 0x40) + 0xC0,
+            (code % 0x40) + 0x80
+        )
+    elseif code < 0x10000 then
+        return strchar(
+            math.floor(code / 0x1000) + 0xE0,
+            math.floor(code / 0x40) % 0x40 + 0x80,
+            (code % 0x40) + 0x80
+        )
+    else
+        return strchar(
+            math.floor(code / 0x40000) + 0xF0,
+            math.floor(code / 0x1000) % 0x40 + 0x80,
+            math.floor(code / 0x40) % 0x40 + 0x80,
+            (code % 0x40) + 0x80
+        )
+    end
 end
 
---[[
-  U+0000..  U+007F 00..7F
-  U+0080..  U+07FF C2..DF 80..BF
-  U+0800..  U+0FFF E0     A0..BF 80..BF
-  U+1000..  U+CFFF E1..EC 80..BF 80..BF
-  U+D000..  U+D7FF ED     80..9F 80..BF
-  U+E000..  U+FFFF EE..EF 80..BF 80..BF
- U+10000.. U+3FFFF F0     90..BF 80..BF 80..BF
- U+40000.. U+FFFFF F1..F3 80..BF 80..BF 80..BF
-U+100000..U+10FFFF F4     80..8F 80..BF 80..BF
-]]
 local function utf8next(s, n)
     if n > #s then
         return
     end
-    if strmatch(s, "^[\0-\x7F]", n) then
-        return n+1, utf8byte(s, n)
-    elseif strmatch(s, "^[\xC2-\xDF][\x80-\xBF]", n) then
-        return n+2, utf8byte(s, n)
-    elseif strmatch(s, "^[\xE0][\xA0-\xBF][\x80-\xBF]", n) then
-        return n+3, utf8byte(s, n)
-    elseif strmatch(s, "^[\xE1-\xEC][\x80-\xBF][\x80-\xBF]", n) then
-        return n+3, utf8byte(s, n)
-    elseif strmatch(s, "^[\xED][\x80-\x9F][\x80-\xBF]", n) then
-        return n+3, utf8byte(s, n)
-    elseif strmatch(s, "^[\xEE-\xEF][\x80-\xBF][\x80-\xBF]", n) then
-        return n+3, utf8byte(s, n)
-    elseif strmatch(s, "^[\xF0][\x90-\xBF][\x80-\xBF][\x80-\xBF]", n) then
-        return n+4, utf8byte(s, n)
-    elseif strmatch(s, "^[\xF1-\xF3][\x80-\xBF][\x80-\xBF][\x80-\xBF]", n) then
-        return n+4, utf8byte(s, n)
-    elseif strmatch(s, "^[\xF4][\x80-\x8F][\x80-\xBF][\x80-\xBF]", n) then
-        return n+4, utf8byte(s, n)
-    else
-        return n+1 --invaild
+
+    local b1 = strbyte(s, n)
+    if not b1 then
+        return
     end
+    if b1 < 0x80 then
+        return n + 1, b1
+    end
+
+    local b2 = strbyte(s, n + 1)
+    local b3 = strbyte(s, n + 2)
+    local b4 = strbyte(s, n + 3)
+
+    if b1 >= 0xC2 and b1 <= 0xDF and b2 and b2 >= 0x80 and b2 <= 0xBF then
+        return n + 2, (b1 - 0xC0) * 0x40 + (b2 - 0x80)
+    elseif b1 == 0xE0 and b2 and b2 >= 0xA0 and b2 <= 0xBF and b3 and b3 >= 0x80 and b3 <= 0xBF then
+        return n + 3, (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
+    elseif b1 >= 0xE1 and b1 <= 0xEC and b2 and b2 >= 0x80 and b2 <= 0xBF and b3 and b3 >= 0x80 and b3 <= 0xBF then
+        return n + 3, (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
+    elseif b1 == 0xED and b2 and b2 >= 0x80 and b2 <= 0x9F and b3 and b3 >= 0x80 and b3 <= 0xBF then
+        return n + 3, (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
+    elseif b1 >= 0xEE and b1 <= 0xEF and b2 and b2 >= 0x80 and b2 <= 0xBF and b3 and b3 >= 0x80 and b3 <= 0xBF then
+        return n + 3, (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
+    elseif b1 == 0xF0 and b2 and b2 >= 0x90 and b2 <= 0xBF and b3 and b3 >= 0x80 and b3 <= 0xBF and b4 and b4 >= 0x80 and b4 <= 0xBF then
+        return n + 4, (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80)
+    elseif b1 >= 0xF1 and b1 <= 0xF3 and b2 and b2 >= 0x80 and b2 <= 0xBF and b3 and b3 >= 0x80 and b3 <= 0xBF and b4 and b4 >= 0x80 and b4 <= 0xBF then
+        return n + 4, (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80)
+    elseif b1 == 0xF4 and b2 and b2 >= 0x80 and b2 <= 0x8F and b3 and b3 >= 0x80 and b3 <= 0xBF and b4 and b4 >= 0x80 and b4 <= 0xBF then
+        return n + 4, (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80)
+    end
+
+    return n + 1, nil
 end
 
 local function utf8codes(s)
