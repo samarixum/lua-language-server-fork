@@ -5,6 +5,10 @@ This repository contains a fork of the Lua Language Server.
 This project was implemented for standard lua but is now being slowly refactored to support moonsharp only by rewriting the 5.2 api definitions and removing any non moonsharp compatible code. The project is still in early stages and is not yet ready for production use.
 
 
+project has changed and is now removing all original non 5.2 logic and external deps, including replacing the current lls.exe with a new moonsharp lls written in C# using moonsharp as the runtime.
+this will mean modifiying all scripts/*.lua files to remove any non moonsharp compatible code and also removing all lua 5.* specific logics leaving only 5.2/moonsharp code
+this will mean that the api definitions and the language server itself are all using moonsharp and all external deps can be removed, vastly simplifying the project and making it more maintainable, especially with the removal of C stuff
+
 
 This document provides an overview of the directory structure and key files within the project.
 

@@ -147,8 +147,8 @@ internal class LuaWorld {
 
                 loadedTable[moduleName] = result;
                 return result;
-            } catch {
-                System.Console.Error.WriteLine($"[Moonsharpy] require('{moduleName}') failed");
+            } catch (Exception ex) {
+                System.Console.Error.WriteLine($"[Moonsharpy] require('{moduleName}') failed: {ex}");
                 loadedTable[moduleName] = DynValue.NewNil();
                 throw;
             }

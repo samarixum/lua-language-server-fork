@@ -16,14 +16,17 @@ local string_sub = string.sub
 local string_format = string.format
 local setmetatable = setmetatable
 local getmetatable = getmetatable
-local huge = math.huge
+local math_module = math
+local huge = math_module and math_module.huge or (1 / 0)
 local tiny = -huge
 
 local utf8_char
 local math_type
 
 if _VERSION == "Moonsharp 2.0.0.0" then
-    local math_floor = math.floor
+    local math_floor = math_module and math_module.floor or function (v)
+        return v - v % 1
+    end
     function utf8_char(c)
         if c <= 0x7f then
             return string_char(c)
@@ -53,7 +56,12 @@ if _VERSION == "Moonsharp 2.0.0.0" then
     end
 else
     utf8_char = utf8.char
-    math_type = math.type
+    math_type = math_module and math_module.type or function (v)
+        if v % 1 == 0 then
+            return "integer"
+        end
+        return "float"
+    end
 end
 
 local json = {}

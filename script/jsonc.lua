@@ -11,9 +11,12 @@ local string_sub = string.sub
 local string_format = string.format
 
 local utf8_char
+local math_module = math
 
 if _VERSION == "Moonsharp 2.0.0.0" then
-    local math_floor = math.floor
+    local math_floor = math_module and math_module.floor or function (v)
+        return v - v % 1
+    end
     function utf8_char(c)
         if c <= 0x7f then
             return string_char(c)

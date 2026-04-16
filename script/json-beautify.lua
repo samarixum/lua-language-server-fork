@@ -8,9 +8,12 @@ local string_rep = string.rep
 local setmetatable = setmetatable
 
 local math_type
+local math_module = math
 
 if _VERSION == "Lua 5.1" or _VERSION == "Moonsharp 2.0.0.0" then
-    local math_floor = math.floor
+    local math_floor = math_module and math_module.floor or function (v)
+        return v - v % 1
+    end
     function math_type(v)
         if v >= -2147483648 and v <= 2147483647 and math_floor(v) == v then
             return "integer"
@@ -18,7 +21,12 @@ if _VERSION == "Lua 5.1" or _VERSION == "Moonsharp 2.0.0.0" then
         return "float"
     end
 else
-    math_type = math.type
+    math_type = math_module and math_module.type or function (v)
+        if v % 1 == 0 then
+            return "integer"
+        end
+        return "float"
+    end
 end
 
 local statusVisited
