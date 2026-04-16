@@ -1,4 +1,4 @@
-local fsu = require 'fs-utility'
+local fsu = require("script.fs-utility")
 
 -- Internal helper to parse package.json if the changelog is missing
 local function loadFromPackageJson()

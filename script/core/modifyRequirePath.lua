@@ -1,11 +1,11 @@
-local files  = require 'files'
-local await  = require 'await'
-local guide  = require 'parser.guide'
-local rpath  = require 'workspace.require-path'
-local furi   = require 'file-uri'
-local util   = require 'utility'
-local client = require 'client'
-local lang   = require 'language'
+local files  = require("script.files")
+local await  = require("script.await")
+local guide  = require("script.parser.guide")
+local rpath  = require("script.workspace.require-path")
+local furi   = require("script.file-uri")
+local util   = require("script.utility")
+local client = require("script.client")
+local lang   = require("script.language")
 
 ---@alias rename { oldUri: uri, newUri: uri }
 

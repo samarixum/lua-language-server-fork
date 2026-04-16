@@ -1,13 +1,13 @@
-local gc      = require 'gc'
-local util    = require 'utility'
-local proto   = require 'proto'
-local await   = require 'await'
-local timer   = require 'timer'
-local pub     = require 'pub'
-local json    = require 'json'
-local define  = require 'proto.define'
+local gc      = require("script.gc")
+local util    = require("script.utility")
+local proto   = require("script.proto")
+local await   = require("script.await")
+local timer   = require("script.timer")
+local pub     = require("script.pub.pub")
+local json    = require("script.json")
+local define  = require("script.proto.define")
 
-require 'provider'
+require("script.provider")
 
 local counter = util.counter()
 
@@ -36,9 +36,9 @@ end
 
 function mt:_flushServer()
     -- reset scopes
-    local ws    = require 'workspace'
-    local scope = require 'workspace.scope'
-    local files = require 'files'
+    local ws    = require("script.workspace")
+    local scope = require("script.workspace.scope")
+    local files = require("script.files")
     ws.reset()
     scope.reset()
     files.reset()

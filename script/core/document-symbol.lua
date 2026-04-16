@@ -1,9 +1,9 @@
-local await    = require 'await'
-local files    = require 'files'
-local guide    = require 'parser.guide'
-local define   = require 'proto.define'
-local util     = require 'utility'
-local subber   = require 'core.substring'
+local await    = require("script.await")
+local files    = require("script.files")
+local guide    = require("script.parser.guide")
+local define   = require("script.proto.define")
+local util     = require("script.utility")
+local subber   = require("script.core.substring")
 
 ---@param text string
 ---@return string

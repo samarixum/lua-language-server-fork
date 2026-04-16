@@ -1,6 +1,6 @@
-local files   = require 'files'
-local lang    = require 'language'
-local vm      = require 'vm'
+local files   = require("script.files")
+local lang    = require("script.language")
+local vm      = require("script.vm")
 
 return function (uri, callback)
     local state = files.getState(uri)

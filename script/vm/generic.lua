@@ -1,5 +1,5 @@
 ---@class vm
-local vm      = require 'vm.vm'
+local vm      = require("script.vm.vm")
 
 ---@class parser.object
 ---@field package _generic vm.generic

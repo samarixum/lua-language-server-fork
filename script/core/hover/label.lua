@@ -1,13 +1,13 @@
-local buildName   = require 'core.hover.name'
-local buildArgs   = require 'core.hover.args'
-local buildReturn = require 'core.hover.return'
-local buildTable  = require 'core.hover.table'
-local vm          = require 'vm'
-local util        = require 'utility'
-local lang        = require 'language'
-local config      = require 'config'
-local files       = require 'files'
-local guide       = require 'parser.guide'
+local buildName   = require("script.core.hover.name")
+local buildArgs   = require("script.core.hover.args")
+local buildReturn = require("script.core.hover.return")
+local buildTable  = require("script.core.hover.table")
+local vm          = require("script.vm")
+local util        = require("script.utility")
+local lang        = require("script.language")
+local config      = require("script.config")
+local files       = require("script.files")
+local guide       = require("script.parser.guide")
 
 local function asFunction(source, oop)
     local name  = buildName(source, oop)

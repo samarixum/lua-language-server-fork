@@ -1,10 +1,10 @@
 print('including parser/luadoc.lua')
 
-local m          = require 'lpeglabel'
-local re         = require 'parser.relabel'
-local guide      = require 'parser.guide'
-local compile    = require 'parser.compile'
-local util       = require 'utility'
+local m          = require("script.lpeglabel")
+local re         = require("script.parser.relabel")
+local guide      = require("script.parser.guide")
+local compile    = require("script.parser.compile")
+local util       = require("script.utility")
 
 local TokenTypes, TokenStarts, TokenFinishs, TokenContents, TokenMarks
 ---@type integer

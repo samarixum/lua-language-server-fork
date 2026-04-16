@@ -1,5 +1,5 @@
 
-local fs = require 'bee.filesystem'
+local fs = require("bee.filesystem")
 
 local type         = type
 local ioOpen       = io.open

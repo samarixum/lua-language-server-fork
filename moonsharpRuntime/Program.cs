@@ -11,8 +11,26 @@ namespace Moonsharpy;
 
 public static class Program {
 
+    // here unlike 5.5 lua-language-server.exe we skip the bin/main.lua and directly execute the bootstrap.lua
+    // this removes the need to modify require package.path to include the script directory from the bin/ folder
     private static string ResolveDefaultScriptPath() {
-        var baseDirectory = AppContext.BaseDirectory;
+        string baseDirectory = AppContext.BaseDirectory;
+
+        // Get the parent of the bin directory
+        DirectoryInfo? parentDirInfo = Directory.GetParent(baseDirectory);
+
+        // If the path ends in a slash, GetParent might return the current dir.
+        // We check if we are still inside "bin" and go up one more if needed.
+        if (parentDirInfo != null && baseDirectory.TrimEnd(Path.DirectorySeparatorChar).EndsWith("bin")) {
+            parentDirInfo = parentDirInfo.Parent;
+        }
+
+        if (parentDirInfo != null) {
+            string finalPath = Path.Combine(parentDirInfo.FullName, "bootstrap.lua");
+            Console.WriteLine($"Resolved path: {finalPath}");
+            return finalPath;
+        }
+
         return Path.Combine(baseDirectory, "main.lua");
     }
 

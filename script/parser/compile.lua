@@ -1,7 +1,7 @@
 print('loading parser/compile.lua...')
 
-local tokens     = require 'parser.tokens'
-local guide      = require 'parser.guide'
+local tokens     = require("script.parser.tokens")
+local guide      = require("script.parser.guide")
 local sbyte      = string.byte
 local sfind      = string.find
 local smatch     = string.match

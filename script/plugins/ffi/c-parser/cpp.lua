@@ -1,7 +1,7 @@
 local cpp = {}
 
-local typed = require("plugins.ffi.c-parser.typed")
-local c99 = require("plugins.ffi.c-parser.c99")
+local typed = require("script.plugins.ffi.c-parser.typed")
+local c99 = require("script.plugins.ffi.c-parser.c99")
 
 local SEP = package.config:sub(1,1)
 
@@ -14,7 +14,7 @@ end
 
 local function debug(...) end
 --[[
-local inspect = require("inspect")
+local inspect = require("script.inspect")
 local function debug(...)
     local args = { ... }
     for i, arg in ipairs(args) do

@@ -1,7 +1,7 @@
-local files  = require 'files'
-local guide  = require 'parser.guide'
-local define = require 'proto.define'
-local lang   = require 'language'
+local files  = require("script.files")
+local guide  = require("script.parser.guide")
+local define = require("script.proto.define")
+local lang   = require("script.language")
 
 return function (uri, callback)
     local ast = files.getState(uri)

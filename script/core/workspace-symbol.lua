@@ -1,8 +1,8 @@
-local files    = require 'files'
-local guide    = require 'parser.guide'
-local matchKey = require 'core.matchkey'
-local define   = require 'proto.define'
-local vm       = require 'vm'
+local files    = require("script.files")
+local guide    = require("script.parser.guide")
+local matchKey = require("script.core.matchkey")
+local define   = require("script.proto.define")
+local vm       = require("script.vm.vm")
 
 local function buildSource(source, key, results)
     if     source.type == 'local'

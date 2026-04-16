@@ -1,13 +1,13 @@
-local vm       = require 'vm'
-local ws       = require 'workspace'
-local markdown = require 'provider.markdown'
-local config   = require 'config'
-local lang     = require 'language'
-local util     = require 'utility'
-local guide    = require 'parser.guide'
-local rpath    = require 'workspace.require-path'
-local furi     = require 'file-uri'
-local wssymbol = require 'core.workspace-symbol'
+local vm       = require("script.vm")
+local ws       = require("script.workspace")
+local markdown = require("script.provider.markdown")
+local config   = require("script.config")
+local lang     = require("script.language")
+local util     = require("script.utility")
+local guide    = require("script.parser.guide")
+local rpath    = require("script.workspace.require-path")
+local furi     = require("script.file-uri")
+local wssymbol = require("script.core.workspace-symbol")
 
 local function collectRequire(mode, literal, uri)
     local result, searchers

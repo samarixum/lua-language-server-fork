@@ -1,7 +1,7 @@
-local files   = require 'files'
-local guide   = require "parser.guide"
-local await   = require 'await'
-local helper  = require 'core.diagnostics.helper.missing-doc-helper'
+local files   = require("script.files")
+local guide   = require("script.parser.guide")
+local await   = require("script.await")
+local helper  = require("script.core.diagnostics.helper.missing-doc-helper")
 
 ---@async
 local function findSetField(ast, name, callback)

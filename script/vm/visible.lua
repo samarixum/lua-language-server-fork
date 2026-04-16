@@ -1,8 +1,8 @@
 ---@class vm
-local vm       = require 'vm.vm'
-local guide    = require 'parser.guide'
-local config   = require 'config'
-local glob     = require 'glob'
+local vm       = require("script.vm.vm")
+local guide    = require("script.parser.guide")
+local config   = require("script.config")
+local glob     = require("script.glob")
 
 ---@class parser.object
 ---@field package _visibleType? parser.visibleType

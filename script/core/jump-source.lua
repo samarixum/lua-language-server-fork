@@ -1,6 +1,6 @@
-local guide = require 'parser.guide'
-local furi  = require 'file-uri'
-local ws    = require 'workspace'
+local guide = require("script.parser.guide")
+local furi  = require("script.file-uri")
+local ws    = require("script.workspace")
 
 ---@param doc parser.object
 ---@return uri

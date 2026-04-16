@@ -1,7 +1,7 @@
-local files = require 'files'
-local guide = require 'parser.guide'
-local lang  = require 'language'
-local vm    = require "vm.vm"
+local files = require("script.files")
+local guide = require("script.parser.guide")
+local lang  = require("script.language")
+local vm    = require("script.vm.vm")
 
 ---@param source parser.object
 ---@return boolean

@@ -3,7 +3,7 @@ if not suc then
     return
 end
 
-local config = require 'config'
+local config = require("script.config")
 
 local m = {}
 

@@ -1,5 +1,5 @@
-local channel = require 'bee.channel'
-local epoll   = require 'bee.epoll'
+local channel = require("bee.channel")
+local epoll   = require("bee.epoll")
 
 local reqPad
 local resPad

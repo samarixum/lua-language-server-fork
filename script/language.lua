@@ -1,6 +1,6 @@
-local fs      = require 'bee.filesystem'
-local util    = require 'utility'
-local lloader = require 'locale-loader'
+local fs      = require("bee.filesystem")
+local util    = require("script.utility")
+local lloader = require("script.locale-loader")
 
 local function supportLanguage()
     local list = {}

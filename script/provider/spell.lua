@@ -3,9 +3,9 @@ if not suc then
     return
 end
 
-local fs = require 'bee.filesystem'
-local config = require 'config'
-local pformatting = require 'provider.formatting'
+local fs = require("bee.filesystem")
+local config = require("script.config")
+local pformatting = require("script.provider.formatting")
 
 local m = {}
 

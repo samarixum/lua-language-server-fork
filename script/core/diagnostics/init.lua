@@ -1,10 +1,10 @@
-local files  = require 'files'
-local define = require 'proto.define'
-local config = require 'config'
-local await  = require 'await'
-local vm     = require "vm.vm"
-local util   = require 'utility'
-local diagd  = require 'proto.diagnostic'
+local files  = require("script.files")
+local define = require("script.proto.define")
+local config = require("script.config")
+local await  = require("script.await")
+local vm     = require("script.vm.vm")
+local util   = require("script.utility")
+local diagd  = require("script.proto.diagnostic")
 
 local sleepRest = 0.0
 
@@ -116,7 +116,7 @@ local function check(uri, name, isScopeDiag, response, ignoreFileOpenState)
     local clock = os.clock()
     local mark = {}
     ---@async
-    require('core.diagnostics.' .. name)(uri, function (result)
+    require('script.core.diagnostics.' .. name)(uri, function (result)
         if vm.isDiagDisabledAt(uri, result.start, name) then
             return
         end

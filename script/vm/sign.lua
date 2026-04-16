@@ -1,6 +1,6 @@
-local guide         = require 'parser.guide'
+local guide         = require("script.parser.guide")
 ---@class vm
-local vm            = require 'vm.vm'
+local vm            = require("script.vm.vm")
 
 ---@class vm.sign
 ---@field parent    parser.object

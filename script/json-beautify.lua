@@ -1,4 +1,4 @@
-local json = require "json"
+local json = require("script.json")
 local type = type
 local next = next
 local error = error

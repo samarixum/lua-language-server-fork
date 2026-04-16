@@ -1,9 +1,9 @@
-local files  = require 'files'
-local guide  = require 'parser.guide'
-local vm     = require 'vm'
-local lang   = require 'language'
-local await  = require 'await'
-local define = require 'proto.define'
+local files  = require("script.files")
+local guide  = require("script.parser.guide")
+local vm     = require("script.vm")
+local lang   = require("script.language")
+local await  = require("script.await")
+local define = require("script.proto.define")
 
 ---@param source parser.object
 ---@return boolean

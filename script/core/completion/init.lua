@@ -1,1 +1,1 @@
-return require 'core.completion.completion'
+return require("script.core.completion.completion")

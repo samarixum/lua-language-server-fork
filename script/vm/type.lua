@@ -1,9 +1,9 @@
 ---@class vm
-local vm        = require 'vm.vm'
-local guide     = require 'parser.guide'
-local config    = require 'config.config'
-local util      = require 'utility'
-local lang      = require 'language'
+local vm        = require("script.vm.vm")
+local guide     = require("script.parser.guide")
+local config    = require("script.config.config")
+local util      = require("script.utility")
+local lang      = require("script.language")
 
 ---@class vm.ANY
 vm.ANY = {'<VM.ANY>'}

@@ -1,10 +1,10 @@
-local workspace  = require 'workspace'
-local files      = require 'files'
-local vm         = require 'vm'
-local findSource = require 'core.find-source'
-local guide      = require 'parser.guide'
-local rpath      = require 'workspace.require-path'
-local jumpSource = require 'core.jump-source'
+local workspace  = require("script.workspace")
+local files      = require("script.files")
+local vm         = require("script.vm")
+local findSource = require("script.core.find-source")
+local guide      = require("script.parser.guide")
+local rpath      = require("script.workspace.require-path")
+local jumpSource = require("script.core.jump-source")
 
 local function sortResults(results)
     -- 先按照顺序排序

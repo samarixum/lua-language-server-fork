@@ -1,5 +1,5 @@
-local brave          = require 'brave'
-local time           = require 'bee.time'
+local brave          = require("script.brave")
+local time           = require("bee.time")
 
 local tablePack      = table.pack
 local tostring       = tostring

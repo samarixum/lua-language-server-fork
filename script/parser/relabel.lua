@@ -8,7 +8,7 @@ local pcall = pcall
 local setmetatable = setmetatable
 local tinsert, concat = table.insert, table.concat
 local rep = string.rep
-local m = require("lpeglabel")
+local m = require("script.lpeglabel")
 
 -- 'm' will be used to parse expressions, and 'mm' will be used to
 -- create expressions; that is, 're' runs on 'm', creating patterns

@@ -1,6 +1,6 @@
-local config = require 'config'
-local client = require 'client'
-local await  = require 'await'
+local config = require("script.config")
+local client = require("script.client")
+local await  = require("script.await")
 
 ---@async
 return function (data)

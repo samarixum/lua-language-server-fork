@@ -1,10 +1,10 @@
-local guide        = require 'parser.guide'
-local lookback     = require 'core.look-backward'
-local matchKey     = require 'core.matchkey'
-local subString    = require 'core.substring'
-local define       = require 'proto.define'
-local markdown     = require 'provider.markdown'
-local config       = require 'config'
+local guide        = require("script.parser.guide")
+local lookback     = require("script.core.look-backward")
+local matchKey     = require("script.core.matchkey")
+local subString    = require("script.core.substring")
+local define       = require("script.proto.define")
+local markdown     = require("script.provider.markdown")
+local config       = require("script.config")
 
 local actions = {}
 

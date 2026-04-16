@@ -137,7 +137,9 @@ internal class LuaWorld {
             try {
                 var source = System.IO.File.ReadAllText(modulePath);
                 var chunk = LuaScript.LoadString(source, codeFriendlyName: modulePath);
-                var result = LuaScript.Call(chunk);
+                System.Console.Error.WriteLine($"[Moonsharpy] require('{moduleName}') -> loading {modulePath}");
+                var result = LuaScript.Call(chunk) ?? DynValue.NewNil();
+                System.Console.Error.WriteLine($"[Moonsharpy] require('{moduleName}') -> result type {result.Type}");
 
                 if (result.Type == DataType.Nil || result.Type == DataType.Void) {
                     result = DynValue.NewBoolean(true);
@@ -146,6 +148,7 @@ internal class LuaWorld {
                 loadedTable[moduleName] = result;
                 return result;
             } catch {
+                System.Console.Error.WriteLine($"[Moonsharpy] require('{moduleName}') failed");
                 loadedTable[moduleName] = DynValue.NewNil();
                 throw;
             }
@@ -247,25 +250,53 @@ internal class LuaWorld {
 
         var forwardedArgs = new List<DynValue>();
         var processPath = System.Environment.ProcessPath;
+        var executableValue = DynValue.NewString(string.IsNullOrWhiteSpace(processPath) ? LuaScriptPath : processPath);
+        var mainScriptValue = DynValue.NewString("!main.lua");
 
-        ScriptArguments[-1] = DynValue.NewString(string.IsNullOrWhiteSpace(processPath) ? LuaScriptPath : processPath);
-        ScriptArguments[0] = DynValue.NewString("!main.lua");
+        ScriptArguments[-1] = executableValue;
+        ScriptArguments[0] = mainScriptValue;
 
         var argMetadata = new Table(LuaScript);
+        argMetadata["__index"] = DynValue.NewCallback((context, callbackArgs) => {
+            if (callbackArgs.Count < 2) {
+                return DynValue.NewNil();
+            }
+
+            var key = callbackArgs[1];
+            if (key.Type != DataType.Number) {
+                return DynValue.NewNil();
+            }
+
+            var index = (int)key.Number;
+            if (index == -1) {
+                return executableValue;
+            }
+
+            if (index == 0) {
+                return mainScriptValue;
+            }
+
+            if (index > 0 && index <= forwardedArgs.Count) {
+                return forwardedArgs[index - 1];
+            }
+
+            return DynValue.NewNil();
+        }, "arg_index");
+
         argMetadata["__pairs"] = DynValue.NewCallback((context, callbackArgs) => {
             var orderedKeys = new List<DynValue>();
             var orderedValues = new List<DynValue>();
 
             for (var i = 1; i <= forwardedArgs.Count; i++) {
                 orderedKeys.Add(DynValue.NewNumber(i));
-                orderedValues.Add(ScriptArguments.Get(i));
+                orderedValues.Add(forwardedArgs[i - 1]);
             }
 
             orderedKeys.Add(DynValue.NewNumber(-1));
-            orderedValues.Add(ScriptArguments.Get(-1));
+            orderedValues.Add(executableValue);
 
             orderedKeys.Add(DynValue.NewNumber(0));
-            orderedValues.Add(ScriptArguments.Get(0));
+            orderedValues.Add(mainScriptValue);
 
             var position = -1;
             var iterator = DynValue.NewCallback((iteratorContext, iteratorArgs) => {

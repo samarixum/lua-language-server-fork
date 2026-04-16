@@ -1,5 +1,5 @@
-local ansi    = require 'encoder.ansi'
-local utf16   = require 'encoder.utf16'
+local ansi    = require("script.encoder.ansi")
+local utf16   = require("script.encoder.utf16")
 local utf16le = utf16('le', 0xFFFD)
 local utf16be = utf16('be', 0xFFFD)
 

@@ -1,8 +1,8 @@
-local thread     = require 'bee.thread'
-local channelMod = require 'bee.channel'
-local selectMod  = require 'bee.select'
-local utility    = require 'utility'
-local await      = require 'await'
+local thread     = require("bee.thread")
+local channelMod = require("bee.channel")
+local selectMod  = require("bee.select")
+local utility    = require("script.utility")
+local await      = require("script.await")
 
 -- 每个 brave 有独立的 channel 对，避免多线程竞争
 local selector = selectMod.create()
@@ -19,10 +19,10 @@ DBGWAIT = {DBGWAIT}
 
 collectgarbage 'generational'
 
-log = require 'brave.log'
+log = require("script.brave.log")
 
 xpcall(dofile, log.error, {debugger:q})
-local brave = require 'brave'
+local brave = require("script.brave")
 brave.register({id}, {taskChName:q}, {replyChName:q})
 ]]
 

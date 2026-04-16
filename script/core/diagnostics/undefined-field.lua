@@ -1,8 +1,8 @@
-local files   = require 'files'
-local vm      = require 'vm'
-local lang    = require 'language'
-local guide   = require 'parser.guide'
-local await   = require 'await'
+local files   = require("script.files")
+local vm      = require("script.vm")
+local lang    = require("script.language")
+local guide   = require("script.parser.guide")
+local await   = require("script.await")
 
 local skipCheckClass = {
     ['unknown']       = true,

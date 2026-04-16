@@ -1,6 +1,6 @@
 print('including parser/tokens.lua')
 
-local m = require 'lpeglabel'
+local m = require("script.lpeglabel")
 
 local Sp     = m.S' \t\v\f'
 local Nl     = m.P'\r\n' + m.S'\r\n'

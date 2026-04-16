@@ -1,16 +1,16 @@
-local fs        = require 'bee.filesystem'
-local nonil     = require 'without-check-nil'
-local util      = require 'utility'
-local lang      = require 'language'
-local proto     = require 'proto'
-local define    = require 'proto.define'
-local config    = require 'config'
-local converter = require 'proto.converter'
-local await     = require 'await'
-local scope     = require 'workspace.scope'
-local inspect   = require 'inspect'
-local jsone     = require 'json-edit'
-local jsonc     = require 'jsonc'
+local fs        = require("bee.filesystem")
+local nonil     = require("script.without-check-nil")
+local util      = require("script.utility")
+local lang      = require("script.language")
+local proto     = require("script.proto")
+local define    = require("script.proto.define")
+local config    = require("script.config")
+local converter = require("script.proto.converter")
+local await     = require("script.await")
+local scope     = require("script.workspace.scope")
+local inspect   = require("script.inspect")
+local jsone     = require("script.json-edit")
+local jsonc     = require("script.jsonc")
 
 local m = {}
 m._eventList = {}
@@ -377,7 +377,7 @@ local function tryModifySpecifiedConfig(uri, finalChanges)
         return false
     end
     log.info('tryModifySpecifiedConfig', uri, inspect(finalChanges))
-    local workspace = require 'workspace'
+    local workspace = require("script.workspace")
     local scp = scope.getScope(uri)
     if scp:get('lastLocalType') ~= 'json' then
         log.info('lastLocalType ~= json')
@@ -409,7 +409,7 @@ local function tryModifyRC(uri, finalChanges, create)
         return false
     end
     log.info('tryModifyRC', uri, inspect(finalChanges))
-    local workspace = require 'workspace'
+    local workspace = require("script.workspace")
     local path = workspace.getAbsolutePath(uri, '.luarc.jsonc')
     if not path then
         log.info('Can not get absolute path of .luarc.jsonc')
@@ -547,7 +547,7 @@ function m.setConfig(changes, onlyMemory)
     end
     log.info('Modify config', inspect(finalChanges))
     xpcall(function ()
-        local ws = require 'workspace'
+        local ws = require("script.workspace")
         tryModifyClientGlobal(finalChanges)
         if #ws.folders == 0 then
             tryModifySpecifiedConfig(nil, finalChanges)
@@ -576,7 +576,7 @@ end
 ---@param uri   uri
 ---@param edits textEditor[]
 function m.editText(uri, edits)
-    local files = require 'files'
+    local files = require("script.files")
     local state = files.getState(uri)
     if not state then
         return
@@ -600,7 +600,7 @@ end
 
 ---@param editors textMultiEditor[]
 function m.editMultiText(editors)
-    local files = require 'files'
+    local files = require("script.files")
     local changes = {}
     for _, editor in ipairs(editors) do
         local uri = editor.uri

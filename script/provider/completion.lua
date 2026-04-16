@@ -1,8 +1,7 @@
-local proto  = require 'proto'
-local nonil  = require 'without-check-nil'
-local client = require 'client'
-local config = require 'config'
-local ws     = require 'workspace'
+local proto  = require("script.proto")
+local client = require("script.client")
+local config = require("script.config")
+local ws     = require("script.workspace")
 
 local isEnable = false
 
@@ -33,12 +32,9 @@ local function enable(_uri)
     if isEnable then
         return
     end
-    nonil.enable()
-    if not client.info.capabilities.textDocument.completion.dynamicRegistration then
-        nonil.disable()
+    if not client.getAbility('textDocument.completion.dynamicRegistration') then
         return
     end
-    nonil.disable()
     isEnable = true
     log.info('Enable completion.')
     proto.request('client/registerCapability', {
@@ -59,12 +55,9 @@ local function disable(_uri)
     if not isEnable then
         return
     end
-    nonil.enable()
-    if not client.info.capabilities.textDocument.completion.dynamicRegistration then
-        nonil.disable()
+    if not client.getAbility('textDocument.completion.dynamicRegistration') then
         return
     end
-    nonil.disable()
     isEnable = false
     log.info('Disable completion.')
     proto.request('client/unregisterCapability', {

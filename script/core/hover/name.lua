@@ -1,5 +1,5 @@
-local guide    = require 'parser.guide'
-local vm       = require 'vm'
+local guide    = require("script.parser.guide")
+local vm       = require("script.vm")
 
 local buildName
 

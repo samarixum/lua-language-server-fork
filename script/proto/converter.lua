@@ -1,6 +1,6 @@
-local guide   = require 'parser.guide'
-local files   = require 'files'
-local encoder = require 'encoder'
+local guide   = require("script.parser.guide")
+local files   = require("script.files")
+local encoder = require("script.encoder")
 
 local offsetEncoding = 'utf16'
 

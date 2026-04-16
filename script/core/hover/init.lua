@@ -1,12 +1,12 @@
-local files      = require 'files'
-local vm         = require 'vm'
-local getLabel   = require 'core.hover.label'
-local getDesc    = require 'core.hover.description'
-local util       = require 'utility'
-local findSource = require 'core.find-source'
-local markdown   = require 'provider.markdown'
-local guide      = require 'parser.guide'
-local wssymbol   = require 'core.workspace-symbol'
+local files      = require("script.files")
+local vm         = require("script.vm")
+local getLabel   = require("script.core.hover.label")
+local getDesc    = require("script.core.hover.description")
+local util       = require("script.utility")
+local findSource = require("script.core.find-source")
+local markdown   = require("script.provider.markdown")
+local guide      = require("script.parser.guide")
+local wssymbol   = require("script.core.workspace-symbol")
 
 ---@async
 ---@param level integer

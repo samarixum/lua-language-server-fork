@@ -1,6 +1,6 @@
-local files = require("files")
-local log = require("log")
-local converter = require("proto.converter")
+local files = require("script.files")
+local log = require("script.log")
+local converter = require("script.proto.converter")
 
 return function(uri, range, options)
     local state = files.getState(uri)

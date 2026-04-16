@@ -1,11 +1,11 @@
-local platform  = require 'bee.platform'
-local files     = require 'files'
-local furi      = require 'file-uri'
-local workspace = require "workspace"
-local config    = require 'config'
-local scope     = require 'workspace.scope'
-local util      = require 'utility'
-local plugin    = require 'plugin'
+local platform  = require("bee.platform")
+local files     = require("script.files")
+local furi      = require("script.file-uri")
+local workspace = require("script.workspace")
+local config    = require("script.config")
+local scope     = require("script.workspace.scope")
+local util      = require("script.utility")
+local plugin    = require("script.plugin")
 
 ---@class require-path
 local m = {}
@@ -60,7 +60,7 @@ end
 ---@param path string
 ---@return require-manager.visibleResult[]
 function mt:getRequireResultByPath(path)
-    local vm  = require 'vm'
+    local vm  = require("script.vm")
     local uri = furi.encode(path)
     local result = {}
     if vm.isMetaFile(uri) then
@@ -153,7 +153,7 @@ end
 ---@return uri[]
 ---@return table<uri, string>?
 function mt:searchUrisByRequireName(name, suri)
-    local vm          = require 'vm'
+    local vm          = require("script.vm")
     local searchers   = config.get(self.scp.uri, 'Lua.runtime.path')
     local strict      = config.get(self.scp.uri, 'Lua.runtime.pathStrict')
     local separator   = config.get(self.scp.uri, 'Lua.completion.requireSeparator')

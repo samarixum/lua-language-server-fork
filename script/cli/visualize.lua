@@ -1,7 +1,7 @@
-local lang   = require 'language'
-local parser = require 'parser'
-local guide  = require 'parser.guide'
-local util   = require 'utility'
+local lang   = require("script.language")
+local parser = require("script.parser")
+local guide  = require("script.parser.guide")
+local util   = require("script.utility")
 
 local function nodeId(node)
 	return node.type .. ':' .. node.start .. ':' .. node.finish

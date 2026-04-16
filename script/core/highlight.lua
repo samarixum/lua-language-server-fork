@@ -1,9 +1,9 @@
-local files      = require 'files'
-local vm         = require 'vm'
-local define     = require 'proto.define'
-local findSource = require 'core.find-source'
-local util       = require 'utility'
-local guide      = require 'parser.guide'
+local files      = require("script.files")
+local vm         = require("script.vm")
+local define     = require("script.proto.define")
+local findSource = require("script.core.find-source")
+local util       = require("script.utility")
+local guide      = require("script.parser.guide")
 
 ---@async
 local function eachRef(source, callback)

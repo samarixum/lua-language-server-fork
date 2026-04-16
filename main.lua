@@ -1,10 +1,10 @@
-local util    = require 'utility'
-local version = require 'version'
+local util    = require('script.utility')
+local version = require('script.version')
 
 --local useMoonSharpPaths = _MOONSHARP == true
-local fs = require 'bee.filesystem'
+local fs = require('bee.filesystem')
 
-require 'config.env'
+require('script.config.env')
 
 local function getValue(value)
     if value == 'true' or value == nil then
@@ -84,7 +84,7 @@ collectgarbage('param', 'minormajor', 50)
 LOGLEVEL = LOGLEVEL or 'debug'
 
 ---@diagnostic disable-next-line: lowercase-global
-log = require 'log'
+log = require 'script.log'
 log.init(ROOT, LOGPATH / 'service.log')
 if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
@@ -110,16 +110,16 @@ log.info('METAPATH:', METAPATH)
 log.info('VERSION:', version.getVersion())
 
 print('including script/tracy.lua')
-require 'tracy'
+require 'script.tracy'
 
 print('xpcall dofile debugger.lua')
 xpcall(dofile, log.debug, (ROOT / 'debugger.lua'):string())
 
-print('including script/cli.lua')
-require 'cli'
+print('including script/cli/init.lua')
+require 'script.cli.init'
 
 print('setup service')
-local ok, service = xpcall(require, log.error, 'service.service')
+local ok, service = xpcall(require, log.error, 'script.service.service')
 if not ok then
     error(service)
 end

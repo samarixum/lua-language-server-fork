@@ -1,4 +1,4 @@
-local platform = require 'bee.platform'
+local platform = require("bee.platform")
 
 ---@alias uri string
 

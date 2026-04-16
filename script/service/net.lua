@@ -1,11 +1,11 @@
-local socket = require "bee.socket"
-local select = require "bee.select"
-local fs = require "bee.filesystem"
+local socket = require("bee.socket")
+local select = require("bee.select")
+local fs = require("bee.filesystem")
 
 -- Dynamically resolve bitwise operations to avoid MoonSharp syntax errors
 local b_and, b_or, b_not
 if _G._MOONSHARP or _VERSION == "MoonSharp 2.0.0.0" or _VERSION == "Lua 5.2" then
-    local bit32 = require("bit32")
+    local bit32 = require("script.bit32")
     b_and = bit32.band
     b_or  = bit32.bor
     b_not = bit32.bnot

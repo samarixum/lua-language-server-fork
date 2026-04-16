@@ -1,11 +1,11 @@
-local files    = require 'files'
-local vm       = require 'vm'
-local config   = require 'config'
-local guide    = require 'parser.guide'
-local await    = require 'await'
-local define   = require 'proto.define'
-local lang     = require 'language'
-local substr   = require 'core.substring'
+local files    = require("script.files")
+local vm       = require("script.vm")
+local config   = require("script.config")
+local guide    = require("script.parser.guide")
+local await    = require("script.await")
+local define   = require("script.proto.define")
+local lang     = require("script.language")
+local substr   = require("script.core.substring")
 
 ---@async
 local function typeHint(uri, results, start, finish)

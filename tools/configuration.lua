@@ -1,6 +1,34 @@
-local json     = require 'json'
-local template = require 'config.template'
-local util     = require 'utility'
+--[[
+    File: configuration.lua
+    Purpose: Processes raw configuration templates into a structured schema for LLS.
+
+    This script iterates through internal template definitions and maps them to
+    a standardized format that includes type validation, default values, and
+    localization keys for the Lua Language Server.
+
+    Key Functions:
+    * Type Mapping: Translates internal types (e.g., 'Hash', 'Or', 'Integer')
+        into standard types like 'object', 'boolean', or union types.
+    * Localization Key Generation: Automatically generates placeholder keys
+        (e.g., %config.diagnostics.XXX%) used by the localization system to
+        display human-readable descriptions in the editor.
+    * Complex Structure Handling:
+        * Arrays: Defines item types and valid enums for list-based settings.
+        * Hashes (Objects): Handles both fixed properties (with specific keys)
+            and pattern-based properties (dictionary-style settings).
+    * Schema Normalization: Sets the scope to 'resource' and ensures that
+        default values are correctly represented, including handling empty
+        JSON objects.
+
+    Integration:
+    The resulting 'config' table is typically used by the language server
+    to validate user settings in .luarc.json and by build scripts to
+    generate localized documentation.
+]]
+
+local json     = require 'script.json'
+local template = require 'script.config.template'
+local util     = require 'script.utility'
 
 local function getType(temp)
     if temp.name == 'Boolean' then

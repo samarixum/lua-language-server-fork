@@ -1,8 +1,8 @@
-local files  = require 'files'
-local define = require 'proto.define'
-local lang   = require 'language'
-local guide  = require 'parser.guide'
-local await  = require 'await'
+local files  = require("script.files")
+local define = require("script.proto.define")
+local lang   = require("script.language")
+local guide  = require("script.parser.guide")
+local await  = require("script.await")
 
 ---@async
 return function (uri, callback)

@@ -1,12 +1,12 @@
-local config    = require 'config'
-local util      = require 'utility'
-local guide     = require 'parser.guide'
-local workspace = require 'workspace'
-local files     = require 'files'
-local furi      = require 'file-uri'
-local rpath     = require 'workspace.require-path'
-local vm        = require 'vm'
-local matchKey  = require 'core.matchkey'
+local config    = require("script.config")
+local util      = require("script.utility")
+local guide     = require("script.parser.guide")
+local workspace = require("script.workspace")
+local files     = require("script.files")
+local furi      = require("script.file-uri")
+local rpath     = require("script.workspace.require-path")
+local vm        = require("script.vm")
+local matchKey  = require("script.core.matchkey")
 
 local ipairs = ipairs
 

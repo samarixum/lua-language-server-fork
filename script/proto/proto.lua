@@ -1,14 +1,14 @@
-local util       = require 'utility'
-local await      = require 'await'
-local pub        = require 'pub'
-local jsonrpc    = require 'jsonrpc'
-local define     = require 'proto.define'
-local json       = require 'json'
-local inspect    = require 'inspect'
-local platform   = require 'bee.platform'
-local fs         = require 'bee.filesystem'
-local net        = require 'service.net'
-local timer      = require 'timer'
+local util       = require("script.utility")
+local await      = require("script.await")
+local pub        = require("script.pub.pub")
+local jsonrpc    = require("script.jsonrpc")
+local define     = require("script.proto.define")
+local json       = require("script.json")
+local inspect    = require("script.inspect")
+local platform   = require("bee.platform")
+local fs         = require("bee.filesystem")
+local net        = require("script.service.net")
+local timer      = require("script.timer")
 
 local reqCounter = util.counter()
 
@@ -272,7 +272,7 @@ function m.listen(mode, socketPort)
     if mode == 'stdio' then
         log.info('Listen Mode: stdio')
         if platform.os == 'windows' then
-            local windows = require 'bee.windows'
+            local windows = require("bee.windows")
             windows.filemode(io.stdin,  'b')
             windows.filemode(io.stdout, 'b')
         end

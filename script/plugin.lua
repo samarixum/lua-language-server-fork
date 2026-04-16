@@ -1,11 +1,11 @@
-local config = require 'config'
-local util   = require 'utility'
-local client = require 'client'
-local lang   = require 'language'
-local await  = require 'await'
-local scope  = require 'workspace.scope'
-local ws     = require 'workspace'
-local fs = require 'bee.filesystem'
+local config = require("script.config")
+local util   = require("script.utility")
+local client = require("script.client")
+local lang   = require("script.language")
+local await  = require("script.await")
+local scope  = require("script.workspace.scope")
+local ws     = require("script.workspace")
+local fs = require("bee.filesystem")
 
 ---@class plugin
 local m = {}
@@ -168,7 +168,7 @@ end
 
 ws.watch(function (ev, uri)
     if ev == 'startReload' then
-        require 'plugins'
+        require("script.plugins")
         initPlugin(uri)
     end
 end)

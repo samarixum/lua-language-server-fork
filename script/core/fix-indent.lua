@@ -1,10 +1,10 @@
-local files = require 'files'
-local guide = require 'parser.guide'
-local proto = require 'proto.proto'
-local lookBackward = require 'core.look-backward'
-local util = require 'utility'
-local client = require 'client'
-local config = require 'config'
+local files = require("script.files")
+local guide = require("script.parser.guide")
+local proto = require("script.proto.proto")
+local lookBackward = require("script.core.look-backward")
+local util = require("script.utility")
+local client = require("script.client")
+local config = require("script.config")
 
 ---@param uri uri
 ---@param change table

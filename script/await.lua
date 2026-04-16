@@ -1,4 +1,4 @@
-local timer = require 'timer'
+local timer = require("script.timer")
 
 local wkmt = { __mode = 'k' }
 

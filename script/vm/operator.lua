@@ -1,8 +1,8 @@
 ---@class vm
-local vm     = require 'vm.vm'
-local util   = require 'utility'
-local guide  = require 'parser.guide'
-local config = require 'config'
+local vm     = require("script.vm.vm")
+local util   = require("script.utility")
+local guide  = require("script.parser.guide")
+local config = require("script.config")
 
 vm.UNARY_OP  = {
     'unm',

@@ -1,8 +1,8 @@
-local files   = require 'files'
-local lang    = require 'language'
-local vm      = require 'vm.vm'
-local await   = require 'await'
-local guide   = require 'parser.guide'
+local files   = require("script.files")
+local lang    = require("script.language")
+local vm      = require("script.vm.vm")
+local await   = require("script.await")
+local guide   = require("script.parser.guide")
 
 local function isDocFunc(doc)
     if not doc.extends then

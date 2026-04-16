@@ -1,7 +1,7 @@
-local util     = require 'utility'
-local await    = require 'await'
-local progress = require 'progress'
-local lang     = require 'language'
+local util     = require("script.utility")
+local await    = require("script.await")
+local progress = require("script.progress")
+local lang     = require("script.language")
 
 local m = {}
 

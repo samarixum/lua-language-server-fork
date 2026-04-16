@@ -1,12 +1,12 @@
-local files     = require 'files'
-local util      = require 'utility'
-local proto     = require 'proto'
-local define    = require 'proto.define'
-local lang      = require 'language'
-local converter = require 'proto.converter'
-local guide     = require 'parser.guide'
-local json      = require 'json'
-local jsonc     = require 'jsonc'
+local files     = require("script.files")
+local util      = require("script.utility")
+local proto     = require("script.proto")
+local define    = require("script.proto.define")
+local lang      = require("script.language")
+local converter = require("script.proto.converter")
+local guide     = require("script.parser.guide")
+local json      = require("script.json")
+local jsonc     = require("script.jsonc")
 
 ---@async
 return function (data)

@@ -1,5 +1,5 @@
-local fs             = require 'bee.filesystem'
-local time           = require 'bee.time'
+local fs             = require("bee.filesystem")
+local time           = require("bee.time")
 
 local monotonic      = time.monotonic
 local osDate         = os.date

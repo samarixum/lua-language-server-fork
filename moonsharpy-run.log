@@ -1,0 +1,99 @@
+[DEBUG]	Lua Version: MoonSharp 2.0.0.0
+[DEBUG]	Running in MoonSharp environment
+[DEBUG]	arg[-1] = A:\RemakeEngine\Extension\submodules\server\bin\moonsharpy.exe
+[DEBUG]	arg[0] = !main.lua
+[DEBUG]	Determining root via package.cpath...
+[DEBUG]	Resolved root path: A:\RemakeEngine\Extension\submodules\server
+[DEBUG]	Final package.path: A:\RemakeEngine\Extension\submodules\server\?.lua;A:\RemakeEngine\Extension\submodules\server\script\?.lua;A:\RemakeEngine\Extension\submodules\server\script\?\init.lua
+[DEBUG]	Executing entry point: A:\RemakeEngine\Extension\submodules\server\main.lua
+[DEBUG]	------------------------------------------
+[DEBUG]	Using host-provided require shim
+Current path:	A:/RemakeEngine/Extension/submodules/server/main.lua
+Root path:	A:/RemakeEngine/Extension/submodules/server
+Expanded root path:	A:/RemakeEngine/Extension/submodules/server
+ROOT path:	A:/RemakeEngine/Extension/submodules/server
+LOGPATH:	A:/RemakeEngine/Extension/submodules/server/log
+METAPATH:	A:/RemakeEngine/Extension/submodules/server/meta
+Lua _VERSION: 	MoonSharp 2.0.0.0
+_MOONSHARP.version: 	2.0.0.0
+_MOONSHARP.luacompat: 	5.2
+_MOONSHARP.platform: 	core.dotnet.clr4.netcore
+_MOONSHARP.is_aot: 	false
+_MOONSHARP.is_unity: 	false
+_MOONSHARP.is_mono: 	false
+_MOONSHARP.is_clr4: 	true
+_MOONSHARP.is_pcl: 	false
+_MOONSHARP.banner: 	MoonSharp 2.0.0.0 [core.dotnet.clr4.netcore]
+Copyright (C) 2014-2016 Marco Mastropaolo
+http://www.moonsharp.org
+
+[16:07:31.%03.f][info] [#0:A:/RemakeEngine/Extension/submodules/server/bin/main.lua:149]: Lua Lsp startup, root: 	A:/RemakeEngine/Extension/submodules/server
+
+[16:07:31.%03.f][info] [#0:A:/RemakeEngine/Extension/submodules/server/bin/main.lua:149]: ROOT:	A:/RemakeEngine/Extension/submodules/server
+
+[16:07:31.%03.f][info] [#0:A:/RemakeEngine/Extension/submodules/server/bin/main.lua:149]: LOGPATH:	A:/RemakeEngine/Extension/submodules/server/log
+
+[16:07:31.%03.f][info] [#0:A:/RemakeEngine/Extension/submodules/server/bin/main.lua:149]: METAPATH:	A:/RemakeEngine/Extension/submodules/server/meta
+
+[16:07:31.%03.f][info] [#0:A:/RemakeEngine/Extension/submodules/server/bin/main.lua:149]: VERSION:	3.17.18-B
+
+including script/tracy.lua
+xpcall dofile debugger.lua
+including script/cli/init.lua
+setup service
+#############################loading service/service.lua
+service-1
+including script/timer.lua
+service-1
+service-2
+service-3
+service-4
+including script/vm.lua
+including parser/guide.lua
+including script/files.lua
+including script/config.lua
+including script/config/template.lua
+template.lua EOF
+config.lua EOF
+glob
+loading lpeglabel.lua...
+lpeglabel.lua loaded
+glob end
+including parser/init.lua
+loading parser/compile.lua...
+including parser/tokens.lua
+loaded parser/compile.lua
+including parser/luadoc.lua
+including parser/relabel.lua
+parser/relabel.lua loaded
+files.lua loaded
+vm-1
+vm-2
+vm-3
+vm-4
+vm-5
+vm-6
+vm-7
+vm-8
+vm-9
+vm.lua loaded
+[16:07:31.%03.f][error][#0:libfunc_require:0]: attempt to index a nil value
+stack traceback:
+	[clr]: in function 'xpcall'
+	A:\RemakeEngine\Extension\submodules\server\main.lua:(122,0-72): in ?
+	A:\RemakeEngine\Extension\submodules\server\bin\main.lua:(149,8-58): in function '<A:\RemakeEngine\Extension\submodules\server\bin\main.lua:148>'
+	[clr]: in function 'pcall'
+	A:\RemakeEngine\Extension\submodules\server\bin\main.lua:(148,4-150,8): in main chunk
+
+
+
+[CRITICAL ERROR DURING EXECUTION]
+A:\RemakeEngine\Extension\submodules\server\main.lua:(124,9-18): [16:07:31.%03.f][error][#0:libfunc_require:0]: attempt to index a nil value
+stack traceback:
+	[clr]: in function 'xpcall'
+	A:\RemakeEngine\Extension\submodules\server\main.lua:(122,0-72): in ?
+	A:\RemakeEngine\Extension\submodules\server\bin\main.lua:(149,8-58): in function '<A:\RemakeEngine\Extension\submodules\server\bin\main.lua:148>'
+	[clr]: in function 'pcall'
+	A:\RemakeEngine\Extension\submodules\server\bin\main.lua:(148,4-150,8): in main chunk
+
+

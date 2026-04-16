@@ -1,7 +1,7 @@
 package.path = package.path .. ';script/?.lua;tools/?.lua'
 
 local fs   = require 'bee.filesystem'
-local util = require 'utility'
+local util = require('script.utility')
 
 local function getLongStringMark(text)
     return text:match '^%[[=]*%['

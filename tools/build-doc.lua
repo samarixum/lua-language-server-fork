@@ -1,12 +1,37 @@
-package.path = package.path .. ';script/?.lua;tools/?.lua'
+--[[
+    File: build-doc.lua
+    Purpose: Automated Documentation Generator for Lua Language Server Configurations
+
+    This script is responsible for generating localized Markdown documentation (config.md)
+    for all available server settings. It acts as a bridge between the internal
+    configuration definitions and the user-facing documentation found in the `doc/` directory.
+
+    Key Functions:
+    1.  Locale Aggregation: Scans the `locale/` directory to load language-specific
+        strings for settings descriptions and diagnostic groups.
+    2.  Metadata Processing: Parses configuration objects to determine data types,
+        default values, and valid enum options.
+    3.  Markdown Construction: Utilizes a markdown provider to programmatically
+        build structured documentation for every setting, formatted with TypeScript-style
+        types and JSON-beautified default values.
+    4.  Localized Output: Generates a distinct `config.md` for every supported language
+        and saves them in their respective `doc/<lang>/` subdirectories.
+
+    Note: This is a build-time utility script typically used by the VS Code client
+    build process to ensure documentation stays in sync with the codebase.
+]]
+
+-- add tools directory to require path resolutionlist
+
+-- tools items
+local config   = require 'tools.configuration'
 
 local fs       = require 'bee.filesystem'
-local config   = require 'configuration'
-local markdown = require 'provider.markdown'
-local util     = require 'utility'
-local lloader  = require 'locale-loader'
-local json     = require 'json-beautify'
-local diagd    = require 'proto.diagnostic'
+local markdown = require 'script.provider.markdown'
+local util     = require 'script.utility'
+local lloader  = require 'script.locale-loader'
+local json     = require 'script.json-beautify'
+local diagd    = require 'script.proto.diagnostic'
 
 local function mergeDiagnosticGroupLocale(locale)
     for groupName, names in pairs(diagd.diagnosticGroups) do

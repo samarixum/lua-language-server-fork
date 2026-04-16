@@ -1,4 +1,4 @@
-local lang    = require 'language'
+local lang    = require("script.language")
 
 local m = {}
 

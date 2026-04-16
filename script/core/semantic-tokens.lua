@@ -1,13 +1,13 @@
-local files          = require 'files'
-local await          = require 'await'
-local define         = require 'proto.define'
-local vm             = require 'vm'
-local util           = require 'utility'
-local guide          = require 'parser.guide'
-local converter      = require 'proto.converter'
-local config         = require 'config'
-local linkedTable    = require 'linked-table'
-local client         = require 'client'
+local files          = require("script.files")
+local await          = require("script.await")
+local define         = require("script.proto.define")
+local vm             = require("script.vm")
+local util           = require("script.utility")
+local guide          = require("script.parser.guide")
+local converter      = require("script.proto.converter")
+local config         = require("script.config")
+local linkedTable    = require("script.linked-table")
+local client         = require("script.client")
 
 local Care = util.switch()
     : case 'getglobal'

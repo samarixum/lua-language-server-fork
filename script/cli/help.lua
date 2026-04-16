@@ -1,4 +1,4 @@
-local util = require 'utility'
+local util = require("script.utility")
 
 --- @class cli.arg
 --- @field type? string|string[]

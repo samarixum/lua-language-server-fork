@@ -1,22 +1,22 @@
 print('including script/files.lua')
-local platform = require 'bee.platform'
-local fs       = require 'bee.filesystem'
-local sys      = require 'bee.sys'
-local config   = require 'config'
-local glob     = require 'glob'
-local furi     = require 'file-uri'
-local parser   = require 'parser'
-local lang     = require 'language'
-local await    = require 'await'
-local util     = require 'utility'
-local smerger  = require 'string-merger'
-local progress = require "progress"
-local encoder  = require 'encoder'
-local scope    = require 'workspace.scope'
-local lazy     = require 'lazytable'
-local cacher   = require 'lazy-cacher'
-local sp       = require 'bee.subprocess'
-local pub      = require 'pub'
+local platform = require("bee.platform")
+local fs       = require("bee.filesystem")
+local sys      = require("bee.sys")
+local config   = require("script.config.config")
+local glob     = require("script.glob.glob")
+local furi     = require("script.file-uri")
+local parser   = require("script.parser.init")
+local lang     = require("script.language")
+local await    = require("script.await")
+local util     = require("script.utility")
+local smerger  = require("script.string-merger")
+local progress = require("script.progress")
+local encoder  = require("script.encoder.init")
+local scope    = require("script.workspace.scope")
+local lazy     = require("script.lazytable")
+local cacher   = require("script.lazy-cacher")
+local sp       = require("bee.subprocess")
+local pub      = require("script.pub.pub")
 
 ---@class file
 ---@field uri           uri
@@ -193,7 +193,7 @@ end
 ---@param text string
 ---@return string
 local function pluginOnSetText(file, text)
-    local plugin   = require 'plugin'
+    local plugin   = require("script.plugin")
     file.diffInfo = nil
     local suc, result = plugin.dispatch('OnSetText', file.uri, text)
     if not suc then
@@ -236,7 +236,7 @@ function m.setText(uri, text, isTrust, callback)
         return
     end
     if #text > 1024 * 1024 * 10 then
-        local client = require 'client'
+        local client = require("script.client")
         client.showMessage('Warning', lang.script('WORKSPACE_SKIP_HUGE_FILE', uri))
         return
     end
@@ -588,8 +588,8 @@ function m.checkPreload(uri)
     if not file then
         return false
     end
-    local ws     = require 'workspace'
-    local client = require 'client'
+    local ws     = require("script.workspace")
+    local client = require("script.client")
     if  not m.isOpen(uri)
     and not m.isLibrary(uri)
     and #file.text >= config.get(uri, 'Lua.workspace.preloadFileSize') * 1000 then
@@ -659,7 +659,7 @@ function m.compileStateAsync(uri, callback)
 end
 
 local function pluginOnTransformAst(uri, state)
-    local plugin   = require 'plugin'
+    local plugin   = require("script.plugin")
     ---TODO: maybe deepcopy astNode
     local suc, result = plugin.dispatch('OnTransformAst', uri, state.ast)
     if not suc then
@@ -690,8 +690,8 @@ function m.compileState(uri)
         nonstandardSymbol = util.arrayToHash(config.get(uri, 'Lua.runtime.nonstandardSymbol')),
     }
 
-    local ws     = require 'workspace'
-    local client = require 'client'
+    local ws     = require("script.workspace")
+    local client = require("script.client")
     if not client.isReady() then
         log.error('Client not ready!', uri)
     end
@@ -965,7 +965,7 @@ function m.resolvePathPlaceholders(path)
             if addonsPath then
                 return addonsPath
             end
-            local client = require("client")
+            local client = require("script.client")
             local storagePath = client.getOption("storagePath")
             if storagePath then
                 addonsPath = (fs.path(storagePath) / "addonManager" / "addons"):string()
@@ -992,7 +992,7 @@ function m.resolvePathPlaceholders(path)
             local env = os.getenv(key:sub(5))
             return env
         elseif key == "workspaceFolder" then
-            local ws = require 'workspace'
+            local ws = require("script.workspace")
             return ws.rootUri and furi.decode(ws.rootUri)
         elseif key:match("^workspaceFolder:.+$") then
             local folderName = key:match("^workspaceFolder:(.+)$")

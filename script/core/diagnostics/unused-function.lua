@@ -1,11 +1,11 @@
-local files   = require 'files'
-local guide   = require 'parser.guide'
-local vm      = require 'vm'
-local define  = require 'proto.define'
-local lang    = require 'language'
-local await   = require 'await'
-local client  = require 'client'
-local util    = require 'utility'
+local files   = require("script.files")
+local guide   = require("script.parser.guide")
+local vm      = require("script.vm")
+local define  = require("script.proto.define")
+local lang    = require("script.language")
+local await   = require("script.await")
+local client  = require("script.client")
+local util    = require("script.utility")
 
 local function isToBeClosed(source)
     if not source.attrs then

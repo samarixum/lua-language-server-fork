@@ -1,4 +1,4 @@
-local diag = require 'proto.diagnostic'
+local diag = require("script.proto.diagnostic")
 
 local m = {}
 

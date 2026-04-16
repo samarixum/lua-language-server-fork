@@ -1,7 +1,7 @@
-local files    = require 'files'
-local guide    = require 'parser.guide'
-local lang     = require 'language'
-local vm       = require 'vm'
+local files    = require("script.files")
+local guide    = require("script.parser.guide")
+local lang     = require("script.language")
+local vm       = require("script.vm")
 
 return function (uri, callback)
     local state = files.getState(uri)

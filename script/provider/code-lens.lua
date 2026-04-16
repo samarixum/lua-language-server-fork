@@ -1,7 +1,7 @@
-local proto          = require 'proto'
-local client         = require 'client'
-local json           = require 'json'
-local config         = require 'config'
+local proto          = require("script.proto")
+local client         = require("script.client")
+local json           = require("script.json")
+local config         = require("script.config")
 
 local function refresh()
     if not client.isReady() then

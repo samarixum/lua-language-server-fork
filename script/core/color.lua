@@ -1,5 +1,5 @@
-local files = require "files"
-local guide = require "parser.guide"
+local files = require("script.files")
+local guide = require("script.parser.guide")
 
 local colorPattern = string.rep('%x', 8)
 local hex6Pattern = string.format("^#%s", string.rep('%x', 6))

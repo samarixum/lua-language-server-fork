@@ -1,7 +1,7 @@
 ---@class vm
-local vm        = require 'vm.vm'
-local util      = require 'utility'
-local guide     = require 'parser.guide'
+local vm        = require("script.vm.vm")
+local util      = require("script.utility")
+local guide     = require("script.parser.guide")
 
 local searchByNodeSwitch = util.switch()
     : case 'global'

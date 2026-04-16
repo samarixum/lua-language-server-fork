@@ -1,8 +1,8 @@
-local doc    = require 'cli.doc'
-local client = require 'client'
-local furi   = require 'file-uri'
-local lang   = require 'language'
-local files  = require 'files'
+local doc    = require("script.cli.doc")
+local client = require("script.client")
+local furi   = require("script.file-uri")
+local lang   = require("script.language")
+local files  = require("script.files")
 
 ---@async
 return function (args)

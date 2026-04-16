@@ -1,4 +1,4 @@
-local util = require 'utility'
+local util = require("script.utility")
 
 ---@class proto.diagnostic
 local m = {}

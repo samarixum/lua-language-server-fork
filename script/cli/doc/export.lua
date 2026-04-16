@@ -1,15 +1,15 @@
 ---@diagnostic disable: await-in-sync, param-type-mismatch
-local ws       = require 'workspace'
-local vm       = require 'vm'
-local guide    = require 'parser.guide'
+local ws       = require("script.workspace")
+local vm       = require("script.vm")
+local guide    = require("script.parser.guide")
 
-local getDesc  = require 'core.hover.description'
-local getLabel = require 'core.hover.label'
-local jsonb    = require 'json-beautify'
-local util     = require 'utility'
-local markdown = require 'provider.markdown'
-local fs       = require 'bee.filesystem'
-local furi     = require 'file-uri'
+local getDesc  = require("script.core.hover.description")
+local getLabel = require("script.core.hover.label")
+local jsonb    = require("script.json-beautify")
+local util     = require("script.utility")
+local markdown = require("script.provider.markdown")
+local fs       = require("bee.filesystem")
+local furi     = require("script.file-uri")
 
 ---@alias doctype
 ---| 'doc.alias'

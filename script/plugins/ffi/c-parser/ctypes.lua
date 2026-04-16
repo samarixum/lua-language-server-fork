@@ -1,9 +1,9 @@
 local ctypes = { TESTMODE = false }
 
-local inspect = require("inspect")
-local utility = require 'utility'
-local util = require 'plugins.ffi.c-parser.util'
-local typed = require("plugins.ffi.c-parser.typed")
+local inspect = require("script.inspect")
+local utility = require("script.utility")
+local util = require("script.plugins.ffi.c-parser.util")
+local typed = require("script.plugins.ffi.c-parser.typed")
 
 local equal_declarations
 

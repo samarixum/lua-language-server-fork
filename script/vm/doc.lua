@@ -1,9 +1,9 @@
-local files  = require 'files'
-local await  = require 'await'
-local guide  = require 'parser.guide'
+local files  = require("script.files")
+local await  = require("script.await")
+local guide  = require("script.parser.guide")
 ---@class vm
-local vm     = require 'vm.vm'
-local config = require 'config'
+local vm     = require("script.vm.vm")
+local config = require("script.config")
 
 ---@class parser.object
 ---@field package _castTargetHead? parser.object | vm.global | false

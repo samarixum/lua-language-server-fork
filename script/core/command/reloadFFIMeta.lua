@@ -1,11 +1,11 @@
-local config      = require 'config'
-local ws          = require 'workspace'
-local fs          = require 'bee.filesystem'
-local scope       = require 'workspace.scope'
-local SDBMHash    = require 'SDBMHash'
-local searchCode  = require 'plugins.ffi.searchCode'
-local cdefRerence = require 'plugins.ffi.cdefRerence'
-local ffi         = require 'plugins.ffi'
+local config      = require("script.config")
+local ws          = require("script.workspace")
+local fs          = require("bee.filesystem")
+local scope       = require("script.workspace.scope")
+local SDBMHash    = require("script.SDBMHash")
+local searchCode  = require("script.plugins.ffi.searchCode")
+local cdefRerence = require("script.plugins.ffi.cdefRerence")
+local ffi         = require("script.plugins.ffi")
 
 local function createDir(uri)
     local dir     = scope.getScope(uri).uri or 'default'
@@ -43,7 +43,7 @@ return function (uri)
     end
 
     if not exists then
-        local client = require 'client'
+        local client = require("script.client")
         client.setConfig {
             {
                 key    = 'Lua.workspace.library',

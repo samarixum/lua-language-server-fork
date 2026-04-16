@@ -1,5 +1,5 @@
-local files      = require("files")
-local log        = require("log")
+local files      = require("script.files")
+local log        = require("script.log")
 
 return function(uri, options)
     local suc, codeFormat = pcall(require, "code_format")

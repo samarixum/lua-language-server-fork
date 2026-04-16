@@ -27,8 +27,8 @@
 
 local c99 = {}
 
-local re = require("parser.relabel")
-local typed = require("plugins.ffi.c-parser.typed")
+local re = require("script.parser.relabel")
+local typed = require("script.plugins.ffi.c-parser.typed")
 
 local defs = {}
 
@@ -37,7 +37,7 @@ c99.tracing = false
 
 defs["trace"] = function(s, i)
     if c99.tracing then
-        --local location = require("titan-compiler.location")
+        --local location = require("script.titan-compiler.location")
         --local line, col = location.get_line_number(s, i)
         --print("TRACE", line, col, "[[" ..s:sub(i, i+ 256):gsub("\n.*", "") .. "]]")
     end

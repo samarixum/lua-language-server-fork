@@ -1,4 +1,4 @@
-local vm = require 'vm'
+local vm = require("script.vm")
 
 local function getLiterals(arg)
     local literals = vm.getLiterals(arg)

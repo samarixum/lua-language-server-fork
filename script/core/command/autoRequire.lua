@@ -1,9 +1,9 @@
-local files  = require 'files'
-local furi   = require 'file-uri'
-local rpath  = require 'workspace.require-path'
-local client = require 'client'
-local lang   = require 'language'
-local guide  = require 'parser.guide'
+local files  = require("script.files")
+local furi   = require("script.file-uri")
+local rpath  = require("script.workspace.require-path")
+local client = require("script.client")
+local lang   = require("script.language")
+local guide  = require("script.parser.guide")
 
 local function inComment(state, pos)
     for _, comm in ipairs(state.comms) do

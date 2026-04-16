@@ -1,12 +1,12 @@
-local files     = require 'files'
-local lang      = require 'language'
-local util      = require 'utility'
-local guide     = require "parser.guide"
-local converter = require 'proto.converter'
-local autoreq   = require 'core.completion.auto-require'
-local rpath     = require 'workspace.require-path'
-local furi      = require 'file-uri'
-local vm        = require 'vm'
+local files     = require("script.files")
+local lang      = require("script.language")
+local util      = require("script.utility")
+local guide     = require("script.parser.guide")
+local converter = require("script.proto.converter")
+local autoreq   = require("script.core.completion.auto-require")
+local rpath     = require("script.workspace.require-path")
+local furi      = require("script.file-uri")
+local vm        = require("script.vm")
 
 ---@param uri  uri
 ---@param row  integer
@@ -380,7 +380,7 @@ local function solveSpell(uri, diag, results)
     if not state then
         return
     end
-    local spell = require 'provider.spell'
+    local spell = require("script.provider.spell")
     local word = diag.data
     if word == nil then
         return

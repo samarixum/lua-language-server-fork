@@ -1,8 +1,8 @@
-local util     = require 'utility'
-local config   = require 'config'
-local guide    = require 'parser.guide'
+local util     = require("script.utility")
+local config   = require("script.config")
+local guide    = require("script.parser.guide")
 ---@class vm
-local vm       = require 'vm.vm'
+local vm       = require("script.vm.vm")
 
 ---@class vm.infer
 ---@field node vm.node

@@ -1,4 +1,4 @@
-local m = require 'lpeglabel'
+local m = require("script.lpeglabel")
 
 local Slash  = m.S('/\\')^1
 local Symbol = m.S',{}[]*?/\\'

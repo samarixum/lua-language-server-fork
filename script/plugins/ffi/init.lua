@@ -1,8 +1,8 @@
-local cdriver                = require 'plugins.ffi.c-parser.cdriver'
-local util                   = require 'plugins.ffi.c-parser.util'
-local utility                = require 'utility'
-local fs                     = require 'bee.filesystem'
-local ws                     = require 'workspace'
+local cdriver                = require("script.plugins.ffi.c-parser.cdriver")
+local util                   = require("script.plugins.ffi.c-parser.util")
+local utility                = require("script.utility")
+local fs                     = require("bee.filesystem")
+local ws                     = require("script.workspace")
 
 local namespace <const>      = 'ffi.namespace*.'
 

@@ -1,11 +1,11 @@
-local proto     = require 'proto'
-local lang      = require 'language'
-local util      = require 'utility'
-local workspace = require 'workspace'
-local scope     = require 'workspace.scope'
-local inspect   = require 'inspect'
-local jsonc     = require 'jsonc'
-local json      = require 'json'
+local proto     = require("script.proto")
+local lang      = require("script.language")
+local util      = require("script.utility")
+local workspace = require("script.workspace")
+local scope     = require("script.workspace.scope")
+local inspect   = require("script.inspect")
+local jsonc     = require("script.jsonc")
+local json      = require("script.json")
 
 local function errorMessage(msg)
     proto.notify('window/showMessage', {

@@ -1,5 +1,5 @@
-local client = require 'client'
-local await  = require 'await'
+local client = require("script.client")
+local await  = require("script.await")
 
 ---@async
 ---@param changes config.change[]

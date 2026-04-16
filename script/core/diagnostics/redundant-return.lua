@@ -1,7 +1,7 @@
-local files   = require 'files'
-local guide   = require 'parser.guide'
-local lang    = require 'language'
-local define  = require 'proto.define'
+local files   = require("script.files")
+local guide   = require("script.parser.guide")
+local lang    = require("script.language")
+local define  = require("script.proto.define")
 
 -- reports 'return' without any return values at the end of functions
 return function (uri, callback)

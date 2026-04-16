@@ -1,8 +1,8 @@
-local proto  = require 'proto.proto'
-local util   = require 'utility'
-local timer  = require "timer"
-local config = require 'config'
-local time   = require 'bee.time'
+local proto  = require("script.proto.proto")
+local util   = require("script.utility")
+local timer  = require("script.timer")
+local config = require("script.config.config")
+local time   = require("bee.time")
 
 local nextToken = util.counter()
 

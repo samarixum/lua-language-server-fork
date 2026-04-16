@@ -1,20 +1,20 @@
-local fs      = require 'bee.filesystem'
-local plat    = require 'bee.platform'
-local config  = require 'config'
-local util    = require 'utility'
-local lang    = require 'language'
-local client  = require 'client'
-local lloader = require 'locale-loader'
-local fsu     = require 'fs-utility'
-local define  = require "proto.define"
-local files   = require 'files'
-local await   = require 'await'
-local encoder = require 'encoder'
-local ws      = require 'workspace.workspace'
-local scope   = require 'workspace.scope'
-local inspect = require 'inspect'
-local jsonb   = require 'json-beautify'
-local jsonc   = require 'jsonc'
+local fs      = require("bee.filesystem")
+local plat    = require("bee.platform")
+local config  = require("script.config")
+local util    = require("script.utility")
+local lang    = require("script.language")
+local client  = require("script.client")
+local lloader = require("script.locale-loader")
+local fsu     = require("script.fs-utility")
+local define  = require("script.proto.define")
+local files   = require("script.files")
+local await   = require("script.await")
+local encoder = require("script.encoder")
+local ws      = require("script.workspace.workspace")
+local scope   = require("script.workspace.scope")
+local inspect = require("script.inspect")
+local jsonb   = require("script.json-beautify")
+local jsonc   = require("script.jsonc")
 
 local m = {}
 

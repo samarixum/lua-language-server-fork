@@ -1,6 +1,6 @@
-local config = require 'config'
-local ws = require 'workspace'
-local util = require 'utility'
+local config = require("script.config")
+local ws = require("script.workspace")
+local util = require("script.utility")
 
 local function getConfig(key)
     local scope = ws.getFirstScope()

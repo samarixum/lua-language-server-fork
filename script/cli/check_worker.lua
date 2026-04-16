@@ -1,19 +1,19 @@
-local lclient   = require 'lclient'()
-local furi      = require 'file-uri'
-local ws        = require 'workspace'
-local files     = require 'files'
-local diag      = require 'provider.diagnostic'
-local util      = require 'utility'
-local jsonb     = require 'json-beautify'
-local lang      = require 'language'
-local define    = require 'proto.define'
-local protoDiag = require 'proto.diagnostic'
-local config    = require 'config.config'
-local fs        = require 'bee.filesystem'
-local provider  = require 'provider'
-local await     = require 'await'
-require 'plugin'
-require 'vm'
+local lclient   = require("script.lclient")()
+local furi      = require("script.file-uri")
+local ws        = require("script.workspace")
+local files     = require("script.files")
+local diag      = require("script.provider.diagnostic")
+local util      = require("script.utility")
+local jsonb     = require("script.json-beautify")
+local lang      = require("script.language")
+local define    = require("script.proto.define")
+local protoDiag = require("script.proto.diagnostic")
+local config    = require("script.config.config")
+local fs        = require("bee.filesystem")
+local provider  = require("script.provider")
+local await     = require("script.await")
+require("script.plugin")
+require("script.vm")
 
 local export = {}
 

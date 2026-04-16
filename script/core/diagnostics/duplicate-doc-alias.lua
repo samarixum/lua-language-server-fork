@@ -1,8 +1,8 @@
-local files    = require 'files'
-local lang     = require 'language'
-local vm       = require 'vm'
-local guide    = require 'parser.guide'
-local await    = require 'await'
+local files    = require("script.files")
+local lang     = require("script.language")
+local vm       = require("script.vm")
+local guide    = require("script.parser.guide")
+local await    = require("script.await")
 
 ---@async
 return function (uri, callback)

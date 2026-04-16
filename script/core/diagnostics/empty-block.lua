@@ -1,8 +1,8 @@
-local files   = require 'files'
-local guide   = require 'parser.guide'
-local lang    = require 'language'
-local define  = require 'proto.define'
-local await   = require 'await'
+local files   = require("script.files")
+local guide   = require("script.parser.guide")
+local lang    = require("script.language")
+local define  = require("script.proto.define")
+local await   = require("script.await")
 
 -- 检查空代码块  
 -- 但是排除忙等待（repeat/while)

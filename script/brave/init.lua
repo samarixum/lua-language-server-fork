@@ -1,4 +1,4 @@
-local brave = require 'brave.brave'
-require 'brave.work'
+local brave = require("script.brave.brave")
+require("script.brave.work")
 
 return brave

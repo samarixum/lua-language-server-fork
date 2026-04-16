@@ -1,10 +1,10 @@
-local files    = require 'files'
+local files    = require("script.files")
 ---@class vm
-local vm       = require 'vm.vm'
-local ws       = require 'workspace.workspace'
-local guide    = require 'parser.guide'
-local timer    = require 'timer'
-local util     = require 'utility'
+local vm       = require("script.vm.vm")
+local ws       = require("script.workspace.workspace")
+local guide    = require("script.parser.guide")
+local timer    = require("script.timer")
+local util     = require("script.utility")
 
 ---@type table<vm.object, vm.node>
 vm.nodeCache = setmetatable({}, util.MODE_K)

@@ -1,8 +1,8 @@
-local files      = require 'files'
-local vm         = require 'vm'
-local findSource = require 'core.find-source'
-local guide      = require 'parser.guide'
-local jumpSource = require 'core.jump-source'
+local files      = require("script.files")
+local vm         = require("script.vm")
+local findSource = require("script.core.find-source")
+local guide      = require("script.parser.guide")
+local jumpSource = require("script.core.jump-source")
 
 local function sortResults(results)
     -- 先按照顺序排序

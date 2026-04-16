@@ -1,11 +1,11 @@
 ---@class vm
-local vm        = require 'vm.vm'
-local util      = require 'utility'
-local guide     = require 'parser.guide'
-local files     = require 'files'
-local await     = require 'await'
-local progress  = require 'progress'
-local lang      = require 'language'
+local vm        = require("script.vm.vm")
+local util      = require("script.utility")
+local guide     = require("script.parser.guide")
+local files     = require("script.files")
+local await     = require("script.await")
+local progress  = require("script.progress")
+local lang      = require("script.language")
 
 local simpleSwitch
 

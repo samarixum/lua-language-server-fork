@@ -1,3 +1,3 @@
-local workspace = require 'workspace.workspace'
+local workspace = require("script.workspace.workspace")
 
 return workspace

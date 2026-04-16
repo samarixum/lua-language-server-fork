@@ -2,37 +2,37 @@ print('#############################loading service/service.lua')
 
 
 print('service-1')
-local pub    = require 'pub'
+local pub    = require("script.pub.pub")
 print('service-1')
-local await  = require 'await'
+local await  = require("script.await")
 print('service-2')
-local timer  = require 'timer'
+local timer  = require("script.timer")
 print('service-3')
-local proto  = require 'proto'
+local proto  = require("script.proto")
 print('service-4')
-local vm     = require 'vm'
+local vm     = require("script.vm")
 print('service-5')
-local util   = require 'utility'
+local util   = require("script.utility")
 print('service-6')
-local files  = require 'files'
+local files  = require("script.files")
 print('service-7')
-local lang   = require 'language'
+local lang   = require("script.language")
 print('service-8')
-local ws     = require 'workspace'
+local ws     = require("script.workspace")
 print('service-9')
-local time   = require 'bee.time'
+local time   = require("bee.time")
 print('service-10')
-local fw     = require 'filewatch'
+local fw     = require("script.filewatch")
 print('service-11')
-local furi   = require 'file-uri'
+local furi   = require("script.file-uri")
 print('service-12')
-local net    = require 'service.net'
+local net    = require("script.service.net")
 print('service-13')
-local client = require 'client'
+local client = require("script.client")
 print('service-14')
-require 'jsonc'
+require("script.jsonc")
 print('service-15')
-require 'json-beautify'
+require("script.json-beautify")
 print('service-16')
 
 
@@ -268,8 +268,8 @@ function m.sayHello()
 end
 
 function m.lockCache()
-    local fs = require 'bee.filesystem'
-    local sp = require 'bee.subprocess'
+    local fs = require("bee.filesystem")
+    local sp = require("bee.subprocess")
     local cacheDir = string.format('%s/cache', LOGPATH)
     local myCacheDir = string.format('%s/%d'
         , cacheDir
@@ -299,7 +299,7 @@ function m.start()
     m.report()
     m.lockCache()
 
-    require 'provider'
+    require("script.provider")
 
     m.sayHello()
 

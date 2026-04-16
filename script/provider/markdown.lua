@@ -1,5 +1,5 @@
-local wssymbol = require("core.workspace-symbol")
-local guide = require("parser.guide")
+local wssymbol = require("script.core.workspace-symbol")
+local guide = require("script.parser.guide")
 
 ---@class markdown
 local mt = {}

@@ -56,7 +56,7 @@ else
     math_type = math.type
 end
 
-local json = require "json-beautify"
+local json = require("script.json-beautify")
 
 local encode_escape_map = {
     [ "\"" ] = "\\\"",

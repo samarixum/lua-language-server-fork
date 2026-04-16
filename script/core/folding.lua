@@ -1,7 +1,7 @@
-local files = require "files"
-local guide = require "parser.guide"
-local util  = require 'utility'
-local await = require 'await'
+local files = require("script.files")
+local guide = require("script.parser.guide")
+local util  = require("script.utility")
+local await = require("script.await")
 
 local care = {
     ['function'] = function (source, _text, results)

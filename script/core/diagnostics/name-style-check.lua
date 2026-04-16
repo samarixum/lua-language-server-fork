@@ -1,7 +1,7 @@
-local files     = require 'files'
-local converter = require 'proto.converter'
-local log       = require 'log'
-local nameStyle = require 'provider.name-style'
+local files     = require("script.files")
+local converter = require("script.proto.converter")
+local log       = require("script.log")
+local nameStyle = require("script.provider.name-style")
 
 
 ---@async

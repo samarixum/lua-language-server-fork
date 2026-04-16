@@ -1,5 +1,5 @@
-local vm       = require 'vm.vm'
-local guide    = require 'parser.guide'
+local vm       = require("script.vm.vm")
+local guide    = require("script.parser.guide")
 
 ---@param source parser.object
 ---@return parser.object[]

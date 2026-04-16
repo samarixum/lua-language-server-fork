@@ -1,6 +1,6 @@
-local files    = require 'files'
-local globalModule = require 'vm.global'
-local variable = require 'vm.variable'
+local files    = require("script.files")
+local globalModule = require("script.vm.global")
+local variable = require("script.vm.variable")
 
 ---@async
 files.watch(function (ev, uri)

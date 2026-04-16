@@ -1,9 +1,9 @@
-local lang       = require 'language'
-local platform   = require 'bee.platform'
-local subprocess = require 'bee.subprocess'
-local json       = require 'json'
-local jsonb      = require 'json-beautify'
-local util       = require 'utility'
+local lang       = require("script.language")
+local platform   = require("bee.platform")
+local subprocess = require("bee.subprocess")
+local json       = require("script.json")
+local jsonb      = require("script.json-beautify")
+local util       = require("script.utility")
 
 local export = {}
 

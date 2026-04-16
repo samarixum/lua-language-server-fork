@@ -1,11 +1,10 @@
-local nonil      = require 'without-check-nil'
-local client     = require 'client'
-local completion = require 'provider.completion'
+local client     = require("script.client")
+local completion = require("script.provider.completion")
 
-require 'provider.semantic-tokens'
-require 'provider.formatting'
-require 'provider.inlay-hint'
-require 'provider.code-lens'
+require("script.provider.semantic-tokens")
+require("script.provider.formatting")
+require("script.provider.inlay-hint")
+require("script.provider.code-lens")
 
 local m = {}
 
@@ -57,15 +56,13 @@ function m.getProvider()
         },
     }
 
-    nonil.enable()
-    if not client.info.capabilities.textDocument.completion.dynamicRegistration
-    or not client.info.capabilities.workspace.configuration then
+    if not client.getAbility('textDocument.completion.dynamicRegistration')
+    or not client.getAbility('workspace.configuration') then
         provider.completionProvider = {
             resolveProvider = true,
             triggerCharacters = completion.allWords(),
         }
     end
-    nonil.disable()
 
     mergeFillings(provider)
     resolve(provider)

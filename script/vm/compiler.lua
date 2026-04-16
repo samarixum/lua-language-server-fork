@@ -1,12 +1,12 @@
-local guide      = require 'parser.guide'
-local util       = require 'utility'
-local config     = require 'config'
-local rpath      = require 'workspace.require-path'
-local files      = require 'files'
-local scope      = require 'workspace.scope'
+local guide      = require("script.parser.guide")
+local util       = require("script.utility")
+local config     = require("script.config")
+local rpath      = require("script.workspace.require-path")
+local files      = require("script.files")
+local scope      = require("script.workspace.scope")
 ---@class vm
-local vm         = require 'vm.vm'
-local plugin     = require 'plugin'
+local vm         = require("script.vm.vm")
+local plugin     = require("script.plugin")
 
 ---@class parser.object
 ---@field _compiledNodes        boolean

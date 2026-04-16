@@ -1,7 +1,7 @@
-local files     = require 'files'
-local guide     = require 'parser.guide'
-local vm        = require 'vm'
-local reference = require 'core.reference'
+local files     = require("script.files")
+local guide     = require("script.parser.guide")
+local vm        = require("script.vm")
+local reference = require("script.core.reference")
 local find      = string.find
 local remove    = table.remove
 

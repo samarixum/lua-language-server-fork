@@ -1,4 +1,4 @@
-local gc = require 'gc'
+local gc = require("script.gc")
 
 ---@class scope.manager
 local m = {}

@@ -1,27 +1,27 @@
-local util       = require 'utility'
-local cap        = require 'provider.capability'
-local await      = require 'await'
-local files      = require 'files'
-local proto      = require 'proto.proto'
-local define     = require 'proto.define'
-local workspace  = require 'workspace'
-local config     = require 'config'
-local client     = require 'client'
-local lang       = require 'language'
-local progress   = require 'progress'
-local tm         = require 'text-merger'
-local cfgLoader  = require 'config.loader'
-local converter  = require 'proto.converter'
-local filewatch  = require 'filewatch'
-local json       = require 'json'
-local scope      = require 'workspace.scope'
-local furi       = require 'file-uri'
-local inspect    = require 'inspect'
-local guide      = require 'parser.guide'
-local fs         = require 'bee.filesystem'
-local version    = require 'version'
+local util       = require("script.utility")
+local cap        = require("script.provider.capability")
+local await      = require("script.await")
+local files      = require("script.files")
+local proto      = require("script.proto.proto")
+local define     = require("script.proto.define")
+local workspace  = require("script.workspace")
+local config     = require("script.config")
+local client     = require("script.client")
+local lang       = require("script.language")
+local progress   = require("script.progress")
+local tm         = require("script.text-merger")
+local cfgLoader  = require("script.config.loader")
+local converter  = require("script.proto.converter")
+local filewatch  = require("script.filewatch")
+local json       = require("script.json")
+local scope      = require("script.workspace.scope")
+local furi       = require("script.file-uri")
+local inspect    = require("script.inspect")
+local guide      = require("script.parser.guide")
+local fs         = require("bee.filesystem")
+local version    = require("script.version")
 
-require 'library'
+require("script.library")
 
 ---@class provider
 local m = {}
@@ -238,7 +238,7 @@ m.register 'workspace/didRenameFiles' {
                 end
             end
         end
-        local core = require 'core.modifyRequirePath'
+        local core = require("script.core.modifyRequirePath")
         core(renames)
     end
 }
@@ -299,7 +299,7 @@ m.register 'textDocument/didClose' {
 m.register 'textDocument/didChange' {
     ---@async
     function (params)
-        local fixIndent = require 'core.fix-indent'
+        local fixIndent = require("script.core.fix-indent")
         local doc     = params.textDocument
         local changes = params.contentChanges
         local uri     = files.getRealUri(doc.uri)
@@ -359,7 +359,7 @@ m.register 'textDocument/hover' {
             }
         end
         local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_HOVER, 0.5)
-        local core = require 'core.hover'
+        local core = require("script.core.hover")
         local state = files.getState(uri)
         if not state then
             return nil
@@ -431,7 +431,7 @@ m.register 'textDocument/definition' {
         if not state then
             return nil
         end
-        local core   = require 'core.definition'
+        local core   = require("script.core.definition")
         local pos = converter.unpackPosition(state, params.position)
         local result = core(uri, pos)
         if not result then
@@ -456,7 +456,7 @@ m.register 'textDocument/typeDefinition' {
         if not state then
             return
         end
-        local core   = require 'core.type-definition'
+        local core   = require("script.core.type-definition")
         local pos = converter.unpackPosition(state, params.position)
         local result = core(uri, pos)
         if not result then
@@ -481,7 +481,7 @@ m.register 'textDocument/implementation' {
         if not state then
             return
         end
-        local core   = require 'core.implementation'
+        local core   = require("script.core.implementation")
         local pos = converter.unpackPosition(state, params.position)
         local result = core(uri, pos)
         if not result then
@@ -506,7 +506,7 @@ m.register 'textDocument/references' {
         if not state then
             return nil
         end
-        local core   = require 'core.reference'
+        local core   = require("script.core.reference")
         local pos    = converter.unpackPosition(state, params.position)
         local result = core(uri, pos, params.context.includeDeclaration)
         if not result then
@@ -533,7 +533,7 @@ m.register 'textDocument/documentHighlight' {
     },
     ---@async
     function (params)
-        local core = require 'core.highlight'
+        local core = require("script.core.highlight")
         local uri  = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
         local state = files.getState(uri)
@@ -572,7 +572,7 @@ m.register 'textDocument/rename' {
         if not state then
             return nil
         end
-        local core = require 'core.rename'
+        local core = require("script.core.rename")
         local pos    = converter.unpackPosition(state, params.position)
         local result = core.rename(uri, pos, params.newName)
         if not result then
@@ -600,7 +600,7 @@ m.register 'textDocument/rename' {
 m.register 'textDocument/prepareRename' {
     abortByFileUpdate = true,
     function (params)
-        local core = require 'core.rename'
+        local core = require("script.core.rename")
         local uri  = files.getRealUri(params.textDocument.uri)
         local state = files.getState(uri)
         if not state then
@@ -630,7 +630,7 @@ m.register 'textDocument/completion' {
         end
         local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_COMPLETION, 0.5)
         --log.info(util.dump(params))
-        local core  = require 'core.completion'
+        local core  = require("script.core.completion")
         --log.debug('textDocument/completion')
         --log.debug('completion:', params.context and params.context.triggerKind, params.context and params.context.triggerCharacter)
         local state = files.getState(uri)
@@ -732,7 +732,7 @@ m.register 'textDocument/completion' {
 m.register 'completionItem/resolve' {
     ---@async
     function (item)
-        local core = require 'core.completion'
+        local core = require("script.core.completion")
         if not item.data then
             return item
         end
@@ -790,7 +790,7 @@ m.register 'textDocument/signatureHelp' {
         end
         local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SIGNATURE, 0.5)
         local pos = converter.unpackPosition(state, params.position)
-        local core = require 'core.signature'
+        local core = require("script.core.signature")
         local results = core(uri, pos)
         if not results then
             return nil
@@ -836,7 +836,7 @@ m.register 'textDocument/documentSymbol' {
         if not state then
             return nil
         end
-        local core = require 'core.document-symbol'
+        local core = require("script.core.document-symbol")
         local symbols = core(uri)
         if not symbols then
             return nil
@@ -889,7 +889,7 @@ m.register 'textDocument/codeAction' {
     abortByFileUpdate = true,
     ---@async
     function (params)
-        local core        = require 'core.code-action'
+        local core        = require("script.core.code-action")
         local uri         = files.getRealUri(params.textDocument.uri)
         local range       = params.range
         local diagnostics = params.context.diagnostics
@@ -945,7 +945,7 @@ m.register 'textDocument/codeLens' {
         if not state then
             return nil
         end
-        local core = require 'core.code-lens'
+        local core = require("script.core.code-lens")
         local results = core.codeLens(uri)
         if not results then
             return nil
@@ -967,7 +967,7 @@ m.register 'textDocument/codeLens' {
 m.register 'codeLens/resolve' {
     ---@async
     function (codeLen)
-        local core = require 'core.code-lens'
+        local core = require("script.core.code-lens")
         local command = core.resolve(codeLen.data.uri, codeLen.data.id)
         codeLen.command = command or converter.command('...', '', {})
         return codeLen
@@ -991,28 +991,28 @@ m.register 'workspace/executeCommand' {
     function (params)
         local command = params.command:gsub(':.+', '')
         if     command == 'lua.removeSpace' then
-            local core = require 'core.command.removeSpace'
+            local core = require("script.core.command.removeSpace")
             return core(params.arguments[1])
         elseif command == 'lua.solve' then
-            local core = require 'core.command.solve'
+            local core = require("script.core.command.solve")
             return core(params.arguments[1])
         elseif command == 'lua.jsonToLua' then
-            local core = require 'core.command.jsonToLua'
+            local core = require("script.core.command.jsonToLua")
             return core(params.arguments[1])
         elseif command == 'lua.setConfig' then
-            local core = require 'core.command.setConfig'
+            local core = require("script.core.command.setConfig")
             return core(params.arguments)
         elseif command == 'lua.getConfig' then
-            local core = require 'core.command.getConfig'
+            local core = require("script.core.command.getConfig")
             return core(params.arguments)
         elseif command == 'lua.autoRequire' then
-            local core = require 'core.command.autoRequire'
+            local core = require("script.core.command.autoRequire")
             return core(params.arguments[1])
         elseif command == 'lua.exportDocument' then
-            local core = require 'core.command.exportDocument'
+            local core = require("script.core.command.exportDocument")
             core(params.arguments)
         elseif command == 'lua.reloadFFIMeta' then
-            local core = require 'core.command.reloadFFIMeta'
+            local core = require("script.core.command.reloadFFIMeta")
             for _, scp in ipairs(workspace.folders) do
                 core(scp.uri)
             end
@@ -1028,7 +1028,7 @@ m.register 'workspace/symbol' {
     ---@async
     function (params)
         local _ <close> = progress.create(workspace.getFirstScope().uri, lang.script.WINDOW_PROCESSING_WS_SYMBOL, 0.5)
-        local core = require 'core.workspace-symbol'
+        local core = require("script.core.workspace-symbol")
 
         local symbols = core(params.query, nil, true)
         if not symbols or #symbols == 0 then
@@ -1097,7 +1097,7 @@ client.event(function (ev)
                     workspace.awaitReady(uri)
                     await.sleep(0.0)
                     local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SEMANTIC_FULL, 0.5)
-                    local core = require 'core.semantic-tokens'
+                    local core = require("script.core.semantic-tokens")
                     local results = core(uri, 0, math.huge)
                     return {
                         data = results
@@ -1130,7 +1130,7 @@ m.register 'textDocument/semanticTokens/range' {
         if not state then
             return nil
         end
-        local core = require 'core.semantic-tokens'
+        local core = require("script.core.semantic-tokens")
         local start, finish = converter.unpackRange(state, params.range)
         local results = core(uri, start, finish)
         return {
@@ -1145,7 +1145,7 @@ m.register 'textDocument/foldingRange' {
     },
     ---@async
     function (params)
-        local core    = require 'core.folding'
+        local core    = require("script.core.folding")
         local uri     = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
         if not files.exists(uri) then
@@ -1186,7 +1186,7 @@ m.register 'textDocument/documentColor' {
     },
     ---@async
     function (params)
-        local color = require 'core.color'
+        local color = require("script.core.color")
         local uri     = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
         local state = files.getState(uri)
@@ -1210,7 +1210,7 @@ m.register 'textDocument/documentColor' {
 
 m.register 'textDocument/colorPresentation' {
     function (params)
-        local color = (require 'core.color').colorToText(params.color)
+        local color = (require("script.core.color")).colorToText(params.color)
         return {{label = color}}
     end
 }
@@ -1236,16 +1236,16 @@ m.register '$/status/click' {
             return
         end
         if result == titleDiagnostic then
-            local diagnostic = require 'provider.diagnostic'
+            local diagnostic = require("script.provider.diagnostic")
             for _, scp in ipairs(workspace.folders) do
                 diagnostic.diagnosticsScope(scp.uri, true, true)
             end
         elseif result == 'Restart Server' then
-            local diag = require 'provider.diagnostic'
+            local diag = require("script.provider.diagnostic")
             diag.clearAll(nil, true)
             os.exit(0, true)
         elseif result == 'Clear Node Cache' then
-            local vm = require 'vm'
+            local vm = require("script.vm")
             vm.clearNodeCache()
             collectgarbage()
             collectgarbage()
@@ -1273,10 +1273,10 @@ m.register 'textDocument/formatting' {
             return nil
         end
 
-        local pformatting = require 'provider.formatting'
+        local pformatting = require("script.provider.formatting")
         pformatting.updateConfig(uri)
 
-        local core = require 'core.formatting'
+        local core = require("script.core.formatting")
         local edits = core(uri, params.options)
         if not edits or #edits == 0 then
             return nil
@@ -1311,10 +1311,10 @@ m.register 'textDocument/rangeFormatting' {
             return nil
         end
 
-        local pformatting = require 'provider.formatting'
+        local pformatting = require("script.provider.formatting")
         pformatting.updateConfig(uri)
 
-        local core = require 'core.rangeformatting'
+        local core = require("script.core.rangeformatting")
         local edits = core(uri, params.range, params.options)
         if not edits or #edits == 0 then
             return nil
@@ -1350,7 +1350,7 @@ m.register 'textDocument/onTypeFormatting' {
         if not state then
             return nil
         end
-        local core   = require 'core.type-formatting'
+        local core   = require("script.core.type-formatting")
         local pos    = converter.unpackPosition(state, params.position)
         local edits  = core(uri, pos, ch, params.options)
         if not edits or #edits == 0 then
@@ -1389,7 +1389,7 @@ m.register '$/requestHint' {
         if not state then
             return
         end
-        local core = require 'core.hint'
+        local core = require("script.core.hint")
         local start, finish = converter.unpackRange(state, params.range)
         local results = core(uri, start, finish)
         local hintResults = {}
@@ -1417,7 +1417,7 @@ m.register 'textDocument/inlayHint' {
             return nil
         end
         workspace.awaitReady(uri)
-        local core = require 'core.hint'
+        local core = require("script.core.hint")
         local state = files.getState(uri)
         if not state then
             return nil
@@ -1478,7 +1478,7 @@ m.register 'textDocument/diagnostic' {
     function (params)
         local uri = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local core = require 'provider.diagnostic'
+        local core = require("script.provider.diagnostic")
         -- TODO: do some trick
         core.doDiagnostic(uri)
 
@@ -1515,7 +1515,7 @@ m.register 'workspace/diagnostic' {
     --},
     ---@async
     function (params)
-        local core = require 'provider.diagnostic'
+        local core = require("script.provider.diagnostic")
         local excepts = {}
         for _, id in ipairs(params.previousResultIds) do
             excepts[#excepts+1] = id.value
@@ -1556,8 +1556,8 @@ m.register 'workspace/diagnostic' {
 m.register '$/api/report' {
     ---@async
     function (params)
-        local buildMeta = require 'provider.build-meta'
-        local SDBMHash  = require 'SDBMHash'
+        local buildMeta = require("script.provider.build-meta")
+        local SDBMHash  = require("script.SDBMHash")
         await.close 'api/report'
         await.setID 'api/report'
         local name = params.name or 'default'
@@ -1591,7 +1591,7 @@ m.register '$/psi/view' {
         if not files.exists(uri) then
             return nil
         end
-        local core = require 'core.view.psi-view'
+        local core = require("script.core.view.psi-view")
         local result = core(uri)
         return result
     end
@@ -1606,7 +1606,7 @@ m.register '$/psi/select' {
         if not files.exists(uri) then
             return nil
         end
-        local core = require 'core.view.psi-select'
+        local core = require("script.core.view.psi-select")
         local result = core(uri, params.position)
         return result
     end
@@ -1616,7 +1616,7 @@ local function refreshLanguageConfiguration()
     if not client.getOption('languageConfiguration') then
         return
     end
-    local lc = require 'provider.language-configuration'
+    local lc = require("script.provider.language-configuration")
     proto.notify('$/languageConfiguration', lc.make())
 end
 

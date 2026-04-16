@@ -1,5 +1,5 @@
-local files  = require 'files'
-local config = require 'config'
+local files  = require("script.files")
+local config = require("script.config")
 
 local function typeFormat(results, uri, position, ch, options)
     if ch ~= '\n' then
@@ -14,7 +14,7 @@ local function typeFormat(results, uri, position, ch, options)
     if not state then
         return
     end
-    local converter = require("proto.converter")
+    local converter = require("script.proto.converter")
     local pos = converter.packPosition(state, position)
     local typeFormatOptions = config.get(uri, 'Lua.typeFormat.config')
     local success, result = codeFormat.type_format(uri, text, pos.line, pos.character, options, typeFormatOptions)

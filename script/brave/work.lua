@@ -1,7 +1,7 @@
-local brave   = require 'brave.brave'
+local brave   = require("script.brave.brave")
 
 brave.on('loadProtoByStdio', function ()
-    local jsonrpc = require 'jsonrpc'
+    local jsonrpc = require("script.jsonrpc")
     while true do
         local proto, err = jsonrpc.decode(io.read)
         --log.debug('loaded proto', proto.method)
@@ -14,8 +14,8 @@ brave.on('loadProtoByStdio', function ()
 end)
 
 brave.on('loadProtoBySocket', function (param)
-    local jsonrpc = require 'jsonrpc'
-    local net     = require 'service.net'
+    local jsonrpc = require("script.jsonrpc")
+    local net     = require("script.service.net")
     local buf = ''
 
     ---@async
@@ -71,7 +71,7 @@ brave.on('loadProtoBySocket', function (param)
 end)
 
 brave.on('timer', function (time)
-    local thread = require 'bee.thread'
+    local thread = require("bee.thread")
     while true do
         thread.sleep(math.floor(time * 1000))
         brave.push('wakeup')
@@ -79,13 +79,13 @@ brave.on('timer', function (time)
 end)
 
 brave.on('loadFile', function (path)
-    local util    = require 'utility'
+    local util    = require("script.utility")
     return util.loadFile(path)
 end)
 
 brave.on('removeCaches', function (path)
-    local fs  = require 'bee.filesystem'
-    local fsu = require 'fs-utility'
+    local fs  = require("bee.filesystem")
+    local fsu = require("script.fs-utility")
     for dir in fs.pairs(fs.path(path)) do
         local lockFile = dir / '.lock'
         local f = io.open(lockFile:string(), 'wb')
@@ -110,7 +110,7 @@ end)
 
 ---@param param brave.param.compile
 brave.on('compile', function (param)
-    local parser = require 'parser'
+    local parser = require("script.parser")
     local clock = os.clock()
     local state, err = parser.compile(param.text
         , param.mode

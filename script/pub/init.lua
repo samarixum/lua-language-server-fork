@@ -1,4 +1,4 @@
-local pub  = require 'pub.pub'
-require 'pub.report'
+local pub  = require("script.pub.pub")
+require("script.pub.report")
 
 return pub

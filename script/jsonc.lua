@@ -39,7 +39,7 @@ else
     utf8_char = utf8.char
 end
 
-local json = require "json"
+local json = require("script.json")
 
 local encode_escape_map = {
     [ "\"" ] = "\\\"",

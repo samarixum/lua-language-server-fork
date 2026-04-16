@@ -1,9 +1,9 @@
-local util  = require 'utility'
-local scope = require 'workspace.scope'
-local guide = require 'parser.guide'
-local config = require 'config'
+local util  = require("script.utility")
+local scope = require("script.workspace.scope")
+local guide = require("script.parser.guide")
+local config = require("script.config")
 ---@class vm
-local vm    = require 'vm.vm'
+local vm    = require("script.vm.vm")
 
 ---@type table<string, vm.global>
 local allGlobals = {}

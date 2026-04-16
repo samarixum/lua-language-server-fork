@@ -1,8 +1,8 @@
 print('including script/config/template.lua')
 
-local util   = require 'utility'
-local define = require 'proto.define'
-local diag   = require 'proto.diagnostic'
+local util   = require("script.utility")
+local define = require("script.proto.define")
+local diag   = require("script.proto.diagnostic")
 
 ---@class config.unit
 ---@field caller function

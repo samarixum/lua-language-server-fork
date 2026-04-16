@@ -1,8 +1,8 @@
-local define     = require 'proto.define'
-local guide      = require 'parser.guide'
-local config     = require 'config'
-local util       = require 'utility'
-local lookback   = require 'core.look-backward'
+local define     = require("script.proto.define")
+local guide      = require("script.parser.guide")
+local config     = require("script.config")
+local util       = require("script.utility")
+local lookback   = require("script.core.look-backward")
 
 local keyWordMap = {
     { 'do', function(info, results)

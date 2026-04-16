@@ -1,9 +1,9 @@
-local files      = require 'files'
-local vm         = require 'vm'
-local hoverLabel = require 'core.hover.label'
-local hoverDesc  = require 'core.hover.description'
-local guide      = require 'parser.guide'
-local lookback   = require 'core.look-backward'
+local files      = require("script.files")
+local vm         = require("script.vm")
+local hoverLabel = require("script.core.hover.label")
+local hoverDesc  = require("script.core.hover.description")
+local guide      = require("script.parser.guide")
+local lookback   = require("script.core.look-backward")
 
 local function findNearCall(uri, ast, pos)
     local text  = files.getText(uri)

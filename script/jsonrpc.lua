@@ -1,5 +1,5 @@
-local json     = require 'json'
-local inspect  = require 'inspect'
+local json     = require("script.json")
+local inspect  = require("script.inspect")
 local pcall    = pcall
 local tonumber = tonumber
 

@@ -1,9 +1,9 @@
-local fw    = require 'bee.filewatch'
-local fs    = require 'bee.filesystem'
-local sys   = require 'bee.sys'
-local plat  = require 'bee.platform'
-local await = require 'await'
-local files = require 'files'
+local fw    = require("bee.filewatch")
+local fs    = require("bee.filesystem")
+local sys   = require("bee.sys")
+local plat  = require("bee.platform")
+local await = require("script.await")
+local files = require("script.files")
 
 local MODIFY = 1 << 0
 local RENAME = 1 << 1

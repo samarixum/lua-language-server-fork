@@ -1,7 +1,7 @@
-local files = require("files")
-local guide = require("parser.guide")
-local converter = require("proto.converter")
-local subString = require 'core.substring'
+local files = require("script.files")
+local guide = require("script.parser.guide")
+local converter = require("script.proto.converter")
+local subString = require("script.core.substring")
 
 
 

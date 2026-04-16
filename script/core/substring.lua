@@ -1,4 +1,4 @@
-local guide = require 'parser.guide'
+local guide = require("script.parser.guide")
 
 return function (state)
     ---@param pos1 parser.position

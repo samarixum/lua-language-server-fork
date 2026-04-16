@@ -1,6 +1,6 @@
-local util    = require 'utility'
-local encoder = require 'encoder'
-local client  = require 'client'
+local util    = require("script.utility")
+local encoder = require("script.encoder")
+local client  = require("script.client")
 
 local offsetEncoding
 local function getOffsetEncoding()

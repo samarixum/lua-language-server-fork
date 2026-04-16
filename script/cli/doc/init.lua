@@ -1,13 +1,13 @@
-local lclient  = require 'lclient'
-local furi     = require 'file-uri'
-local ws       = require 'workspace'
-local files    = require 'files'
-local util     = require 'utility'
-local lang     = require 'language'
-local config   = require 'config.config'
-local await    = require 'await'
-local progress = require 'progress'
-local fs       = require 'bee.filesystem'
+local lclient  = require("script.lclient")
+local furi     = require("script.file-uri")
+local ws       = require("script.workspace")
+local files    = require("script.files")
+local util     = require("script.utility")
+local lang     = require("script.language")
+local config   = require("script.config.config")
+local await    = require("script.await")
+local progress = require("script.progress")
+local fs       = require("bee.filesystem")
 
 local doc = {}
 
@@ -33,7 +33,7 @@ local function getPathDocUpdate()
     local doc_json_path = findDocJson()
     local ok, doc_path = pcall(
         function ()
-            local json = require('json')
+            local json = require("script.json")
             local json_file = io.open(doc_json_path:string(), 'r'):read('*all')
             local json_data = json.decode(json_file)
             for _, section in ipairs(json_data) do
@@ -92,20 +92,20 @@ end
 --these modules need to be loaded by the time this function is created
 --im leaving them here since this is a pretty strange function that might get moved somewhere else later
 --so make sure to bring these with you!
-require 'workspace'
-require 'vm'
-require 'parser.guide'
-require 'core.hover.description'
-require 'core.hover.label'
-require 'json-beautify'
-require 'utility'
-require 'provider.markdown'
+require("script.workspace")
+require("script.vm")
+require("script.parser.guide")
+require("script.core.hover.description")
+require("script.core.hover.label")
+require("script.json-beautify")
+require("script.utility")
+require("script.provider.markdown")
 
 ---Gets config file's doc gen overrides.
 ---@return table dirty_module clone of the export module modified by user buildscript
 local function injectBuildScript()
     local sub_path = config.get(ws.rootUri, 'Lua.docScriptPath')
-    local module = reinstantiateModule( ( require 'cli.doc.export' ) )
+    local module = reinstantiateModule( ( require("script.cli.doc.export") ) )
     --if default, then no build script modifications
     if sub_path == '' then
         return module
@@ -120,14 +120,14 @@ local function injectBuildScript()
     local data, err = loadfile(resolved_path, 't', setmetatable({
             export = module,
 
-            ws       = require 'workspace',
-            vm       = require 'vm',
-            guide    = require 'parser.guide',
-            getDesc  = require 'core.hover.description',
-            getLabel = require 'core.hover.label',
-            jsonb    = require 'json-beautify',
-            util     = require 'utility',
-            markdown = require 'provider.markdown'
+            ws       = require("script.workspace"),
+            vm       = require("script.vm"),
+            guide    = require("script.parser.guide"),
+            getDesc  = require("script.core.hover.description"),
+            getLabel = require("script.core.hover.label"),
+            jsonb    = require("script.json-beautify"),
+            util     = require("script.utility"),
+            markdown = require("script.provider.markdown")
         },
         {__index = _G}))
     if err or not data then

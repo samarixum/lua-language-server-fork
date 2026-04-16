@@ -1,7 +1,7 @@
-local vm       = require 'vm'
-local config   = require 'config'
-local await    = require 'await'
-local guide    = require 'parser.guide'
+local vm       = require("script.vm")
+local config   = require("script.config")
+local await    = require("script.await")
+local guide    = require("script.parser.guide")
 
 ---@param uri uri
 ---@param keys string[]

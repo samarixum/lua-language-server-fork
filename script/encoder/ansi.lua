@@ -1,8 +1,8 @@
-local platform = require 'bee.platform'
+local platform = require("bee.platform")
 local windows
 
 if platform.os == 'windows' then
-    windows = require 'bee.windows'
+    windows = require("bee.windows")
 end
 
 local m = {}

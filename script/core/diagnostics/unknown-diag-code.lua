@@ -1,6 +1,6 @@
-local files   = require 'files'
-local lang    = require 'language'
-local diag    = require 'proto.diagnostic'
+local files   = require("script.files")
+local lang    = require("script.language")
+local diag    = require("script.proto.diagnostic")
 
 return function (uri, callback)
     local state = files.getState(uri)

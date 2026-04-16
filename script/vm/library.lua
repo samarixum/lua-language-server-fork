@@ -1,5 +1,5 @@
 ---@class vm
-local vm      = require 'vm.vm'
+local vm      = require("script.vm.vm")
 
 function vm.getLibraryName(source)
     if source.special then

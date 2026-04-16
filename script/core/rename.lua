@@ -1,9 +1,9 @@
-local files      = require 'files'
-local vm         = require 'vm'
-local util       = require 'utility'
-local findSource = require 'core.find-source'
-local guide      = require 'parser.guide'
-local config     = require 'config'
+local files      = require("script.files")
+local vm         = require("script.vm")
+local util       = require("script.utility")
+local findSource = require("script.core.find-source")
+local guide      = require("script.parser.guide")
+local config     = require("script.config")
 
 local Forcing
 

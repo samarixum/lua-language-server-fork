@@ -3,12 +3,12 @@ if not suc then
     return
 end
 
-local ws          = require 'workspace'
-local furi        = require 'file-uri'
-local fs          = require 'bee.filesystem'
-local fw          = require 'filewatch'
-local util        = require 'utility'
-local config      = require 'config'
+local ws          = require("script.workspace")
+local furi        = require("script.file-uri")
+local fs          = require("bee.filesystem")
+local fw          = require("script.filewatch")
+local util        = require("script.utility")
+local config      = require("script.config")
 
 local loadedUris = {}
 

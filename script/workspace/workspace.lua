@@ -1,18 +1,18 @@
-local pub        = require 'pub'
-local fs         = require 'bee.filesystem'
-local furi       = require 'file-uri'
-local files      = require 'files'
-local config     = require 'config'
-local glob       = require 'glob'
-local platform   = require 'bee.platform'
-local await      = require 'await'
-local client     = require 'client'
-local util       = require 'utility'
-local fw         = require 'filewatch'
-local scope      = require 'workspace.scope'
-local loading    = require 'workspace.loading'
-local inspect    = require 'inspect'
-local lang       = require 'language'
+local pub        = require("script.pub.pub")
+local fs         = require("bee.filesystem")
+local furi       = require("script.file-uri")
+local files      = require("script.files")
+local config     = require("script.config")
+local glob       = require("script.glob")
+local platform   = require("bee.platform")
+local await      = require("script.await")
+local client     = require("script.client")
+local util       = require("script.utility")
+local fw         = require("script.filewatch")
+local scope      = require("script.workspace.scope")
+local loading    = require("script.workspace.loading")
+local inspect    = require("script.inspect")
+local lang       = require("script.language")
 
 ---@class workspace
 local m = {}
@@ -396,7 +396,7 @@ function m.findUrisByFilePath(path)
         return {}
     end
     local myUri = furi.encode(path)
-    local vm    = require 'vm'
+    local vm    = require("script.vm")
     local resultCache = vm.getCache 'findUrisByFilePath.result'
     if resultCache[path] then
         return resultCache[path]

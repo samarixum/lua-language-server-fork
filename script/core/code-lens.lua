@@ -1,10 +1,10 @@
-local files  = require 'files'
-local guide  = require 'parser.guide'
-local await  = require 'await'
-local conv   = require 'proto.converter'
-local getRef = require 'core.reference'
-local lang   = require 'language'
-local client = require 'client'
+local files  = require("script.files")
+local guide  = require("script.parser.guide")
+local await  = require("script.await")
+local conv   = require("script.proto.converter")
+local getRef = require("script.core.reference")
+local lang   = require("script.language")
+local client = require("script.client")
 
 ---@class parser.state
 ---@field package _codeLens? codeLens

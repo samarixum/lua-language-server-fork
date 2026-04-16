@@ -1,7 +1,7 @@
 print('glob')
 
-local m = require 'lpeglabel'
-local matcher = require 'glob.matcher'
+local m = require("script.lpeglabel")
+local matcher = require("script.glob.matcher")
 
 local function prop(name, pat)
     return m.Cg(m.Cc(true), name) * pat

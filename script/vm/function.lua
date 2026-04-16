@@ -1,7 +1,7 @@
 ---@class vm
-local vm    = require 'vm.vm'
-local guide = require 'parser.guide'
-local util  = require 'utility'
+local vm    = require("script.vm.vm")
+local guide = require("script.parser.guide")
+local util  = require("script.utility")
 
 ---@param arg parser.object
 ---@return parser.object?

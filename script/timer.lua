@@ -1,12 +1,14 @@
 print('including script/timer.lua')
 
-local time         = require 'bee.time'
+local time         = require("bee.time")
 local setmetatable = setmetatable
 local mathMax      = math.max
 local mathFloor    = math.floor
 local monotonic    = time.monotonic
 local xpcall       = xpcall
-local logError     = log.error
+local logError     = log and log.error or function (err)
+    print(err)
+end
 
 _ENV = nil
 

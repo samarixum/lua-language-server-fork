@@ -1,10 +1,13 @@
 
 print('including script/vm.lua')
-local guide     = require 'parser.guide'
-local files     = require 'files'
-local timer     = require 'timer'
+local guide     = require("script.parser.guide")
+local files     = require("script.files")
+local timer     = require("script.timer")
 local setmetatable   = setmetatable
 local log            = log
+local logError       = log and log.error or function (err)
+    print(err)
+end
 local xpcall         = xpcall
 local mathHuge       = math.huge
 
@@ -134,7 +137,7 @@ end
 
 print('vm-9')
 
-xpcall(init, log.error)
+xpcall(init, logError)
 
 print('vm.lua loaded')
 

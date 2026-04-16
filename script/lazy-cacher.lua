@@ -1,5 +1,5 @@
-local fs          = require 'bee.filesystem'
-local linkedTable = require 'linked-table'
+local fs          = require("bee.filesystem")
+local linkedTable = require("script.linked-table")
 
 local setmt = setmetatable
 local pairs = pairs

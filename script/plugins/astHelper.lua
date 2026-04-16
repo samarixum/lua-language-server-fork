@@ -1,5 +1,5 @@
-local luadoc = require 'parser.luadoc'
-local guide = require 'parser.guide'
+local luadoc = require("script.parser.luadoc")
+local guide = require("script.parser.guide")
 local _M = {}
 
 function _M.buildComment(t, value, pos)

@@ -1,8 +1,8 @@
-local files     = require 'files'
-local guide     = require 'parser.guide'
-local proto     = require 'proto'
-local lang      = require 'language'
-local converter = require 'proto.converter'
+local files     = require("script.files")
+local guide     = require("script.parser.guide")
+local proto     = require("script.proto")
+local lang      = require("script.language")
+local converter = require("script.proto.converter")
 
 local opMap = {
     ['+']  = true,

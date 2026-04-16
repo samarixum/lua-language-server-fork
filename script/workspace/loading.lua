@@ -1,11 +1,11 @@
-local progress = require 'progress'
-local lang     = require 'language'
-local await    = require 'await'
-local files    = require 'files'
-local config   = require 'config.config'
-local client   = require 'client'
-local furi     = require 'file-uri'
-local pub      = require 'pub'
+local progress = require("script.progress")
+local lang     = require("script.language")
+local await    = require("script.await")
+local files    = require("script.files")
+local config   = require("script.config.config")
+local client   = require("script.client")
+local furi     = require("script.file-uri")
+local pub      = require("script.pub.pub")
 
 ---@class workspace.loading
 ---@field scp scope

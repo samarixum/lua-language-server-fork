@@ -1,10 +1,10 @@
-local files  = require 'files'
-local guide  = require 'parser.guide'
-local define = require 'proto.define'
-local lang   = require 'language'
-local vm     = require 'vm.vm'
-local config = require 'config.config'
-local glob   = require 'glob'
+local files  = require("script.files")
+local guide  = require("script.parser.guide")
+local define = require("script.proto.define")
+local lang   = require("script.language")
+local vm     = require("script.vm.vm")
+local config = require("script.config.config")
+local glob   = require("script.glob")
 
 local function hasGet(loc)
     if not loc.ref then
