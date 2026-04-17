@@ -135,7 +135,7 @@ function m.build(path, api)
 
     files[api.root][#files[api.root]+1] = buildRootText(api)
 
-    local proc <close> = progress.create(nil, lang.script.WINDOW_PROCESSING_BUILD_META, 0.5)
+    local proc = progress.create(nil, lang.script.WINDOW_PROCESSING_BUILD_META, 0.5)
     for i, class in ipairs(api.classes) do
         local space = class.namespace ~= '' and class.namespace or api.root
         proc:setMessage(space)

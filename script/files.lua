@@ -696,11 +696,11 @@ function m.compileState(uri)
         log.error('Client not ready!', uri)
     end
     
-    -- Removed <close> attribute for MoonSharp compatibility
+    -- Removed attribute for MoonSharp compatibility
     local prog = progress.create(uri, lang.script.WINDOW_COMPILING, 0.5)
     prog:setMessage(ws.getRelativePath(uri))
     
-    -- Helper to emulate the Lua 5.4 <close> behavior
+    -- Helper to emulate the Lua 5.4 behavior
     local function close_prog()
         if not prog then return end
         local mt = getmetatable(prog)

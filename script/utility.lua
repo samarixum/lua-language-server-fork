@@ -29,6 +29,31 @@ local nan          = 0 / 0
 local error        = error
 local assert       = assert
 
+if not math.tointeger then
+    function math.tointeger(n)
+        if type(n) == 'number' and n % 1 == 0 then
+            return n
+        end
+        return nil
+    end
+end
+
+if not math.type then
+    function math.type(n)
+        if math.tointeger(n) then
+            return 'integer'
+        end
+        if type(n) == 'number' then
+            return 'float'
+        end
+        return nil
+    end
+end
+
+if not table.unpack and unpack then
+    table.unpack = unpack
+end
+
 
 _ENV = nil
 

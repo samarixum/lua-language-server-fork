@@ -1,24 +1,14 @@
 local socket = require("bee.socket")
 local select = require("bee.select")
 local fs = require("bee.filesystem")
+local bit32 = require("script.bit32")
 
--- Dynamically resolve bitwise operations to avoid MoonSharp syntax errors
-local b_and, b_or, b_not
-if _G._MOONSHARP or _VERSION == "MoonSharp 2.0.0.0" or _VERSION == "Lua 5.2" then
-    local bit32 = require("script.bit32")
-    b_and = bit32.band
-    b_or  = bit32.bor
-    b_not = bit32.bnot
-else
-    -- Lua 5.3+ (including 5.5). We use load() to hide the syntax from MoonSharp's parser
-    b_and = load("return function(a, b) return a & b end")()
-    b_or  = load("return function(a, b) return a | b end")()
-    b_not = load("return function(a) return ~a end")()
-end
+local b_and = bit32.band
+local b_or  = bit32.bor
+local b_not = bit32.bnot
 
 local selector = select.create()
 
--- Removed <const> attribute for MoonSharp compatibility
 local SELECT_READ = select.SELECT_READ
 local SELECT_WRITE = select.SELECT_WRITE
 

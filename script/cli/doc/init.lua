@@ -111,7 +111,7 @@ local function injectBuildScript()
         return module
     end
     local resolved_path = fs.absolute(fs.path(DOC)):string() .. sub_path
-    local f <close> = io.open(resolved_path, 'r')
+    local f = io.open(resolved_path, 'r')
     if not f then
         error('could not open config file at '..tostring(resolved_path))
     end
@@ -145,7 +145,7 @@ function doc.makeDoc(outputPath)
 
     local expandAlias = config.get(ws.rootUri, 'Lua.hover.expandAlias')
     config.set(ws.rootUri, 'Lua.hover.expandAlias', false)
-    local _ <close> = function ()
+    local _ = function ()
         config.set(ws.rootUri, 'Lua.hover.expandAlias', expandAlias)
     end
 
@@ -153,7 +153,7 @@ function doc.makeDoc(outputPath)
 
     -- ready --
 
-    local prog <close> = progress.create(ws.rootUri, lang.script('CLI_DOC_WORKING'), 0)
+    local prog = progress.create(ws.rootUri, lang.script('CLI_DOC_WORKING'), 0)
 
     local dirty_export = injectBuildScript()
 

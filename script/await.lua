@@ -85,7 +85,7 @@ function m.await(callback, ...)
     end
     return m.wait(function (resume, ...)
         m.call(function ()
-            -- pcall is used for Lua 5.2 compatibility to replace 5.4's <close> feature
+            -- pcall is used for Lua 5.2 compatibility to replace 5.4's feature
             local ok, result = pcall(callback)
             if ok then
                 resume(result)

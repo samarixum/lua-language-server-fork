@@ -3255,8 +3255,8 @@ local function parseMultiVars(n1, parser, isLocal)
     end
 
     do
-        -- Lua 5.4: only one <close> attribute allowed across a local declaration
-        -- Lua 5.5: multiple <close> are allowed
+        -- Lua 5.4: only one attribute allowed across a local declaration
+        -- Lua 5.5: multiple are allowed
         if State.version == 'Lua 5.4' then
             local function collectCloseAttrs(node, list)
                 local attrs = node and node.attrs

@@ -246,7 +246,7 @@ local function checkValue(parent, child, mark, errs)
                 local cvalues = vm.getTableValue(uri, tnode, knode, true)
                 if not cvalues then
                     if pfield.optional then
-                        goto continue
+                        goto CONTINUE
                     end
                     if errs then
                         errs[#errs+1] = 'TYPE_ERROR_TABLE_NO_FIELD'
@@ -254,17 +254,19 @@ local function checkValue(parent, child, mark, errs)
                     end
                     return false
                 end
-                local pvalues = vm.compileNode(pfield.extends)
-                if vm.isSubType(uri, cvalues, pvalues, mark, errs) == false then
-                    if errs then
-                        errs[#errs+1] = 'TYPE_ERROR_TABLE_FIELD_DISMATCH'
-                        errs[#errs+1] = pfield.name
-                        errs[#errs+1] = cvalues
-                        errs[#errs+1] = pvalues
+                do
+                    local pvalues = vm.compileNode(pfield.extends)
+                    if vm.isSubType(uri, cvalues, pvalues, mark, errs) == false then
+                        if errs then
+                            errs[#errs+1] = 'TYPE_ERROR_TABLE_FIELD_DISMATCH'
+                            errs[#errs+1] = pfield.name
+                            errs[#errs+1] = cvalues
+                            errs[#errs+1] = pvalues
+                        end
+                        return false
                     end
-                    return false
                 end
-                ::continue::
+                ::CONTINUE::
             end
         end
         return true

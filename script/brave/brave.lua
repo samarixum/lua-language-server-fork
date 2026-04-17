@@ -1,5 +1,6 @@
 local channel = require("bee.channel")
 local epoll   = require("bee.epoll")
+local bit32   = require("script.bit32")
 
 local reqPad
 local resPad
@@ -52,29 +53,28 @@ end
 
 --- 开始找工作
 function m.start()
-    local epfd <close> = assert(epoll.create(16))
+    local epfd = assert(epoll.create(16))
     epfd:event_add(reqPad:fd(), epoll.EPOLLIN)
 
-    m.push('mem', collectgarbage 'count')
+    m.push('mem', collectgarbage('count') or 0)
     while true do
         for _, event in epfd:wait() do
-            if event & epoll.EPOLLIN ~= 0 then
+            if bit32.band(event, epoll.EPOLLIN) ~= 0 then
                 local ok, name, id, params = reqPad:pop()
                 if ok then
                     local ability = m.ability[name]
                     if not ability then
                         resPad:push(id)
                         log.error('Brave can not handle this work: ' .. name)
-                        goto CONTINUE
-                    end
-                    local suc, res = xpcall(ability, log.error, params)
-                    if suc then
-                        resPad:push(id, res)
                     else
-                        resPad:push(id)
+                        local suc, res = xpcall(ability, log.error, params)
+                        if suc then
+                            resPad:push(id, res)
+                        else
+                            resPad:push(id)
+                        end
                     end
-                    m.push('mem', collectgarbage 'count')
-                    ::CONTINUE::
+                    m.push('mem', collectgarbage('count') or 0)
                 end
             end
         end

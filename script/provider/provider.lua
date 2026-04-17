@@ -140,7 +140,7 @@ m.register 'initialize' {
 m.register 'initialized'{
     ---@async
     function (params)
-        local _ <close> = progress.create(workspace.getFirstScope().uri, lang.script.WINDOW_INITIALIZING, 0.5)
+        local _ = progress.create(workspace.getFirstScope().uri, lang.script.WINDOW_INITIALIZING, 0.5)
         --- 传递`.luarc.doc.json`文件所在的文件夹路径
         m.updateConfig(params and params.luarcParentUri)
         local registrations = {}
@@ -358,7 +358,7 @@ m.register 'textDocument/hover' {
                 }
             }
         end
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_HOVER, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_HOVER, 0.5)
         local core = require("script.core.hover")
         local state = files.getState(uri)
         if not state then
@@ -426,7 +426,7 @@ m.register 'textDocument/definition' {
     function (params)
         local uri    = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_DEFINITION, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_DEFINITION, 0.5)
         local state = files.getState(uri)
         if not state then
             return nil
@@ -451,7 +451,7 @@ m.register 'textDocument/typeDefinition' {
     function (params)
         local uri    = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_DEFINITION, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_DEFINITION, 0.5)
         local state = files.getState(uri)
         if not state then
             return
@@ -476,7 +476,7 @@ m.register 'textDocument/implementation' {
     function (params)
         local uri    = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_DEFINITION, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_DEFINITION, 0.5)
         local state = files.getState(uri)
         if not state then
             return
@@ -501,7 +501,7 @@ m.register 'textDocument/references' {
     function (params)
         local uri    = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_REFERENCE, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_REFERENCE, 0.5)
         local state = files.getState(uri)
         if not state then
             return nil
@@ -567,7 +567,7 @@ m.register 'textDocument/rename' {
     function (params)
         local uri  = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_RENAME, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_RENAME, 0.5)
         local state = files.getState(uri)
         if not state then
             return nil
@@ -628,7 +628,7 @@ m.register 'textDocument/completion' {
         if not workspace.isReady(uri) then
             return nil
         end
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_COMPLETION, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_COMPLETION, 0.5)
         --log.info(util.dump(params))
         local core  = require("script.core.completion")
         --log.debug('textDocument/completion')
@@ -657,7 +657,7 @@ m.register 'textDocument/completion' {
             return nil
         end
         tracy.ZoneBeginN 'completion make'
-        local _ <close> = tracy.ZoneEnd
+        local _ = tracy.ZoneEnd
         local easy = false
         local items = {}
         for i, res in ipairs(result) do
@@ -788,7 +788,7 @@ m.register 'textDocument/signatureHelp' {
         if not state then
             return nil
         end
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SIGNATURE, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_SIGNATURE, 0.5)
         local pos = converter.unpackPosition(state, params.position)
         local core = require("script.core.signature")
         local results = core(uri, pos)
@@ -831,7 +831,7 @@ m.register 'textDocument/documentSymbol' {
     function (params)
         local uri   = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SYMBOL, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_SYMBOL, 0.5)
         local state = files.getState(uri)
         if not state then
             return nil
@@ -1027,7 +1027,7 @@ m.register 'workspace/symbol' {
     abortByFileUpdate = true,
     ---@async
     function (params)
-        local _ <close> = progress.create(workspace.getFirstScope().uri, lang.script.WINDOW_PROCESSING_WS_SYMBOL, 0.5)
+        local _ = progress.create(workspace.getFirstScope().uri, lang.script.WINDOW_PROCESSING_WS_SYMBOL, 0.5)
         local core = require("script.core.workspace-symbol")
 
         local symbols = core(params.query, nil, true)
@@ -1096,7 +1096,7 @@ client.event(function (ev)
                     local uri = files.getRealUri(params.textDocument.uri)
                     workspace.awaitReady(uri)
                     await.sleep(0.0)
-                    local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SEMANTIC_FULL, 0.5)
+                    local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_SEMANTIC_FULL, 0.5)
                     local core = require("script.core.semantic-tokens")
                     local results = core(uri, 0, math.huge)
                     return {
@@ -1124,7 +1124,7 @@ m.register 'textDocument/semanticTokens/range' {
         log.debug('textDocument/semanticTokens/range')
         local uri = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_SEMANTIC_RANGE, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_SEMANTIC_RANGE, 0.5)
         await.sleep(0.0)
         local state = files.getState(uri)
         if not state then
@@ -1344,7 +1344,7 @@ m.register 'textDocument/onTypeFormatting' {
     function (params)
         local uri    = files.getRealUri(params.textDocument.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
         local ch     = params.ch
         local state  = files.getState(uri)
         if not state then
@@ -1587,7 +1587,7 @@ m.register '$/psi/view' {
     function (params)
         local uri = files.getRealUri(params.uri)
         workspace.awaitReady(uri)
-        local _ <close> = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
+        local _ = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
         if not files.exists(uri) then
             return nil
         end
@@ -1602,7 +1602,7 @@ m.register '$/psi/select' {
     function(params)
         local uri = files.getRealUri(params.uri)
         workspace.awaitReady(uri)
-        local _<close> = progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
+        local _= progress.create(uri, lang.script.WINDOW_PROCESSING_TYPE_FORMATTING, 0.5)
         if not files.exists(uri) then
             return nil
         end

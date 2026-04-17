@@ -40,10 +40,15 @@ function m.isVSCode()
 end
 
 function m.getOption(name)
-    nonil.enable()
-    local option = m.info.initializationOptions[name]
-    nonil.disable()
-    return option
+    local info = m.info
+    if type(info) ~= 'table' then
+        return nil
+    end
+    local initializationOptions = rawget(info, 'initializationOptions')
+    if type(initializationOptions) ~= 'table' then
+        return nil
+    end
+    return initializationOptions[name]
 end
 
 function m.getAbility(name)

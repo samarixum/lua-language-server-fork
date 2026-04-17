@@ -42,7 +42,7 @@ local function searchInAllFiles(suri, searcher, notify)
         end
     end
 
-    local loading <close> = progress.create(suri, lang.script.WINDOW_SEARCHING_IN_FILES, 1)
+    local loading = progress.create(suri, lang.script.WINDOW_SEARCHING_IN_FILES, 1)
     local cancelled
     loading:onCancel(function ()
         cancelled = true

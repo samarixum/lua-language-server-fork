@@ -120,7 +120,6 @@ end
 -- 1. Store the paths in a local table
 local paths = {
     abRoot .. "/?.lua",             -- For root level modules
-    abRoot .. "/bin/?.lua",         -- For binary-related scripts
     abRoot .. "/?/?.lua",           -- FIX: This will map 'script.proto' to 'script/proto/proto.lua'
     abRoot .. "/?/init.lua",        -- Standard Lua package pattern
 }

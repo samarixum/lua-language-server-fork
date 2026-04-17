@@ -185,13 +185,14 @@ function mt:resolve(uri, args)
         local knownTypes = {}
         local genericsNames   = {}
         for obj in sign:eachObject() do
+            local skip
             if obj.type == 'doc.generic.name' then
                 genericsNames[obj[1]] = true
-                goto CONTINUE
+                skip = true
             end
-            if obj.type == 'doc.type.table'
+            if not skip and (obj.type == 'doc.type.table'
             or obj.type == 'doc.type.function'
-            or obj.type == 'doc.type.array' then
+            or obj.type == 'doc.type.array') then
                 ---@cast obj parser.object
                 local hasGeneric
                 guide.eachSourceType(obj, 'doc.generic.name', function (src)
@@ -199,18 +200,19 @@ function mt:resolve(uri, args)
                     genericsNames[src[1]] = true
                 end)
                 if hasGeneric then
-                    goto CONTINUE
+                    skip = true
                 end
             end
-            if obj.type == 'variable'
-            or obj.type == 'local' then
-                goto CONTINUE
+            if not skip and (obj.type == 'variable'
+            or obj.type == 'local') then
+                skip = true
             end
-            local view = vm.getInfer(obj):view(uri)
-            if view then
-                knownTypes[view] = true
+            if not skip then
+                local view = vm.getInfer(obj):view(uri)
+                if view then
+                    knownTypes[view] = true
+                end
             end
-            ::CONTINUE::
         end
         return knownTypes, genericsNames
     end
@@ -224,20 +226,22 @@ function mt:resolve(uri, args)
         local newArgNode = vm.createNode()
         local needRemoveNil = sign:hasFalsy()
         for n in argNode:eachObject() do
+            local skip = false
             if needRemoveNil then
-                if n.type == 'nil' then
-                    goto CONTINUE
-                end
-                if n.type == 'global' and n.cate == 'type' and n.name == 'nil' then
-                    goto CONTINUE
+                if n.type == 'nil'
+                or (n.type == 'global' and n.cate == 'type' and n.name == 'nil') then
+                    skip = true
                 end
             end
-            local view = vm.getInfer(n):view(uri)
-            if knownTypes[view] then
-                goto CONTINUE
+            if not skip then
+                local view = vm.getInfer(n):view(uri)
+                if knownTypes[view] then
+                    skip = true
+                end
             end
-            newArgNode:merge(n)
-            ::CONTINUE::
+            if not skip then
+                newArgNode:merge(n)
+            end
         end
         if not needRemoveNil and argNode:isOptional() then
             newArgNode:addOptional()

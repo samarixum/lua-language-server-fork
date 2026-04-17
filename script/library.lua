@@ -270,18 +270,16 @@ local function initBuiltIn(uri)
             local ok, err = out:saveFile(outputLibName, metaDoc)
             if not ok then
                 log.debug("Save Meta File Failed:", err)
-                goto CONTINUE
-            end
+            else
+                local outputPath = metaPath / outputLibName
+                m.metaPaths[outputPath:string()] = true
+                log.debug('Meta path:', outputPath:string())
 
-            local outputPath = metaPath / outputLibName
-            m.metaPaths[outputPath:string()] = true
-            log.debug('Meta path:', outputPath:string())
-
-            if include then
-                metaPaths[#metaPaths+1] = outputPath:string()
+                if include then
+                    metaPaths[#metaPaths+1] = outputPath:string()
+                end
             end
         end
-        ::CONTINUE::
     end
     local result = fsu.fileSync(out, metaPath)
     if #result.err > 0 then
@@ -548,28 +546,30 @@ local function check3rdByWords(uri, configs, checkThirdParty)
             return
         end
         for _, cfg in ipairs(configs) do
+            local skip = false
             if not cfg.words then
-                goto CONTINUE
+                skip = true
             end
-            if hasAsked[cfg.name] then
-                goto CONTINUE
+            if not skip and hasAsked[cfg.name] then
+                skip = true
             end
             local library = ('%s/library'):format(cfg.dirname)
-            if util.arrayHas(config.get(uri, 'Lua.workspace.library'), library) then
-                goto CONTINUE
+            if not skip and util.arrayHas(config.get(uri, 'Lua.workspace.library'), library) then
+                skip = true
             end
-            for _, word in ipairs(cfg.words) do
-                await.delay()
-                if wholeMatch(text, word) then
-                    log.info('Found 3rd library by word: ', word, uri, library, inspect(config.get(uri, 'Lua.workspace.library')))
-                    ---@async
-                    await.call(function ()
-                        askFor3rd(uri, cfg, checkThirdParty)
-                    end)
-                    return
+            if not skip then
+                for _, word in ipairs(cfg.words) do
+                    await.delay()
+                    if wholeMatch(text, word) then
+                        log.info('Found 3rd library by word: ', word, uri, library, inspect(config.get(uri, 'Lua.workspace.library')))
+                        ---@async
+                        await.call(function ()
+                            askFor3rd(uri, cfg, checkThirdParty)
+                        end)
+                        return
+                    end
                 end
             end
-            ::CONTINUE::
         end
     end, id)
 end
@@ -584,28 +584,30 @@ local function check3rdByFileName(uri, configs, checkThirdParty)
     await.call(function () ---@async
         await.sleep(0.1)
         for _, cfg in ipairs(configs) do
+            local skip = false
             if not cfg.files then
-                goto CONTINUE
+                skip = true
             end
-            if hasAsked[cfg.name] then
-                goto CONTINUE
+            if not skip and hasAsked[cfg.name] then
+                skip = true
             end
             local library = ('%s/library'):format(cfg.dirname)
-            if util.arrayHas(config.get(uri, 'Lua.workspace.library'), library) then
-                goto CONTINUE
+            if not skip and util.arrayHas(config.get(uri, 'Lua.workspace.library'), library) then
+                skip = true
             end
-            for _, filename in ipairs(cfg.files) do
-                await.delay()
-                if wholeMatch(path, filename) then
-                    log.info('Found 3rd library by filename: ', filename, uri, library, inspect(config.get(uri, 'Lua.workspace.library')))
-                    ---@async
-                    await.call(function ()
-                        askFor3rd(uri, cfg, checkThirdParty)
-                    end)
-                    return
+            if not skip then
+                for _, filename in ipairs(cfg.files) do
+                    await.delay()
+                    if wholeMatch(path, filename) then
+                        log.info('Found 3rd library by filename: ', filename, uri, library, inspect(config.get(uri, 'Lua.workspace.library')))
+                        ---@async
+                        await.call(function ()
+                            askFor3rd(uri, cfg, checkThirdParty)
+                        end)
+                        return
+                    end
                 end
             end
-            ::CONTINUE::
         end
     end, id)
 end

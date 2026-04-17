@@ -1,8 +1,26 @@
 ---@class vm
 local vm     = require("script.vm.vm")
 local util   = require("script.utility")
+local bit32  = require("script.bit32")
 local guide  = require("script.parser.guide")
 local config = require("script.config")
+
+local mathType = math.type or function (n)
+    if type(n) == 'number' and n % 1 == 0 then
+        return 'integer'
+    end
+    if type(n) == 'number' then
+        return 'float'
+    end
+    return nil
+end
+
+local toInteger = math.tointeger or function (n)
+    if type(n) == 'number' and n % 1 == 0 then
+        return n
+    end
+    return nil
+end
 
 vm.UNARY_OP  = {
     'unm',
@@ -180,7 +198,7 @@ vm.unarySwich = util.switch()
                 start  = source.start,
                 finish = source.finish,
                 parent = source,
-                [1]    = ~v,
+                [1]    = bit32.bnot(v),
             })
         end
     end)
@@ -247,11 +265,11 @@ vm.binarySwitch = util.switch()
         local b = vm.getInteger(source[2])
         local op = source.op.type
         if a and b then
-            local result = op == '<<' and a << b
-                        or op == '>>' and a >> b
-                        or op == '&'  and a &  b
-                        or op == '|'  and a |  b
-                        or op == '~'  and a ~  b
+            local result = op == '<<' and bit32.lshift(a, b)
+                        or op == '>>' and bit32.rshift(a, b)
+                        or op == '&'  and bit32.band(a, b)
+                        or op == '|'  and bit32.bor(a, b)
+                        or op == '~'  and bit32.bxor(a, b)
             ---@diagnostic disable-next-line: missing-fields
             vm.setNode(source, {
                 type   = 'integer',
@@ -292,11 +310,11 @@ vm.binarySwitch = util.switch()
                         or op == '*'  and a *  b
                         or op == '/'  and a /  b
                         or op == '%'  and a %  b
-                        or op == '//' and a // b
+                        or op == '//' and math.floor(a / b)
                         or op == '^'  and a ^  b
             ---@diagnostic disable-next-line: missing-fields
             vm.setNode(source, {
-                type   = (op == '//' or math.type(result) == 'integer') and 'integer' or 'number',
+                type   = (op == '//' or mathType(result) == 'integer') and 'integer' or 'number',
                 start  = source.start,
                 finish = source.finish,
                 parent = source,
@@ -362,14 +380,14 @@ vm.binarySwitch = util.switch()
             if type(a) == 'number' or type(b) == 'number' then
                 local uri     = guide.getUri(source)
                 local version = config.get(uri, 'Lua.runtime.version')
-                if math.tointeger(a) and math.type(a) == 'float' then
+                if toInteger(a) and mathType(a) == 'float' then
                     if version == 'Lua 5.3' or version == 'Lua 5.4' or version == 'Lua 5.5' then
                         a = ('%.1f'):format(a)
                     else
                         a = ('%.0f'):format(a)
                     end
                 end
-                if math.tointeger(b) and math.type(b) == 'float' then
+                if toInteger(b) and mathType(b) == 'float' then
                     if version == 'Lua 5.3' or version == 'Lua 5.4' or version == 'Lua 5.5' then
                         b = ('%.1f'):format(b)
                     else

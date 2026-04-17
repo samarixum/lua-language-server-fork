@@ -186,20 +186,19 @@ function mt:getLastAssign(start, finish)
             obj = assign
         end
         if obj.start < start then
-            goto CONTINUE
+        else
+            if (obj.effect or obj.range or obj.start) >= finish then
+                break
+            end
+            local objBlock = guide.getTopBlock(obj)
+            if not objBlock then
+                break
+            end
+            if  objBlock.start  <= finish
+            and objBlock.finish >= finish then
+                lastAssign = obj
+            end
         end
-        if (obj.effect or obj.range or obj.start) >= finish then
-            break
-        end
-        local objBlock = guide.getTopBlock(obj)
-        if not objBlock then
-            break
-        end
-        if  objBlock.start  <= finish
-        and objBlock.finish >= finish then
-            lastAssign = obj
-        end
-        ::CONTINUE::
     end
     return lastAssign
 end

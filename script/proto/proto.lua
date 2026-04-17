@@ -181,7 +181,7 @@ function m.applyMethod(proto)
         local is_done = false
 
         -- The task might be interrupted during execution.
-        -- Replaced <close> with a callback function for Lua 5.2/MoonSharp compatibility.
+        -- Replaced with a callback function for Lua 5.2/MoonSharp compatibility.
         local function response()
             if is_done then return end
             is_done = true

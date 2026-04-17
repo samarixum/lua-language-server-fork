@@ -2383,7 +2383,7 @@ local function completion(uri, position, triggerCharacter)
     end
     clearStack()
     diagnostic.pause()
-    local _ <close> = diagnostic.resume
+    local _ = diagnostic.resume
     local results = {}
     tracy.ZoneBeginN 'completion #2'
     tryCompletions(state, position, triggerCharacter, results)

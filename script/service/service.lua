@@ -45,11 +45,13 @@ m.sleeping = false
 local function countMemory()
     local mems = {}
     local total  = 0
-    mems[0] = collectgarbage 'count'
-    total = total + collectgarbage 'count'
+    local memory = collectgarbage 'count' or 0
+    mems[0] = memory
+    total = total + memory
     for id, brave in ipairs(pub.allBraves) do
-        mems[id] = brave.memory
-        total = total + brave.memory
+        local memory = brave.memory or 0
+        mems[id] = memory
+        total = total + memory
     end
     return total, mems
 end
@@ -241,10 +243,11 @@ function m.reportStatus()
     end
 
     local tooltips = {}
+    local memory = collectgarbage('count') or 0
     local params = {
         ast = files.countStates(),
         max = files.fileCount,
-        mem = collectgarbage('count') / 1000,
+        mem = memory / 1000,
     }
     for i, scp in ipairs(ws.folders) do
         tooltips[i] = lang.script('WINDOW_LUA_STATUS_WORKSPACE', furi.decode(scp.uri))
@@ -270,7 +273,7 @@ end
 function m.lockCache()
     local fs = require("bee.filesystem")
     local sp = require("bee.subprocess")
-    local cacheDir = string.format('%s/cache', LOGPATH)
+    local cacheDir = string.format('%s/cache', LOGPATH:string())
     local myCacheDir = string.format('%s/%d'
         , cacheDir
         , sp.get_id()

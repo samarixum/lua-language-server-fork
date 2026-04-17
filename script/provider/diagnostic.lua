@@ -94,18 +94,13 @@ local function buildDiagnostic(uri, diag)
         relatedInformation = {}
         for _, rel in ipairs(diag.related) do
             local rtext = files.getText(rel.uri)
-            if not rtext then
-                goto CONTINUE
-            end
             local relState = files.getState(rel.uri)
-            if not relState then
-                goto CONTINUE
+            if rtext and relState then
+                relatedInformation[#relatedInformation+1] = {
+                    message  = rel.message or rtext:sub(rel.start, rel.finish),
+                    location = converter.location(rel.uri, converter.packRange(relState, rel.start, rel.finish))
+                }
             end
-            relatedInformation[#relatedInformation+1] = {
-                message  = rel.message or rtext:sub(rel.start, rel.finish),
-                location = converter.location(rel.uri, converter.packRange(relState, rel.start, rel.finish))
-            }
-            ::CONTINUE::
         end
     end
 
@@ -135,14 +130,15 @@ local function mergeDiags(a, b, c)
         for i = 1, #diags do
             local diag = diags[i]
             local severity = diag.severity
-            if severity == define.DiagnosticSeverity.Hint
-            or severity == define.DiagnosticSeverity.Information then
-                if #t > 10000 then
-                    goto CONTINUE
-                end
+            local skip = false
+            if (severity == define.DiagnosticSeverity.Hint
+            or severity == define.DiagnosticSeverity.Information)
+            and #t > 10000 then
+                skip = true
             end
-            t[#t+1] = diag
-            ::CONTINUE::
+            if not skip then
+                t[#t+1] = diag
+            end
         end
     end
 
@@ -293,7 +289,7 @@ function m.doDiagnostic(uri, isScopeDiag, ignoreFileState)
 
     local version = files.getVersion(uri)
 
-    local prog <close> = progress.create(uri, lang.script.WINDOW_DIAGNOSING, 0.5)
+    local prog = progress.create(uri, lang.script.WINDOW_DIAGNOSING, 0.5)
     prog:setMessage(ws.getRelativePath(uri))
 
     --log.debug('Diagnostic file:', uri)
@@ -304,7 +300,7 @@ function m.doDiagnostic(uri, isScopeDiag, ignoreFileState)
     local lastDiag = copyDiagsWithoutSyntax(m.cache[uri])
     local function pushResult()
         tracy.ZoneBeginN 'mergeSyntaxAndDiags'
-        local _ <close> = tracy.ZoneEnd
+        local _ = tracy.ZoneEnd
         local full = mergeDiags(syntax, lastDiag, diags)
         --log.debug(('Pushed [%d] results'):format(full and #full or 0))
         if not full then
@@ -394,7 +390,7 @@ function m.pullDiagnostic(uri, isScopeDiag)
         return nil, util.equal(m.cache[uri], nil)
     end
 
-    local prog <close> = progress.create(uri, lang.script.WINDOW_DIAGNOSING, 0.5)
+    local prog = progress.create(uri, lang.script.WINDOW_DIAGNOSING, 0.5)
     prog:setMessage(ws.getRelativePath(uri))
 
     local syntax = m.syntaxErrors(uri, state)
@@ -533,12 +529,12 @@ function m.awaitDiagnosticsScope(suri, callback)
     end
     local finished
     m.scopeDiagCount = m.scopeDiagCount + 1
-    local scopeDiag <close> = util.defer(function ()
+    local scopeDiag = util.defer(function ()
         m.scopeDiagCount = m.scopeDiagCount - 1
         clearMemory(finished)
     end)
     local clock = os.clock()
-    local bar <close> = progress.create(suri, lang.script.WORKSPACE_DIAGNOSTIC, 1)
+    local bar = progress.create(suri, lang.script.WORKSPACE_DIAGNOSTIC, 1)
     local cancelled
     bar:onCancel(function ()
         log.info('Cancel workspace diagnostics')
@@ -611,7 +607,7 @@ function m.pullDiagnosticScope(callback)
             await.close(id)
             await.call(function () ---@async
                 processing = processing + 1
-                local _ <close> = util.defer(function ()
+                local _ = util.defer(function ()
                     processing = processing - 1
                 end)
 
