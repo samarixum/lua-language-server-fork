@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>                      <!-- target .NET 10.0 LTS for latest features and performance improvements -->
+        <OutputType>Exe</OutputType>                                    <!-- specify that this project is an executable application -->
+        <Nullable>enable</Nullable>                                     <!-- enable nullable reference types for better null safety and code 'quality' -->
+        <ImplicitUsings>disable</ImplicitUsings>                        <!-- disable implicit usings to avoid unnecessary dependencies and potential conflicts -->
+
+        <LangVersion>latest</LangVersion>                               <!-- Use latest C# language features -->
+        <EnableDefaultItems>false</EnableDefaultItems>                  <!-- disable default inclusion of all .cs files in the project directory -->
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>    <!-- disable default compilation of all .cs files in the project directory -->
+        <StartupObject>Moonsharpy.Program</StartupObject>               <!-- specify the entry point of the application -->
+
+        <PublishSingleFile>false</PublishSingleFile>                    <!-- publish as a single executable file for easier distribution, for now we dont do this for debugging -->
+        <SelfContained>true</SelfContained>                             <!-- include the .NET runtime with the application for better compatibility on target machines -->
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- include native libraries in the single file publish for better performance and compatibility -->
+
+        <PublishReadyToRun>false</PublishReadyToRun>                    <!-- ReadyToRun is a form of ahead-of-time compilation that can improve startup performance by precompiling the application to native code. -->
+        <TieredCompilation>false</TieredCompilation>                    <!-- Tiered compilation allows the application to start faster by initially using less optimized code and then recompiling hot code paths with more optimizations as the application runs. -->
+
+        <PublishTrimmed>false</PublishTrimmed>                          <!-- trim unused code for smaller deployment size -->
+
+        <DebugType>embedded</DebugType>                                 <!-- embed PDB files into the executable for easier debugging without separate PDB files -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- only include the main program file -->
+        <Compile Include="Program.cs" />
+        <!-- include all files in ./Lua/**-->
+        <Compile Include="Lua/**/*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Script runtimes -->
+        <PackageReference Include="MoonSharp" Version="2.0.0" />
+    </ItemGroup>
+
+</Project>

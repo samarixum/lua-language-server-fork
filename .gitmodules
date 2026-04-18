@@ -1,23 +1,23 @@
 
 ## contains bee.lua (Lua runtime and toolset) and makes the luamake.exe used as a cpp compiler for lua-language-server.exe
-[submodule "submodules/luamake"]
-    path = submodules/luamake
+[submodule "Runtimessubmodules/luamake"]
+    path = Runtimessubmodules/luamake
     url = https://github.com/actboy168/luamake
 
 # used in Docs and Make.lua
-[submodule "submodules/EmmyLuaCodeStyle"]
-    path = submodules/EmmyLuaCodeStyle
+[submodule "Runtimes/submodules/EmmyLuaCodeStyle"]
+    path = Runtimes/submodules/EmmyLuaCodeStyle
     url = https://github.com/CppCXY/EmmyLuaCodeStyle
 
 # (An extension of LPeg that supports labeled failures)
-[submodule "submodules/lpeglabel"]
-    path = submodules/lpeglabel
+[submodule "Runtimes/submodules/lpeglabel"]
+    path = Runtimes/submodules/lpeglabel
     url = https://github.com/sqmedeiros/lpeglabel
 
 ## pure-Lua JSON library used to encode and decode JSON data without needing external C dependencies
 # only hardcoded reference appears in submodules\server\.github\workflows\build.yml
-[submodule "submodules/json.lua"]
-    path = submodules/json.lua
+[submodule "Runtimes/submodules/json.lua"]
+    path = Runtimes/submodules/json.lua
     url = https://github.com/actboy168/json.lua
 
 
