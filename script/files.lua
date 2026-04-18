@@ -825,10 +825,17 @@ end
 --- 获取文件关联
 function m.getAssoc(uri)
     local patt = {}
-    for k, v in pairs(config.get(uri, 'files.associations')) do
+    local associations = config.get(uri, 'files.associations')
+    if type(associations) ~= 'table' then
+        return nil
+    end
+    for k, v in pairs(associations) do
         if v == 'lua' then
             patt[#patt+1] = k
         end
+    end
+    if #patt == 0 then
+        return nil
     end
     m.assocMatcher = glob.glob(patt)
     return m.assocMatcher
@@ -844,6 +851,9 @@ function m.isLua(uri)
     -- check customed assoc, e.g. `*.lua.txt = *.lua`
     local matcher = m.getAssoc(uri)
     local path = furi.decode(uri)
+    if not matcher then
+        return false
+    end
     return matcher(path)
 end
 

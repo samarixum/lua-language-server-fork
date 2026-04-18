@@ -116,7 +116,7 @@ local function loadLang(name, language)
             else
                 -- 这里不能使用翻译，以免死循环
                 log.warn(('[%s][%s-%s] formated error: %s'):format(
-                    language, name, key, str
+                    tostring(language), tostring(name), tostring(key), tostring(str)
                 ))
                 return str
             end
@@ -134,8 +134,8 @@ return setmetatable({
     end,
     __call = function (self, id)
         local language = getLanguage(id)
-        log.info(('VSC language: %s'):format(id))
-        log.info(('LS  language: %s'):format(language))
+        log.info(('VSC language: %s'):format(tostring(id)))
+        log.info(('LS  language: %s'):format(tostring(language)))
         for k in pairs(self) do
             self[k] = nil
         end
