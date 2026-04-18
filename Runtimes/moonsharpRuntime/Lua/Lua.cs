@@ -56,8 +56,8 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
             LuaDebugCompatibility.Install(LuaWorld);
 
 #if DEBUG
-            System.Console.WriteLine($"Running lua script '{this._scriptPath}' with {this._args.Length} args...");
-            System.Console.WriteLine($"input args: {string.Join(", ", this._args)}");
+            System.Console.Error.WriteLine($"Running lua script '{this._scriptPath}' with {this._args.Length} args...");
+            System.Console.Error.WriteLine($"input args: {string.Join(", ", this._args)}");
 #endif
 
             // ::
@@ -84,8 +84,8 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
             }
         } catch (MoonSharp.Interpreter.SyntaxErrorException syntaxEx) {
             // Catches parse errors (e.g. missing 'end', unexpected symbols) before the script even runs
-            System.Console.WriteLine($"Lua Syntax Error: {syntaxEx.DecoratedMessage}");
-            System.Console.WriteLine($"Error: {syntaxEx.Message}");
+            System.Console.Error.WriteLine($"Lua Syntax Error: {syntaxEx.DecoratedMessage}");
+            System.Console.Error.WriteLine($"Error: {syntaxEx.Message}");
 
             exitCode = 1;
             executionError = syntaxEx;
@@ -93,12 +93,12 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
             // luaEx.DecoratedMessage contains the file path and line number
             string luaErrorMessage = luaEx.DecoratedMessage;
 
-            System.Console.WriteLine($"Lua Runtime Error: {luaErrorMessage}");
-            System.Console.WriteLine($"Error: {luaEx.Message}");
+            System.Console.Error.WriteLine($"Lua Runtime Error: {luaErrorMessage}");
+            System.Console.Error.WriteLine($"Error: {luaEx.Message}");
 
             // Print the detailed Lua Call Stack cleanly
             if (luaEx.CallStack != null && luaEx.CallStack.Count > 0) {
-                System.Console.WriteLine("Lua Stack Trace:");
+                System.Console.Error.WriteLine("Lua Stack Trace:");
                 foreach (var frame in luaEx.CallStack) {
                     string functionName = string.IsNullOrEmpty(frame.Name) ? "main chunk" : frame.Name;
                     string location = "[C# / native code]";
@@ -121,7 +121,7 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
                         location = $"{fileName}:line {frame.Location.FromLine}";
                     }
 
-                    System.Console.WriteLine($"  at {functionName} in {location}");
+                    System.Console.Error.WriteLine($"  at {functionName} in {location}");
                 }
             }
 
@@ -137,15 +137,15 @@ public sealed class Main(string scriptPath, IEnumerable<string>? args, CoreModul
                     $"CRITICAL: MoonSharp VM Internal Crash (IndexOutOfRangeException) while executing '{this._scriptPath}'. " +
                     "This usually indicates a stack overflow or an infinite metamethod loop.";
 
-                System.Console.WriteLine(vmErrorMessage);
+                System.Console.Error.WriteLine(vmErrorMessage);
 
                 executionError = new InvalidOperationException(vmErrorMessage, ex);
             } else if (IsMoonSharpIteratorPrepNullReference(ex)) {
                 string compatibilityMessage = "Lua compatibility limitation: MoonSharp 'for ... in' iteration failure. Use pairs()/ipairs() instead.";
                 executionError = new InvalidOperationException(compatibilityMessage, ex);
-                System.Console.WriteLine(compatibilityMessage);
+                System.Console.Error.WriteLine(compatibilityMessage);
             } else {
-                System.Console.WriteLine($"Unhandled Exception in Lua Provider: {ex.Message}");
+                System.Console.Error.WriteLine($"Unhandled Exception in Lua Provider: {ex.Message}");
                 executionError = ex;
             }
 

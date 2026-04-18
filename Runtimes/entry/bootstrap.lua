@@ -173,8 +173,8 @@ end
 
 -- ensure arg[0] is not set to this bootstrap script
 if arg[0] and arg[0] == (abRoot .. "/bootstrap.lua") then
-    print("\n[CRITICAL ERROR] arg[0] is set to bootstrap.lua, which will cause require() to fail!")
-    print("Please ensure you are running the correct entry point and that arg[0] is set appropriately.")
+    io.stderr:write("\n[CRITICAL ERROR] arg[0] is set to bootstrap.lua, which will cause require() to fail!\n")
+    io.stderr:write("Please ensure you are running the correct entry point and that arg[0] is set appropriately.\n")
     os.exit(1)
 end
 
@@ -195,8 +195,8 @@ if (arg[0]) then
     end)
 
     if not status then
-        print("\n[CRITICAL ERROR DURING EXECUTION]")
-        print(result)
+        io.stderr:write("\n[CRITICAL ERROR DURING EXECUTION]\n")
+        io.stderr:write(tostring(result) .. "\n")
     end
 
 else

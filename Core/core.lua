@@ -103,15 +103,15 @@ end
 loadArgs()
 
 local currentPath = debug.getinfo(1, 'S').source:sub(2)
-print('Current path:', currentPath)
+Dprint('Current path:', currentPath)
 local rootPath    = currentPath:gsub('[/\\]*[^/\\]-$', '')
-print('Root path:', rootPath)
+Dprint('Root path:', rootPath)
 
 
 rootPath = (rootPath == '' and '.' or rootPath)
-print('Expanded root path:', (rootPath))
+Dprint('Expanded root path:', (rootPath))
 ROOT     = fs.path(((util.expandPath(rootPath))))
-print('ROOT path:', ROOT)
+Dprint('ROOT path:', ROOT)
 
 local function resolvePath(pathValue, fallback)
     if type(pathValue) == 'string' then
@@ -124,9 +124,9 @@ local function resolvePath(pathValue, fallback)
 end
 
 LOGPATH  = resolvePath(LOGPATH, ROOT / 'log')
-print('LOGPATH:', LOGPATH)
+Dprint('LOGPATH:', LOGPATH)
 METAPATH = resolvePath(METAPATH, ROOT / 'meta')
-print('METAPATH:', METAPATH)
+Dprint('METAPATH:', METAPATH)
 
 util.enableCloseFunction()
 util.enableFormatString()
@@ -145,17 +145,17 @@ if LOGLEVEL then
     log.level = tostring(LOGLEVEL):lower()
 end
 
-print('Lua _VERSION: ', _VERSION)                         -- 'MoonSharp 2.0.0.0' or 'Lua 5.5'
+Dprint('Lua _VERSION: ', _VERSION)                         -- 'MoonSharp 2.0.0.0' or 'Lua 5.5'
 if _MOONSHARP then
-    print('_MOONSHARP.version: ', _MOONSHARP.version)     -- '2.0.0.0'
-    print('_MOONSHARP.luacompat: ', _MOONSHARP.luacompat) -- 'Lua 5.2'
-    print('_MOONSHARP.platform: ', _MOONSHARP.platform)   -- 'core.dotnet.clr4.netcore'
-    print('_MOONSHARP.is_aot: ', _MOONSHARP.is_aot)       -- false
-    print('_MOONSHARP.is_unity: ', _MOONSHARP.is_unity)   -- false
-    print('_MOONSHARP.is_mono: ', _MOONSHARP.is_mono)     -- false
-    print('_MOONSHARP.is_clr4: ', _MOONSHARP.is_clr4)     -- true
-    print('_MOONSHARP.is_pcl: ', _MOONSHARP.is_pcl)       -- false
-    print('_MOONSHARP.banner: ', _MOONSHARP.banner)       -- """Copyright (C) 2014-2016 Marco Mastropaolo \nhttp://www.moonsharp.org"""
+    Dprint('_MOONSHARP.version: ', _MOONSHARP.version)     -- '2.0.0.0'
+    Dprint('_MOONSHARP.luacompat: ', _MOONSHARP.luacompat) -- 'Lua 5.2'
+    Dprint('_MOONSHARP.platform: ', _MOONSHARP.platform)   -- 'core.dotnet.clr4.netcore'
+    Dprint('_MOONSHARP.is_aot: ', _MOONSHARP.is_aot)       -- false
+    Dprint('_MOONSHARP.is_unity: ', _MOONSHARP.is_unity)   -- false
+    Dprint('_MOONSHARP.is_mono: ', _MOONSHARP.is_mono)     -- false
+    Dprint('_MOONSHARP.is_clr4: ', _MOONSHARP.is_clr4)     -- true
+    Dprint('_MOONSHARP.is_pcl: ', _MOONSHARP.is_pcl)       -- false
+    --Dprint('_MOONSHARP.banner: ', _MOONSHARP.banner)       -- """Copyright (C) 2014-2016 Marco Mastropaolo \nhttp://www.moonsharp.org"""
 end
 
 log.info('Lua Lsp startup, root: ', ROOT)
@@ -164,20 +164,20 @@ log.info('LOGPATH:', LOGPATH)
 log.info('METAPATH:', METAPATH)
 log.info('VERSION:', version.getVersion())
 
-print('including script/tracy.lua')
+Dprint('including script/tracy.lua')
 require 'script.tracy'
 
-print('xpcall dofile debugger.lua')
+Dprint('xpcall dofile debugger.lua')
 xpcall(dofile, log.debug, (ROOT / 'debugger.lua'):string())
 
-print('including script/cli/init.lua')
+Dprint('including script/cli/init.lua')
 require 'script.cli.init'
 
-print('setup service')
+Dprint('setup service')
 local ok, service = xpcall(require, log.error, 'script.service.service')
 if not ok then
     error(service)
 end
 
-print('start service')
+Dprint('start service')
 service.start()
