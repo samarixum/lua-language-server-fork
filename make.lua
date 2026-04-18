@@ -1,3 +1,17 @@
+--[[
+lls 5.5 build graph entry for luamake.
+
+Purpose:
+- Defines how the lua-language-server executable is compiled and staged.
+- Configures compiler standards, platform handling, and optional code format support.
+
+Function:
+- Imports luamake core rules and local build helpers.
+- Builds the lua-language-server target and copies build outputs into bin/.
+- Copies Windows runtime libraries when required.
+
+]]
+
 local lm = require 'luamake'
 
 lm.c = lm.compiler == 'msvc' and 'c89' or 'c11'
@@ -69,10 +83,13 @@ lm:copy "copy_lua-language-server" {
     outputs = "bin/lua-language-server" .. exe,
 }
 
-lm:copy "copy_bootstrap" {
-    inputs = "make/bootstrap.lua",
-    outputs = "bin/main.lua",
-}
+-- nolonger copy bootstrap into bin/ bin will only be the exe build outputs now
+-- this means either directly calling bootstrap when running the exe or moving the executable
+-- inprod this is handled automatically by build.ps1
+--lm:copy "copy_bootstrap" {
+--    inputs = "bootstrap.lua",
+--    outputs = "bin/main.lua",
+--}
 
 lm:msvc_copydll 'copy_vcrt' {
     type = "vcrt",
@@ -83,7 +100,7 @@ lm:phony "all" {
     deps = {
         "lua-language-server",
         "copy_lua-language-server",
-        "copy_bootstrap",
+        --"copy_bootstrap",
     },
     windows = {
         deps = {

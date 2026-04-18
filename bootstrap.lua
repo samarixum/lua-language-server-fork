@@ -1,49 +1,49 @@
 local DEBUG = true
-local function dprint(...) if DEBUG then print("[DEBUG]", ...) end end
+function Dprint(...) if DEBUG then print("[DEBUG]", ...) end end
 
-dprint("Lua Version: " .. _VERSION)
-if _MOONSHARP then dprint("Running in MoonSharp environment") end
+Dprint("Lua Version: " .. _VERSION)
+if _MOONSHARP then Dprint("Running in MoonSharp environment") end
 
 
 -- debug print all args
 if arg then
     for k, v in pairs(arg) do
-        dprint("arg[" .. tostring(k) .. "] = " .. tostring(v))
+        Dprint("arg[" .. tostring(k) .. "] = " .. tostring(v))
     end
 else
-    dprint("No args table found")
+    Dprint("No args table found")
 end
 
 
 local main, exec
 local i = 1
 while arg[i] do
-    dprint("Processing arg[" .. i .. "]: " .. tostring(arg[i]))
+    Dprint("Processing arg[" .. i .. "]: " .. tostring(arg[i]))
     if arg[i] == '-E' then
         -- Skip
     elseif arg[i] == '-e' then
         i = i + 1
         local expr = assert(arg[i], "'-e' needs argument")
-        dprint("Executing immediate expression: " .. expr)
+        Dprint("Executing immediate expression: " .. expr)
         assert(load(expr, "=(command line)"))()
         exec = true
     elseif not main and arg[i]:sub(1, 1) ~= '-' then
         main = i
-        dprint("Main script identified at index: " .. main .. " (Value: " .. arg[main] .. ")")
+        Dprint("Main script identified at index: " .. main .. " (Value: " .. arg[main] .. ")")
     elseif arg[i]:sub(1, 2) == '--' then
-        dprint("Found '--', stopping argument parse")
+        Dprint("Found '--', stopping argument parse")
         break
     end
     i = i + 1
 end
 
 if exec and not main then
-    dprint("Execution finished via -e with no main script. Exiting.")
+    Dprint("Execution finished via -e with no main script. Exiting.")
     return
 end
 
 if main then
-    dprint("Shifting arguments for main script...")
+    Dprint("Shifting arguments for main script...")
     -- Handle negative indices (if any)
     for i = -1, -999, -1 do
         if not arg[i] then
@@ -61,7 +61,7 @@ if main then
     for j = #arg - main + 1, #arg do
         arg[j] = nil
     end
-    dprint("New arg[0]: " .. tostring(arg[0]))
+    Dprint("New arg[0]: " .. tostring(arg[0]))
 end
 
 local root
@@ -72,10 +72,10 @@ do
     -- debug print all args again for clarity after potential modifications
     if arg then
         for k, v in pairs(arg) do
-            dprint("arg[" .. tostring(k) .. "] = " .. tostring(v))
+            Dprint("arg[" .. tostring(k) .. "] = " .. tostring(v))
         end
     else
-        dprint("No args table found")
+        Dprint("No args table found")
     end
 
     local fs = require 'bee.filesystem'
@@ -113,8 +113,8 @@ do
 
     root = bin_dir:string()
     abRoot = root_dir:string()
-    dprint("Resolved root path: " .. root)
-    dprint("Resolved absolute root path: " .. abRoot)
+    Dprint("Resolved root path: " .. root)
+    Dprint("Resolved absolute root path: " .. abRoot)
 end
 
 -- 1. Store the paths in a local table
@@ -133,19 +133,19 @@ end
 -- 3. Proceed with your concatenation and gsub logic
 package.path = table.concat(paths, ";"):gsub('/', package.config:sub(1, 1))
 
-dprint("Final package.paths: " .. package.path)
+Dprint("Final package.paths: " .. package.path)
 
 -- Custom Loader Logic
 local function custom_loader(name)
-    dprint("[bin/main.lua] LUA 5.5 : Require call: searching for '" .. name .. "'")
+    Dprint("[bin/main.lua] LUA 5.5 : Require call: searching for '" .. name .. "'")
     local filename, err = package.searchpath(name, package.path)
 
     if not filename then
-        --dprint("  - Not found in package.path: " .. tostring(err))
+        --Dprint("  - Not found in package.path: " .. tostring(err))
         return err
     end
 
-    --dprint("  - Found file: " .. filename)
+    --Dprint("  - Found file: " .. filename)
     local f = io.open(filename, "r")
     if not f then return 'cannot open file:' .. filename end
 
@@ -157,10 +157,10 @@ local function custom_loader(name)
         relative = filename:sub(#root + 2)
     end
 
-    --dprint("  - Loading chunk: @" .. relative)
+    --Dprint("  - Loading chunk: @" .. relative)
     local init, loadErr = load(buf, '@' .. relative)
     if not init then
-        --dprint("  - COMPILATION ERROR: " .. tostring(loadErr))
+        --Dprint("  - COMPILATION ERROR: " .. tostring(loadErr))
         return loadErr
     end
 
@@ -176,14 +176,14 @@ end
 
 
 if (arg[0]) then
-    dprint("Executing entry point: " .. tostring(arg[0]))
-    dprint("------------------------------------------")
+    Dprint("Executing entry point: " .. tostring(arg[0]))
+    Dprint("------------------------------------------")
 
     if not _MOONSHARP then
-        dprint("replacing package.searchers[2] with custom loader for Lua 5.5 host")
+        Dprint("replacing package.searchers[2] with custom loader for Lua 5.5 host")
         package.searchers[2] = custom_loader
     else
-        dprint("Using host-provided require shim")
+        Dprint("Using host-provided require shim")
     end
 
     local status, result = pcall(function()
@@ -196,5 +196,5 @@ if (arg[0]) then
     end
 
 else
-    dprint("No entry point specified, skipping execution")
+    Dprint("No entry point specified, skipping execution")
 end
