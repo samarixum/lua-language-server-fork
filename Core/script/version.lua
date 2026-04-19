@@ -3,10 +3,13 @@ local fsu = require("script.fs-utility")
 -- Internal helper to parse package.json if the changelog is missing
 local function loadFromPackageJson()
     local content = fsu.loadFile(ROOT / 'package.json')
-    if not content then return nil end
+    if not content then
+        print("Warning: package.json not found at " .. tostring(ROOT / 'package.json') .. ", unable to determine version.")
+        return nil
+    end
 
     -- Search for "version": "1.2.3"
-    -- Pattern explanation: 
+    -- Pattern explanation:
     -- "version" : Matches the key
     -- %s*:%s* : Matches the colon with any surrounding whitespace
     -- "([^"]+)" : Captures everything inside the next set of quotes
@@ -17,7 +20,7 @@ end
 local function loadVersion()
     -- Attempt 1: Changelog
     local changelog = fsu.loadFile(ROOT / 'changelog.md')
-    
+
     if changelog then
         local version, pos = changelog:match '%#%# (%d+%.%d+%.%d+)()'
         if version then
